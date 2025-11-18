@@ -69,10 +69,10 @@
 
 
                 <li class="sidebar-list"><i class="fa fa-thumb-tack"></i>
-                    <label class="badge badge-light-primary">1</label><a class="sidebar-link sidebar-title" href="#">
+                    <label class="badge badge-light-primary">1</label><a class="sidebar-link sidebar-title" href="{{route('mensagem.index')}}">
                         <svg class="stroke-icon">
                         <use href="{{ URL('/assets/svg/icon-sprite.svg#stroke-form') }}"></use>
-                        </svg><span class="lan-3">SMS</span></a>
+                        </svg><span class="lan-3">Credito</span></a>
                 </li>
 
 

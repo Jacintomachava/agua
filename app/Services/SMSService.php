@@ -52,7 +52,6 @@ class SMSService
             return false; // ❌ Falhou
         }
 
-
     }
 
      /**
@@ -100,32 +99,11 @@ class SMSService
             return false; // ❌ Falhou
         }
 
-
     }
 
-
-    public static function agendarSMS($conteudo, $dataEnvio, $quantidadeSMS, $telefone, $destinatario, $sender, $categoria, $escola)
+    public static function decrimentoSaldoSMS($empresa,$quantidade)
     {
-        $anoAcademicoAtivo = AnoAcademico::where('estado', true)->first();
-
-        $smsDestinatario = new SMSDestinatario();
-        $smsDestinatario->conteudo = $conteudo;
-        $smsDestinatario->data_envio = $dataEnvio;
-        $smsDestinatario->quantidade_sms = self::quantidadeSMS($conteudo);
-        $smsDestinatario->sender_id = $sender;
-        $smsDestinatario->destinatario_pessoa_id = $destinatario;
-        $smsDestinatario->categoria = $categoria;
-        $smsDestinatario->contacto = $telefone;
-        $smsDestinatario->escola_id = $escola;
-
-        if ($anoAcademicoAtivo->sms == 1) {
-            $smsDestinatario->save();
-        }
-    }
-
-    public static function decrimentoSaldoSMS($quantidade)
-    {
-        $saldo = SaldoSMS::where('codigo', 'saldo')->first();
+        $saldo = SaldoSMS::where('empresa_id',$empresa)->first();
         $saldo->saldo = $saldo->saldo - $quantidade;
 
         if ($saldo->save()) {
@@ -135,40 +113,11 @@ class SMSService
         return false;
     }
 
-    public static function saldoSMS()
+    public static function saldoSMS($empresa)
     {
-        $saldo = SaldoSMS::where('codigo', 'saldo')->first();
+        $saldo = SaldoSMS::where('empresa_id',$empresa)->first();
 
         return $saldo->saldo;
-    }
-
-    // Envia SMS Pendentes
-    public static function notificacaoSMS()
-    {
-        // Buscar destinatários pendentes em campanhas ativas
-        $destinatarios = Mensagem::where('tipo', 'Pendente')->where('canal', 'SMS')->where('created_at', '<=', now())->get();
-
-        if (count($destinatarios) > 0) {
-            // Processar cada destinatário
-            foreach ($destinatarios as $destinatario) {
-                if ((self::saldoSMS() - $destinatario->qtd) >= 0) {
-                    self::sendSMS($destinatario->telefone, $destinatario->descricao, $destinatario->id);
-                    // Atualizar o estado do destinatário
-                    $destinatario->update(['tipo' => 'Enviada']);
-                    self::decrimentoSaldoSMS($destinatario->qtd);
-                }
-            }
-        }
-    }
-
-    public static function encarregadoAlunoTemTelefone($alunoID)
-    {
-        return AlunoRelacaoPessoa::where('aluno_id', $alunoID)
-            ->where('relacao_id', 1)
-            ->whereHas('pessoa', function ($query) {
-                $query->whereNotNull('telefone'); // Verifica se o email não é nulo no relacionamento
-            })
-            ->exists(); // Retorna true se existir pelo menos um registro
     }
 
     public static function quantidadeSMS($sms)

@@ -12,6 +12,7 @@ use App\Http\Controllers\ContratoController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\LeituraController;
 use App\Http\Controllers\PagamentoController;
+use App\Http\Controllers\MensagemController;
 
 /*
 |--------------------------------------------------------------------------
@@ -81,3 +82,11 @@ Route::get('/pagamento/leitura', [PagamentoController::class, 'index'])->name('p
 Route::get('/imprimir/factura', [PagamentoController::class, 'fatura'])->name('fatura.index');
 Route::get('/pagamentos/leituras/{contratoID}', [PagamentoController::class, 'show'])->name('pagamento.show');
 Route::post('/pagamentos', [PagamentoController::class, 'store'])->name('pagamentos.store');
+Route::post('/pagamento', [PagamentoController::class, 'storeParcial'])->name('pagamento.storeParcial');
+Route::get('/pagamento/leitura/{contratoID}', [PagamentoController::class, 'showParcial'])->name('pagamentos.showParcial');
+
+// Mensagem
+Route::get('/mensagem', [MensagemController::class, 'index'])->name('mensagem.index');
+Route::get('/mensagem/{contacto}', [MensagemController::class, 'show'])->name('mensagem.show');
+Route::post('/mensagem', [MensagemController::class, 'store'])->name('mensagem.store');
+

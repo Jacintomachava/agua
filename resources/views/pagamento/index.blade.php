@@ -109,7 +109,7 @@
                                 </td>
                                 <td>
                                    {{$leitura->estado_pagamento}}
-                                   @if($leitura->estado_leitura==0)
+                                    @if($leitura->estado_leitura==0)
                                         ({{($leitura->valor_a_pagar+$leitura->furoClienteContrato->divida)+($leitura->valor_a_pagar+$leitura->furoClienteContrato->divida)*$leitura->multa/100}} MT)
                                     @elseif($leitura->estado_leitura==1 && $leitura->estado_pagamento=='Pendente')
                                         ({{($leitura->valor_a_pagar+$leitura->furoClienteContrato->divida)+($leitura->valor_a_pagar+$leitura->furoClienteContrato->divida)*$leitura->multa/100}} MT)
@@ -119,12 +119,23 @@
                                 </td>
 
                                 <td>
-                                    <a class="btn btn-warning btn-xs activate-btn" href="{{route('pagamento.show',['contratoID'=>$leitura->id])}}" >
-                                        Pagar
-                                    </a>
-                                    <a class="btn btn-info btn-xs activate-btn" href="{{route('fatura.index')}}" >
-                                        Factura
-                                    </a>
+
+                                    @if($leitura->estado_leitura==0)
+                                        
+                                    @elseif($leitura->estado_leitura==1 && $leitura->estado_pagamento=='Pendente')
+                                      <a class="btn btn-warning btn-xs activate-btn" href="{{route('pagamento.show',['contratoID'=>$leitura->id])}}" >
+                                        Pagar 
+                                      </a>
+                                    @elseif($leitura->estado_leitura==1 && $leitura->estado_pagamento=='Parcial')
+                                      <a class="btn btn-warning btn-xs activate-btn" href="{{route('pagamentos.showParcial',['contratoID'=>$leitura->id])}}" >
+                                        Pagar Parcial
+                                      </a>
+                                    @elseif($leitura->estado_leitura==1 && $leitura->estado_pagamento=='Pago')
+                                        
+                                    @endif
+                                        <a class="btn btn-info btn-xs activate-btn" href="{{route('fatura.index')}}" >
+                                            Factura
+                                        </a>
                                 </td>
                             </tr>
                         @endforeach

@@ -11,11 +11,13 @@ use App\Models\Pagamento;
 use App\Models\FormaPagamento;
 use App\Models\Fatura;
 use App\Models\Recibo;
+use App\Models\Mensagem;
 use App\Models\Ano;
 use App\Models\Leitura;
 use App\Models\Mes;
 use App\Models\BancoCarteira;
 use App\Models\Furo;
+use App\Services\SMSService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -130,6 +132,7 @@ class LeituraController extends Controller
 
             if ($leitura->save()) {
 
+                //Criacao de Factura
                 $factura = new Fatura();
                 $factura->cliente_id = $furoClienteContrato->id;
                 $factura->empresa_id = $userActual->empresa_id;
@@ -141,7 +144,31 @@ class LeituraController extends Controller
                 $factura->valor = $valorAPagar;
                 $factura->furo_id = $leitura->furo_id;
 
-                if($factura->save()){
+                $valorFormatado     = number_format($valorAPagar, 2, ',', '.');
+                $dividaFormatada    = number_format($furoClienteContrato->divida, 2, ',', '.');
+                $total              = $valorAPagar + $furoClienteContrato->divida;
+                $totalFormatado     = number_format($total, 2, ',', '.');
+
+                $smsDescricao = "Caro(a) {$furoClienteContrato->cliente->nome}, "
+                                . "Factura {$numeroFatura} do mês {$leitura->mes->nome}-{$leitura->ano->ano}. "
+                                . "Consumo: {$consumo}m3. "
+                                . "Valor: {$valorFormatado} MT. "
+                                . "Dívida: {$dividaFormatada} MT. "
+                                . "Total a pagar: {$totalFormatado} MT.";
+
+                //Gerar SMS de Factura
+                $sms = new Mensagem();
+                $sms->descricao = $smsDescricao;
+                $sms->telefone = $furoClienteContrato->telefone_notificar;
+                $sms->nome = $furoClienteContrato->cliente->nome;
+                $sms->qtd = SMSService::quantidadeSMS($smsDescricao);
+                $sms->credito = SMSService::quantidadeSMS($smsDescricao)*1.8;
+                $sms->custo_real = SMSService::quantidadeSMS($smsDescricao)*1.2;
+                $sms->empresa_id = $userActual->empresa_id;
+                $sms->furo_id = $leitura->furo_id;
+                $sms->data_envio = $data;
+
+                if($factura->save() && $sms->save()){
 
                     DB::commit();
                     return response()->json(['status' => 1, 'message' => 'Leitura Feito Com Sucesso']);

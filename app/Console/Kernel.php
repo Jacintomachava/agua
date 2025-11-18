@@ -5,6 +5,7 @@ namespace App\Console;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use App\Jobs\LeituraJob;
+use App\Jobs\EnviarSMS;
 
 class Kernel extends ConsoleKernel
 {
@@ -17,6 +18,7 @@ class Kernel extends ConsoleKernel
 
         // Preparar Leitura de Mes Anterior
         $schedule->job(new LeituraJob)->everyMinute(); //->monthlyOn(15, '00:00');
+        $schedule->job(new EnviarSMS)->everyMinute(); //->monthlyOn(15, '00:00');
     }
 
     /**

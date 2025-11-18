@@ -12,8 +12,10 @@ use App\Models\FormaPagamento;
 use App\Models\Fatura;
 use App\Models\Recibo;
 use App\Models\Ano;
+use App\Models\Mensagem;
 use App\Models\Leitura;
 use App\Models\Mes;
+use App\Services\SMSService;
 use App\Models\BancoCarteira;
 use App\Models\Furo;
 use Carbon\Carbon;
@@ -74,6 +76,31 @@ class PagamentoController extends Controller
              'formasPagamentos' => $formasPagamentos,
              'bancos' => $bancos,
         ]);
+    }
+
+    public function showParcial($contratoID)
+    {
+
+        $userActual = Auth::user();
+
+        $leitura = Leitura::where('empresa_id',$userActual->empresa_id)->where('id',$contratoID)->first();
+        $formasPagamentos = FormaPagamento::all();
+        $bancos = BancoCarteira::all();
+        $cliente = FuroClienteContrato::where('empresa_id',$userActual->empresa_id)->where('contador',$leitura->furoClienteContrato->contador)->first();
+
+        $valor = Leitura::where('furo_cliente_contrato_id', $leitura->furo_cliente_contrato_id)
+                ->where('estado_leitura', 1)
+                ->orderByDesc('id')             //Pegar O ultimo valor
+                ->value('valor_a_pagar') ?? 0;  //Pagar o valor
+
+        return view('pagamento.pagamentoParcial',  [
+             'leitura' => $leitura,
+             'valor' => $valor,
+             'cliente' => $cliente,
+             'formasPagamentos' => $formasPagamentos,
+             'bancos' => $bancos,
+        ]);
+
     }
 
     public function store(Request $request)
@@ -162,6 +189,116 @@ class PagamentoController extends Controller
             ]);
         }
 
+    }
+
+    public function storeParcial(Request $request)
+    {
+        DB::beginTransaction();
+
+        try {
+
+            $userActual = Auth::user();
+
+            $data = Carbon::now();
+            $anoActual = Carbon::now()->year;
+            $mesActual = Carbon::now()->month;
+            $ano = Ano::where('ano',$anoActual)->first();
+            $mes = Mes::where('numero',$mesActual)->first();
+            $fatura = Fatura::where('empresa_id',$userActual->empresa_id)->where('furo_id',$request->input('furo'))->where('numero_factura',$request->input('fatura'))->first();
+            $totalRecibo = Recibo::where('empresa_id',$userActual->empresa_id)->get();
+
+            $numeroRecibo = str_pad(count($totalRecibo) + 1, 7, '0', STR_PAD_LEFT).''.$anoActual;
+
+            $leitura = Leitura::where('empresa_id',$userActual->empresa_id)->where('id',$request->input('id'))->first();
+            $cliente = FuroClienteContrato::where('empresa_id',$userActual->empresa_id)->where('contador',$leitura->furoClienteContrato->contador)->first();
+
+            $valorPago = $request->input('valor_pago');
+            $valorTotal = $request->input('valor_total');
+            $novaDivida = $request->input('nova_divida');
+            $novaDivida = substr($novaDivida, 0, -3);
+            $estado = null;
+
+            if($novaDivida==0){
+
+                $estado = "Pago";
+                $cliente->divida = $novaDivida;
+                $cliente->save();
+
+            }elseif($novaDivida>0){
+
+                $estado = "Parcial";
+                $cliente->divida = $novaDivida;
+                $cliente->save();
+            }
+
+            $leitura->estado_pagamento = $estado;
+            $leitura->valor_pago = $leitura->valor_pago + $valorPago;
+            $leitura->saldo = $novaDivida;
+            $leitura->save();
+
+            $pagamento = new Pagamento();
+            $pagamento->valor = $valorPago;
+            $pagamento->furo_id = $request->input('furo');
+            $pagamento->empresa_id = $userActual->empresa_id;
+            $pagamento->leitura_id = $leitura->id;
+            $pagamento->factura_id = $fatura->id;
+            $pagamento->estado = $estado;
+            $pagamento->forma_pagamento_id = $request->input('forma_pagamento');
+            $pagamento->tipo_pagamento_id = 2;
+            $pagamento->descricao = $request->input('descricao');
+            $pagamento->tipo_banco = $request->input('banco');
+
+            if($pagamento->save()){
+
+                $recibo = new Recibo();
+                $recibo->cliente_id = $leitura->furoClienteContrato->id;
+                $recibo->empresa_id = $userActual->empresa_id;
+                $recibo->numero_factura = $request->input('fatura');
+                $recibo->status = $estado;
+                $recibo->tipo_pagamento_id = 1;
+                $recibo->factura_id = $fatura->id;
+                $recibo->valor = $valorPago;
+                $recibo->pagamento_id = $pagamento->id;
+
+                $valorFormatado     = number_format($valorPago, 2, ',', '.');
+                $dividaFormatada    = number_format($novaDivida, 2, ',', '.');
+                $total              = $valorPago + $novaDivida;
+                $totalFormatado     = number_format($total, 2, ',', '.');
+
+                $smsDescricao = "Caro(a) {$cliente->cliente->nome}, "
+                                . "Recibo {$numeroRecibo} do mês {$leitura->mes->nome}-{$leitura->ano->ano}. "
+                                . "Consumo: {$consumo}m3. "
+                                . "Valor Pago: {$valorFormatado} MT. "
+                                . "Dívida: {$dividaFormatada} MT. ";
+
+                //Gerar SMS de Factura
+                $sms = new Mensagem();
+                $sms->descricao = $smsDescricao;
+                $sms->telefone = $cliente->telefone_notificar;
+                $sms->nome = $cliente->cliente->nome;
+                $sms->qtd = SMSService::quantidadeSMS($smsDescricao);
+                $sms->credito = SMSService::quantidadeSMS($smsDescricao)*1.8;
+                $sms->custo_real = SMSService::quantidadeSMS($smsDescricao)*1.2;
+                $sms->empresa_id = $userActual->empresa_id;
+                $sms->furo_id = $leitura->furo_id;
+                $sms->data_envio = $data;
+
+                if($recibo->save() && $sms->save()){
+
+                    DB::commit();
+                    return response()->json(['status' => 1, 'message' => 'Pagamento Efectuado Com Sucesso']);
+                }
+
+            }
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            //$errorMessage = DatabaseErrorHandler::handle($e);
+            return response()->json([
+                'status' => 0,
+                'message' => $e->getMessage(),
+            ]);
+        }
     }
 
     public function fatura()
