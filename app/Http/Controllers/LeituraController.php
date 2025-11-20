@@ -11,6 +11,7 @@ use App\Models\Pagamento;
 use App\Models\FormaPagamento;
 use App\Models\Fatura;
 use App\Models\Recibo;
+use App\Models\Empresa;
 use App\Models\Mensagem;
 use App\Models\Ano;
 use App\Models\Leitura;
@@ -62,6 +63,29 @@ class LeituraController extends Controller
         return view('leitura.geolocalizacao',  [
              'cliente' => $cliente,
         ]);
+    }
+
+    public function fatura($leituraID)
+    {
+        $userActual = Auth::user();
+
+        $leitura = Leitura::where('empresa_id',$userActual->empresa_id)->where('id',$leituraID)->first();
+        $cliente = FuroClienteContrato::where('empresa_id',$userActual->empresa_id)->where('id',$leitura->furo_cliente_contrato_id)->first();
+        $fatura = Fatura::where('empresa_id',$userActual->empresa_id)->where('numero_factura',$leitura->numero_factura)->first();
+        $empresa = Empresa::where('id',$userActual->empresa_id)->first();
+
+
+        $pdf = \PDF::loadView('leitura.factura', [
+             'cliente' => $cliente,
+             'leitura' => $leitura,
+             'fatura' => $fatura,
+             'empresa' => $empresa,
+        ])->setPaper([0, 0, 200, 1000]); 
+
+        $fikeName = 'factura-'.$leitura->numero_factura;
+
+        return $pdf->stream($fikeName.'.pdf');
+
     }
 
     public function localizarCasa($contratoID)
@@ -143,6 +167,7 @@ class LeituraController extends Controller
                 $factura->contrato_id = $furoClienteContrato->id;
                 $factura->valor = $valorAPagar;
                 $factura->furo_id = $leitura->furo_id;
+                $factura->leitura_id = $leitura->id;
 
                 $valorFormatado     = number_format($valorAPagar, 2, ',', '.');
                 $dividaFormatada    = number_format($furoClienteContrato->divida, 2, ',', '.');

@@ -172,7 +172,30 @@ class PagamentoController extends Controller
                 $recibo->valor = $valorPago;
                 $recibo->pagamento_id = $pagamento->id;
 
-                if($recibo->save()){
+                $valorFormatado     = number_format($valorPago, 2, ',', '.');
+                $dividaFormatada    = number_format($novaDivida, 2, ',', '.');
+                $total              = $valorPago + $novaDivida;
+                $totalFormatado     = number_format($total, 2, ',', '.');
+
+                $smsDescricao = "Caro(a) {$cliente->cliente->nome}, "
+                                . "Recibo {$numeroRecibo} do mês {$leitura->mes->nome}-{$leitura->ano->ano}. "
+                                . "Consumo: {$consumo}m3. "
+                                . "Valor Pago: {$valorFormatado} MT. "
+                                . "Dívida: {$dividaFormatada} MT. ";
+
+                //Gerar SMS de Recibo
+                $sms = new Mensagem();
+                $sms->descricao = $smsDescricao;
+                $sms->telefone = $cliente->telefone_notificar;
+                $sms->nome = $cliente->cliente->nome;
+                $sms->qtd = SMSService::quantidadeSMS($smsDescricao);
+                $sms->credito = SMSService::quantidadeSMS($smsDescricao)*1.8;
+                $sms->custo_real = SMSService::quantidadeSMS($smsDescricao)*1.2;
+                $sms->empresa_id = $userActual->empresa_id;
+                $sms->furo_id = $leitura->furo_id;
+                $sms->data_envio = $data;
+
+                if($recibo->save() && $sms->save()){
 
                     DB::commit();
                     return response()->json(['status' => 1, 'message' => 'Pagamento Efectuado Com Sucesso']);
@@ -267,11 +290,11 @@ class PagamentoController extends Controller
 
                 $smsDescricao = "Caro(a) {$cliente->cliente->nome}, "
                                 . "Recibo {$numeroRecibo} do mês {$leitura->mes->nome}-{$leitura->ano->ano}. "
-                                . "Consumo: {$consumo}m3. "
+                                . "Consumo: {$leitura->consumo}m3. "
                                 . "Valor Pago: {$valorFormatado} MT. "
                                 . "Dívida: {$dividaFormatada} MT. ";
 
-                //Gerar SMS de Factura
+                //Gerar SMS de Recibo
                 $sms = new Mensagem();
                 $sms->descricao = $smsDescricao;
                 $sms->telefone = $cliente->telefone_notificar;

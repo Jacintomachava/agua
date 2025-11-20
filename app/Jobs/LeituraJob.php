@@ -39,9 +39,10 @@ class LeituraJob implements ShouldQueue
 
         $clientes = FuroClienteContrato::where('ligacao_activa',true)->get();
 
+
         foreach ($clientes as $cliente) {
 
-            $verificarMes = Leitura::where('mes_id',$mesAtual-1)->where('ano_id',$ano->id)->first();
+            $verificarMes = Leitura::where('mes_id',$mesAtual-1)->where('ano_id',$ano->id)->where('furo_cliente_contrato_id',$cliente->id)->first();
 
             if($verificarMes==null){
 

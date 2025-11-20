@@ -17,12 +17,7 @@
                     Lista de Clientes
                 </h2>
                 <div class="card-header-right-icon">
-                    <a href="{{route('cliente.meuClientes')}}">
-                        <button class="btn btn-pill btn-info btn-sm">Clientes</button>
-                    </a>
-                    <a href="{{route('cliente.create')}}">
-                        <button class="btn btn-pill btn-primary btn-sm">Geolocalizacao(Mapa)</button>
-                    </a>
+
                 </div>
             </div>
         </div>
@@ -100,10 +95,16 @@
 
                                 <td>
                                     <a class="btn btn-warning btn-xs activate-btn" href="{{route('leitura.edit',['contratoID'=>$leitura->id])}}" >
-                                        Fazer Leitura
+                                        Leitura
                                     </a>
-                                     <a class="btn btn-danger btn-xs activate-btn" href="{{route('localizar.casa',['contratoID'=>$leitura->furoClienteContrato->contador])}}"  >
-                                        Geolocalizacao
+                                    <a class="btn btn-info btn-xs activate-btn" target="_blank" href="{{route('leitura.fatura',['leituraID'=>$leitura->id])}}" >
+                                        Fatura
+                                    </a>
+                                    <a class="btn btn-danger btn-xs activate-btn" href="{{route('localizar.casa',['contratoID'=>$leitura->furoClienteContrato->contador])}}"  >
+                                        Localizacao
+                                    </a>
+                                    <a class="btn btn-success btn-xs activate-btn" href="{{route('cliente.geolocalizacao',['contratoID'=>$leitura->furoClienteContrato->contador])}}"  >
+                                        Geolo.
                                     </a>
                                 </td>
                             </tr>

@@ -40,7 +40,7 @@
 
 
                 <li class="sidebar-list"><i class="fa fa-thumb-tack"></i>
-                    <label class="badge badge-light-primary">1</label><a class="sidebar-link sidebar-title" href="#">
+                    <label class="badge badge-light-primary">1</label><a class="sidebar-link sidebar-title" href="{{route('dashbord.indexHome')}}">
                         <svg class="stroke-icon">
                         <use href="{{ URL('/assets/svg/icon-sprite.svg#stroke-learning') }}"></use>
                         </svg><span class="lan-3">Home</span></a>
@@ -84,6 +84,7 @@
                     <ul class="sidebar-submenu">
                         <li><a class="lan-1" href="{{route('furo.index')}}">Furos</a></li>
                         <li><a class="lan-2" href="{{route('contrato.index')}}">T. Contractos</a></li>
+                        <li><a class="lan-2" href="{{route('mapa.index')}}">Tubo Geral</a></li>
                     </ul>
                 </li>
                 

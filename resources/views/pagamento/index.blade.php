@@ -128,7 +128,7 @@
                                       </a>
                                     @elseif($leitura->estado_leitura==1 && $leitura->estado_pagamento=='Parcial')
                                       <a class="btn btn-warning btn-xs activate-btn" href="{{route('pagamentos.showParcial',['contratoID'=>$leitura->id])}}" >
-                                        Pagar Parcial
+                                        Pagar
                                       </a>
                                     @elseif($leitura->estado_leitura==1 && $leitura->estado_pagamento=='Pago')
                                         

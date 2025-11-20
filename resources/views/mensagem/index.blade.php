@@ -135,6 +135,9 @@
              <!-- Matriculas -->
             <div class="tab-pane fade show active" id="bottom-inbox" role="tabpanel" aria-labelledby="bottom-inbox-tab">
 
+              <a href="{{route('mensagem.create')}}">
+                    <button class="btn btn-pill btn-primary btn-sm" >Enviar SMS</button>
+              </a>
               <br>
               <div class="col-sm-12"> 
                 <div class="card title-line">

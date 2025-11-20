@@ -13,6 +13,7 @@ use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\LeituraController;
 use App\Http\Controllers\PagamentoController;
 use App\Http\Controllers\MensagemController;
+use App\Http\Controllers\MapaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,7 +25,6 @@ use App\Http\Controllers\MensagemController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-
 
 
 Auth::routes();
@@ -76,6 +76,7 @@ Route::get('/leitura/{contratoID}', [LeituraController::class, 'leituraContador'
 Route::get('/cliente/leitura/{contratoID}', [LeituraController::class, 'edit'])->name('leitura.edit');
 Route::post('/fazer/leitura', [LeituraController::class, 'update'])->name('leitura.update');
 Route::get('/localizar/casa/{contratoID}', [LeituraController::class, 'localizarCasa'])->name('localizar.casa');
+Route::get('/leitura/fatura/{leituraID}', [LeituraController::class, 'fatura'])->name('leitura.fatura');
 
 //Pagamento
 Route::get('/pagamento/leitura', [PagamentoController::class, 'index'])->name('pagamento.index');
@@ -89,4 +90,12 @@ Route::get('/pagamento/leitura/{contratoID}', [PagamentoController::class, 'show
 Route::get('/mensagem', [MensagemController::class, 'index'])->name('mensagem.index');
 Route::get('/mensagem/{contacto}', [MensagemController::class, 'show'])->name('mensagem.show');
 Route::post('/mensagem', [MensagemController::class, 'store'])->name('mensagem.store');
+Route::post('/enviar/mensagem', [MensagemController::class, 'storeSMS'])->name('mensagem.storeSMS');
+Route::get('/escrever/mensagem', [MensagemController::class, 'create'])->name('mensagem.create');
+
+//Mapa Tubagem 
+Route::get('/mapa/tubagem', [MapaController::class, 'index'])->name('mapa.index');
+Route::post('/rota/tubagem', [MapaController::class, 'store'])->name('mapa.store');
+Route::post('/delete/tubagem', [MapaController::class, 'delete'])->name('mapa.delete');
+Route::post('/rota/tubagem/update', [MapaController::class, 'update'])->name('mapa.update');
 
