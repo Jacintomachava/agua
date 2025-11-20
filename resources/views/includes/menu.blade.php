@@ -42,36 +42,30 @@
                 <li class="sidebar-list"><i class="fa fa-thumb-tack"></i>
                     <label class="badge badge-light-primary">1</label><a class="sidebar-link sidebar-title" href="{{route('dashbord.indexHome')}}">
                         <svg class="stroke-icon">
-                        <use href="{{ URL('/assets/svg/icon-sprite.svg#stroke-learning') }}"></use>
+                        <use href="{{ URL('/assets/svg/icon-sprite.svg#stroke-home') }}"></use>
                         </svg><span class="lan-3">Home</span></a>
                 </li>
 
                 <li class="sidebar-list"><i class="fa fa-thumb-tack"></i>
                     <label class="badge badge-light-primary">1</label><a class="sidebar-link sidebar-title" href="{{route('cliente.index')}}">
-                        <svg class="stroke-icon">
-                        <use href="{{ URL('/assets/svg/icon-sprite.svg#stroke-form') }}"></use>
-                        </svg><span class="lan-3">Clientes</span></a>
+                        <span class="lan-3"><i style="font-size: 15pt; padding-right: 5pt;" class="icofont icofont-users-social"></i>Clientes</span></a>
                 </li>
 
                 <li class="sidebar-list"><i class="fa fa-thumb-tack"></i>
                     <label class="badge badge-light-primary">1</label><a class="sidebar-link sidebar-title" href="{{route('leituras.index')}}">
-                        <svg class="stroke-icon">
-                        <use href="{{ URL('/assets/svg/icon-sprite.svg#stroke-form') }}"></use>
-                        </svg><span class="lan-3">Leituras</span></a>
+                        <span class="lan-3"><i style="font-size: 15pt; padding-right: 5pt;" class="icofont icofont-lamp-light"></i>Leituras</span></a>
                 </li>
 
                 <li class="sidebar-list"><i class="fa fa-thumb-tack"></i>
                     <label class="badge badge-light-primary">1</label><a class="sidebar-link sidebar-title" href="{{route('pagamento.index')}}">
-                        <svg class="stroke-icon">
-                        <use href="{{ URL('/assets/svg/icon-sprite.svg#stroke-form') }}"></use>
-                        </svg><span class="lan-3">Pagamentos</span></a>
+                        <span class="lan-3"><i style="font-size: 15pt; padding-right: 5pt;" class="icofont icofont-cur-dollar-true"></i>Pagamentos</span></a>
                 </li>
 
 
                 <li class="sidebar-list"><i class="fa fa-thumb-tack"></i>
                     <label class="badge badge-light-primary">1</label><a class="sidebar-link sidebar-title" href="{{route('mensagem.index')}}">
                         <svg class="stroke-icon">
-                        <use href="{{ URL('/assets/svg/icon-sprite.svg#stroke-form') }}"></use>
+                        <use href="{{ URL('/assets/svg/icon-sprite.svg#stroke-chat') }}"></use>
                         </svg><span class="lan-3">Credito</span></a>
                 </li>
 
@@ -79,7 +73,7 @@
                 <li class="sidebar-list"><i class="fa fa-thumb-tack"></i>
                     <label class="badge badge-light-primary">7</label><a class="sidebar-link sidebar-title" href="#">
                         <svg class="stroke-icon">
-                        <use href="{{ URL('/assets/svg/icon-sprite.svg#stroke-learning') }}"></use>
+                        <use href="{{ URL('/assets/svg/icon-sprite.svg#settings') }}"></use>
                         </svg><span class="lan-3">Parametrização</span></a>
                     <ul class="sidebar-submenu">
                         <li><a class="lan-1" href="{{route('furo.index')}}">Furos</a></li>
@@ -91,9 +85,7 @@
 
                 <li class="sidebar-list"><i class="fa fa-thumb-tack"></i>
                     <label class="badge badge-light-primary">2</label><a class="sidebar-link sidebar-title" href="#">
-                        <svg class="stroke-icon">
-                        <use href="{{ URL('/assets/svg/icon-sprite.svg#stroke-learning') }}"></use>
-                        </svg><span class="lan-3">Administração</span></a>
+                        <span class="lan-3"><i style="font-size: 15pt; padding-right: 5pt;" class="icofont icofont-users"></i>Administração</span></a>
                     <ul class="sidebar-submenu">
                         <li><a class="lan-1" href="{{route('userFuro.index')}}">Usuarios</a></li>
                         <li><a class="lan-2" href="{{route('nivel.index')}}">Roles</a></li>
