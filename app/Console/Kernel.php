@@ -18,7 +18,7 @@ class Kernel extends ConsoleKernel
 
         // Preparar Leitura de Mes Anterior
         $schedule->job(new LeituraJob)->everyMinute(); //->monthlyOn(15, '00:00');
-        //$schedule->job(new EnviarSMS)->everyMinute(); //->monthlyOn(15, '00:00');
+        $schedule->job(new EnviarSMS)->everyMinute(); //->monthlyOn(15, '00:00');
     }
 
     /**
