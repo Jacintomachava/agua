@@ -15,7 +15,7 @@
             <div class="card-header card-no-border pb-0"> 
             <div class="header-top">
                 <div> 
-                <h3 class="f-w-600">Total Clientes</h3>
+                <h3 class="f-w-600">Total Hoje</h3>
                 </div>
                 <div class="card-header-right-icon">
                 <div class="dropdown icon-dropdown d-xxl-none1">
@@ -31,8 +31,8 @@
             </div>
             <div class="widget-middle-content">
                 <div class="d-flex align-items-center"> 
-                <h2>{{count($clientes)}}</h2>
-                    <span class="f-w-500 txt-warning f-12"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trending-up me-1"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg><span>Ano 2026</span></span>
+                <h2>{{$totalPagoHoje}}</h2>
+                    <span class="f-w-500 txt-warning f-12"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trending-up me-1"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg><span>Ano 2025</span></span>
                 </div>
             </div>
             </div>
@@ -49,7 +49,7 @@
             <div class="card-header card-no-border pb-0"> 
             <div class="header-top">
                 <div> 
-                <h3 class="f-w-600">Leituras Pendentes</h3>
+                <h3 class="f-w-600">Total Mes anterior</h3>
                 </div>
                 <div class="card-header-right-icon">
                 <div class="dropdown icon-dropdown d-xxl-none1">
@@ -65,7 +65,7 @@
             </div>
             <div class="widget-middle-content">
                 <div class="d-flex align-items-center"> 
-                <h2>{{count($leituras)}}</h2>
+                <h2>{{$totalMesAnterior}}</h2>
                     <span class="f-w-500 txt-warning f-12"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trending-up me-1"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg><span>+100%</span></span>
                 </div>
             </div>
@@ -83,7 +83,7 @@
             <div class="card-header card-no-border pb-0"> 
             <div class="header-top">
                 <div> 
-                <h3 class="f-w-600">Total Utilizador</h3>
+                <h3 class="f-w-600">Total Pendente</h3>
                 </div>
                 <div class="card-header-right-icon">
                 <div class="dropdown icon-dropdown d-xxl-none1">
@@ -99,7 +99,7 @@
             </div>
             <div class="widget-middle-content">
                 <div class="d-flex align-items-center"> 
-                <h2>{{count($users)}}</h2>
+                <h2>{{$totalPendente}}</h2>
                     <span class="f-w-500 txt-warning f-12"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trending-up me-1"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg><span>+100%</span></span>
                 </div>
             </div>
@@ -118,7 +118,7 @@
             <div class="card-header card-no-border pb-0"> 
             <div class="header-top">
                 <div> 
-                <h3 class="f-w-600">Crédito</h3>
+                <h3 class="f-w-600">Total Contrato</h3>
                 </div>
                 <div class="card-header-right-icon">
                 <div class="dropdown icon-dropdown d-xxl-none1">
@@ -134,7 +134,7 @@
             </div>
             <div class="widget-middle-content">
                 <div class="d-flex align-items-center"> 
-                <h2>{{$saldo->saldo}}</h2>
+                <h2>{{$totalContratos}}</h2>
                     <span class="f-w-500 txt-warning f-12"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trending-up me-1"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg><span>00</span></span>
                 </div>
             </div>
@@ -151,9 +151,53 @@
 </div>
 
 <div class="row">
-   <div class="col-4">Geolocalizao de Clientes <img  src="{{ URL('/images/water-tap.png')}}" width="40" height="40" alt="looginpage"></div>
-   <div class="col-4">Tubo Geral <b style="color: red; font-size: 20pt">________________</b></div>
-   <div id="map" style="height: 600px; width: 100%;"></div>
+
+<div class="col-sm-12" >
+    <div class="card">
+        <div class="card-header pb-0 card-no-border">
+        </div>
+        <div class="card-body">
+
+            <div class="table-responsive custom-scrollbar">
+                <table class="display" id="basic-1">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Valor</th>
+                            <th>Estado</th>
+                            <th>Tipo</th>
+                            <th>Forma</th>
+                            <th>Ban/Cart.</th>
+                            <th>Nome</th>
+                            <th>Data</th>
+                            <th>Hora</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        @foreach($pagamentos as $pagamento)
+                            <tr>
+                                <td></td>
+                                <td>{{$pagamento->valor }}</td>
+                                <td>{{$pagamento->estado}}</td>
+                                <td>{{$pagamento->tipo->nome}}</td>
+                                <td>{{$pagamento->forma->nome}}</td>
+                                <td>{{$pagamento->banco->nome}}</td>
+                                <td>{{$pagamento->fatura->cliente->nome}}</td>
+                                
+                                <td>{{ $pagamento->created_at->format('d/m/Y') }}</td>
+                                <td>{{ $pagamento->created_at->format('H:i') }}</td>
+                            </tr>
+                        @endforeach
+
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+</div>
+
 </div>
 
 @endsection
@@ -161,76 +205,7 @@
 
 @push('js')
 
-<script>
-const clientes  = @json($clientes);
-const tubagens = @json($tubagens);
 
-let map;
-let polyline;
-
-function initMap() {
-
-    map = new google.maps.Map(document.getElementById("map"), {
-        zoom: 14,
-        center: tubagens.length > 0
-            ? { lat: parseFloat(tubagens[0].latitude), lng: parseFloat(tubagens[0].longitude) }
-            : { lat: -25.965, lng: 32.583 }
-    });
-
-    // ---------------------------
-    // 1️⃣ CARREGAR A TUBAGEM
-    // ---------------------------
-    const path = tubagens.map(t => ({
-        lat: parseFloat(t.latitude),
-        lng: parseFloat(t.longitude)
-    }));
-
-    polyline = new google.maps.Polyline({
-        path: path,
-        geodesic: true,
-        strokeColor: "#ff0000",
-        strokeOpacity: 1,
-        strokeWeight: 6
-    });
-
-    polyline.setMap(map);
-
-    // ---------------------------
-    // 2️⃣ COLOCAR MARCADORES DOS CLIENTES
-    // ---------------------------
-    clientes.forEach(cliente => {
-
-        const iconOptions = {
-            url: "/images/water-tap.png",
-            scaledSize: new google.maps.Size(50, 50)
-        };
-
-        const marker = new google.maps.Marker({
-            position: {
-                lat: parseFloat(cliente.latitude),
-                lng: parseFloat(cliente.longitude)
-            },
-            map,
-            icon: iconOptions,
-            title: cliente.nome
-        });
-
-        const info = new google.maps.InfoWindow({
-            content: `
-                <strong>${cliente.nome}</strong><br>
-                Telefone: ${cliente.telefone ?? ''}<br>
-                Tipo: ${cliente.ligacao_activa == 1 ? "Empresa" : "Residência"}
-            `
-        });
-
-        marker.addListener("click", () => info.open(map, marker));
-    });
-}
-</script>
-
-
-
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyARv7Trm55IaqfCzkh-eL2baNxlWJc0qgk&callback=initMap" async defer></script>
 
 
 @endpush

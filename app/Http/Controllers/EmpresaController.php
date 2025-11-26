@@ -4,10 +4,15 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Empresa;
-use App\Models\SMSCredito;
+use App\Models\SaldoSMS;
 use App\Models\User;
 use App\Models\Ano;
+use App\Models\Furo;
+use App\Models\RoleUser;
+use App\Models\UserFuro;
 use App\Models\Subscricao;
+use App\Models\Mensagem;
+use App\Services\SMSService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -33,17 +38,35 @@ class EmpresaController extends Controller
             $anoActual = Carbon::now()->year;
             $ano = Ano::where('ano',$anoActual)->first();
 
+            if ($request->hasFile('logotipo')) {
+
+                $arquivo = $request->file('logotipo');
+                // Pega somente a extensão (ex: png, jpg)
+                $extensao = $arquivo->getClientOriginalExtension();
+                // Gera nome NOVO usando o NUIT
+                $nomeArquivo = $request->input('nuit') . '.' . $extensao;
+                // Caminho onde será salvo: public/logotipos
+                $destino = public_path('logotipo');
+                // Cria a pasta se não existir
+                if (!file_exists($destino)) {
+                    mkdir($destino, 0777, true);
+                }
+                // Move o arquivo para a pasta public
+                $arquivo->move($destino, $nomeArquivo);
+                // Salva o nome ou caminho no banco
+                $empresa->logotipo = $nomeArquivo;
+            }
+
             if ($empresa->save()) {
 
-                $smsCredito = new SMSCredito();
+                $smsCredito = new SaldoSMS();
                 $smsCredito->empresa_id = $empresa->id;
 
-                $user = new User();
-                $user->nome = $request->input('nome_user');
-                $user->telefone = $request->input('telefone_user');
-                $user->distrito_id = $request->input('distrito');
-                $user->password = bcrypt($request->input('telefone_user'));
-                $user->empresa_id = $empresa->id;
+                // Cria Empresa e colocar Saldo de SMSCredito
+                $furo = new Furo();
+                $furo->nome = $request->input('nome_empresa');
+                $furo->empresa_id = $empresa->id;
+                $furo->endereco = $request->input('bairro');
 
                 $subscricao = new Subscricao();
                 $subscricao->valor = 0;
@@ -52,10 +75,53 @@ class EmpresaController extends Controller
                 $subscricao->ano_id = $ano->id;
                 $subscricao->empresa_id = $empresa->id;
 
-                if($smsCredito->save() && $user->save() && $subscricao->save()){
+                if($furo->save() && $subscricao->save() && $smsCredito->save()){
 
-                    DB::commit();
-                    return response()->json(['status' => 1, 'message' => 'Empresa Criada Com Sucesso']);
+                    $data = Carbon::now();
+                    $codigo = rand(100000, 999999);
+                    $smsDescricao = "Caro(a) ".$request->input('nome_user').", a sua empresa ".$request->input('nome_empresa')." foi criada, dados de acesso: user: ".$request->input('telefone_user')." senha: ".$codigo;
+
+                    $user = new User();
+                    $user->nome = $request->input('nome_user');
+                    $user->telefone = $request->input('telefone_user');
+                    $user->distrito_id = $request->input('distrito');
+                    $user->password = bcrypt($codigo);
+                    $user->empresa_id = $empresa->id;
+                    $user->furo_id = $furo->id;
+
+                    //Gerar SMS de Factura
+                    $sms = new Mensagem();
+                    $sms->descricao = $smsDescricao;
+                    $sms->telefone = $request->input('telefone_user');
+                    $sms->nome = $request->input('nome_user');
+                    $sms->qtd = SMSService::quantidadeSMS($smsDescricao);
+                    $sms->credito = SMSService::quantidadeSMS($smsDescricao)*1.8;
+                    $sms->custo_real = SMSService::quantidadeSMS($smsDescricao)*1.2;
+                    $sms->empresa_id = 1;
+                    $sms->furo_id = 1;
+                    $sms->data_envio = $data;
+
+                    if($user->save() && $sms->save()){
+
+                        $roleUser = new RoleUser();
+                        $roleUser->role_id = 1;
+                        $roleUser->model_type = 'App\Models\User';
+                        $roleUser->model_id = $user->id;
+
+                        $userFuro = new UserFuro();
+                        $userFuro->furo_id = $furo->id;
+                        $userFuro->user_id = $user->id;
+
+                        if($roleUser->save() && $userFuro->save()){
+
+                            DB::commit();
+                            return response()->json(['status' => 1, 'message' => 'Empresa Criada Com Sucesso']);
+
+                        }
+
+
+                    }
+
                 }
 
             }

@@ -35,6 +35,8 @@
     <!-- Responsive css-->
     <link rel="stylesheet" type="text/css" href="{{ URL('/assets/css/responsive.css')}}">
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <style>
       .error {
           color: red;
@@ -53,7 +55,7 @@
             <div>
               <div class="login-main" style="width: 60%"> 
 
-                <form class="theme-form" id="formulario">
+                <form class="theme-form" id="formulario" enctype="multipart/form-data">
 
                   <center>
                     <img src="{{ URL('/images/logotipo.png')}}"  width="180" height="180" alt="looginpage">
@@ -65,9 +67,13 @@
 
                     <h2>Dados da Empresa</h2>
 
-                    <div class="col-12">
+                    <div class="col-6">
                       <label class="form-label">Nome Empresa</label>
                       <input class="form-control" name="nome_empresa" type="text" placeholder="Nome Empresa">
+                    </div>
+                    <div class="col-6">
+                      <label class="form-label">Logotipo da Empresa</label>
+                      <input class="form-control" name="logotipo" type="file" placeholder="logotipo Empresa">
                     </div>
 
                     <div class="col-6">
@@ -205,10 +211,16 @@
                     }
                 },
                 submitHandler: function(form) {
+
+                    let formData = new FormData(form); // captura todo o formulário inclusive arquivo
+
                     $.ajax({
                         type: "POST",
                         url: "{{ route('empresa.store') }}",
-                        data: $(form).serialize(), // Corrigido para usar `form` em vez de `this`
+                        data: formData, // Corrigido para usar `form` em vez de `this`
+                        contentType: false,
+                        processData: false,
+                        cache: false,
 
                         beforeSend: function () {
                             // Desabilita o botão de envio e altera o ícone para mostrar que está autenticando
@@ -226,12 +238,22 @@
                             // Redireciona ou exibe uma mensagem de erro com base na resposta
                             if(response.status == 1) {
 
-                                window.location.href = '/home';
+                                Swal.fire({
+                                          icon: 'success',
+                                          title: 'Sucesso!',
+                                          text: response.message,
+                                });
+
+                                window.location.href = '/';
                                 
                                 
                             } else if(response.status == 0) {
-                                var resultado = document.getElementById('error');
-                                resultado.innerText = response.message;
+                               
+                                Swal.fire({
+                                          icon: 'error',
+                                          title: 'Erro!',
+                                          text: response.message,
+                                });
                             }
                         },
                         error: function(errors) {
@@ -240,9 +262,12 @@
                             $('#icon_enviar').removeClass('spinner-border ri-loader-2-line').addClass('ri-arrow-right-line');
                             $('#botao_texto').text('Criar Conta');
 
-                            // Exibe a mensagem de erro
-                            var resultado = document.getElementById('error');
-                            resultado.innerText = errors.responseJSON.message;
+
+                             Swal.fire({
+                                          icon: 'error',
+                                          title: 'Erro!',
+                                          text: errors.responseJSON.message,
+                             });
 
                         }
                     });

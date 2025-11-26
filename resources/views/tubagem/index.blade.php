@@ -39,12 +39,10 @@
 <script>
 let map;
 let polyline;
-let path = [];
 
 const tubagens = @json($tubagens);
 
 function initMap() {
-    // Inicializar mapa
     map = new google.maps.Map(document.getElementById("map"), {
         zoom: 15,
         center: tubagens.length > 0
@@ -52,13 +50,11 @@ function initMap() {
             : { lat: -25.965, lng: 32.583 }
     });
 
-    // Carregar tubagem existente
-    tubagens.forEach(t => {
-        path.push({
-            lat: parseFloat(t.latitude),
-            lng: parseFloat(t.longitude)
-        });
-    });
+    // Carrega tubagem existente
+    const path = tubagens.map(t => ({
+        lat: parseFloat(t.latitude),
+        lng: parseFloat(t.longitude)
+    }));
 
     polyline = new google.maps.Polyline({
         path: path,
@@ -68,14 +64,15 @@ function initMap() {
         strokeWeight: 6,
         editable: true
     });
+
     polyline.setMap(map);
 
-    // Adicionar ponto clicando no mapa
+    // Clicar adiciona ponto
     google.maps.event.addListener(map, "click", function(event) {
         polyline.getPath().push(event.latLng);
     });
 
-    // Remover ponto com botão direito
+    // Botão direito remove ponto
     google.maps.event.addListener(polyline.getPath(), 'rightclick', function(event) {
         if (event.vertex != undefined) {
             polyline.getPath().removeAt(event.vertex);
@@ -83,13 +80,26 @@ function initMap() {
     });
 }
 
-// Função para salvar toda a tubagem no backend
+// SALVAR – Apenas INSERE no backend
 function savePath() {
+    const raw = polyline.getPath();
     let pathArray = [];
 
-    polyline.getPath().forEach(p => {
-        pathArray.push({ lat: p.lat(), lng: p.lng() });
+    raw.forEach(p => {
+        pathArray.push({
+            lat: parseFloat(p.lat().toFixed(6)),
+            lng: parseFloat(p.lng().toFixed(6))
+        });
     });
+
+    if (pathArray.length === 0) {
+        Swal.fire({
+            icon: "warning",
+            title: "Aviso",
+            text: "Nenhum ponto foi desenhado."
+        });
+        return;
+    }
 
     fetch("{{ route('mapa.update') }}", {
         method: "POST",
@@ -102,26 +112,29 @@ function savePath() {
             diametro: 32
         })
     })
-    .then(response => response.json())
+    .then(r => r.json())
     .then(data => {
-        if(data.status === 'ok') {
-
+        if (data.status === 'ok') {
             Swal.fire({
-                    icon: 'success',
-                    title: 'Sucesso!',
-                    text: 'Tubo Gravado Com Sucesso',
-            });
-
-            window.location.reload();
-
+                icon: "success",
+                title: "Sucesso!",
+                text: "Tubagem gravada com sucesso!"
+            }).then(() => location.reload());
         } else {
-
             Swal.fire({
-                    icon: 'error',
-                    title: 'Erro!',
-                    text: 'Ocorreu Erro',
+                icon: "error",
+                title: "Erro!",
+                text: "Falha ao gravar tubagem."
             });
         }
+    })
+    .catch(err => {
+        console.error(err);
+        Swal.fire({
+            icon: "error",
+            title: "Erro!",
+            text: "Erro de comunicação com o servidor."
+        });
     });
 }
 </script>

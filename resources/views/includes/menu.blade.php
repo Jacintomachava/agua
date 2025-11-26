@@ -1,7 +1,11 @@
 <div class="sidebar-wrapper" data-sidebar-layout="stroke-svg">
     <div>
     <div class="logo-wrapper"><a href="#">
-        <img class="img-fluid" src="{{ URL('/images/logotipo.png')}}" width="100" height="100" alt=""></a>
+        @if(Auth::user()->empresa->logotipo==null)
+            <img class="img-fluid" src="{{ URL('/images/logotipo.png')}}" width="100" height="100" alt=""></a>
+        @else
+            <img class="img-fluid" src="{{ URL('/logotipo/'.Auth::user()->empresa->logotipo)}}" width="100" height="100" alt=""></a>
+        @endif
         <div class="back-btn"><i class="fa fa-angle-left"></i></div>
         <div class="toggle-sidebar"><i class="status_toggle middle sidebar-toggle" data-feather="grid"> </i></div>
     </div>
@@ -59,6 +63,11 @@
                 <li class="sidebar-list"><i class="fa fa-thumb-tack"></i>
                     <label class="badge badge-light-primary">1</label><a class="sidebar-link sidebar-title" href="{{route('pagamento.index')}}">
                         <span class="lan-3"><i style="font-size: 15pt; padding-right: 5pt;" class="icofont icofont-cur-dollar-true"></i>Pagamentos</span></a>
+                </li>
+
+                <li class="sidebar-list"><i class="fa fa-thumb-tack"></i>
+                    <label class="badge badge-light-primary">1</label><a class="sidebar-link sidebar-title" href="{{route('financas.index')}}">
+                        <span class="lan-3"><i style="font-size: 15pt; padding-right: 5pt;" class="icofont icofont-cur-dollar-true"></i>Finanças</span></a>
                 </li>
 
 

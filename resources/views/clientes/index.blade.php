@@ -59,7 +59,16 @@
                                 <td>{{$cliente->telefone_notificar}}</td>
                                 <td>{{$cliente->contrato->nome}}</td>
                                 <td>
-                                    {{$cliente->ligacao_activa}}
+
+                                    @if($cliente->ligacao_activa==1)
+                                      <a class="btn btn-success btn-xs activate-btn" href="#" >
+                                        Activa
+                                      </a>
+                                    @else
+                                      <a class="btn btn-warning btn-xs activate-btn" href="#" >
+                                        Cortada
+                                      </a>
+                                    @endif
                                 </td>
                                 <td>{{$cliente->contador}}</td>
                                 <td>{{$cliente->contrato->valor_contrato}}</td>

@@ -128,7 +128,7 @@ class LeituraController extends Controller
             $furoClienteContrato = FuroClienteContrato::where('empresa_id',$userActual->empresa_id)->where('id',$request->input('furo_cliente_contrato'))->first();
 
             $consumo = $request->input('valor_leitura') - $request->input('ultima_leitura');
-            $consumoMinimo = $consumo*$furoClienteContrato->contrato->consumo_minimo;
+            $consumoMinimo = $furoClienteContrato->contrato->consumo_minimo;
 
             $data = Carbon::now();
             $anoActual = Carbon::now()->year;
@@ -145,7 +145,7 @@ class LeituraController extends Controller
             $leitura->numero_factura = $numeroFatura;
 
             
-            if($consumoMinimo < $consumo){
+            if($consumo < $consumoMinimo){
                 $leitura->valor_a_pagar = $furoClienteContrato->contrato->consumo_minimo*$furoClienteContrato->contrato->valor;
                 $valorAPagar = $furoClienteContrato->contrato->consumo_minimo*$furoClienteContrato->contrato->valor;
             }else{

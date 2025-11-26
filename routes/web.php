@@ -14,6 +14,7 @@ use App\Http\Controllers\LeituraController;
 use App\Http\Controllers\PagamentoController;
 use App\Http\Controllers\MensagemController;
 use App\Http\Controllers\MapaController;
+use App\Http\Controllers\FinancaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -99,3 +100,5 @@ Route::post('/rota/tubagem', [MapaController::class, 'store'])->name('mapa.store
 Route::post('/delete/tubagem', [MapaController::class, 'delete'])->name('mapa.delete');
 Route::post('/rota/tubagem/update', [MapaController::class, 'update'])->name('mapa.update');
 
+//Financas
+Route::get('/financas', [FinancaController::class, 'index'])->name('financas.index');

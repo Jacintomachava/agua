@@ -42,7 +42,13 @@
 <body>
 
 <div class="header">
-    <center><img src="{{public_path('images/logotipo.png')}}" width="90" height="90">
+    <center>
+        @if(Auth::user()->empresa->logotipo==null)
+            <img src="{{public_path('images/logotipo.png')}}" width="90" height="90">
+        @else
+            <img src="{{public_path('/logotipo/'.Auth::user()->empresa->logotipo)}}" width="90" height="90">
+        @endif
+        <br>
     <b>{{ strtoupper($empresa->nome) }}</b><br>
     <b>{{ $empresa->endereco }}</b><br>
     <b>NUIT: {{ $empresa->nuit }}</b></center>

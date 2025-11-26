@@ -10,4 +10,16 @@ class Fatura extends Model
     use HasFactory;
 
     protected $table = 'facturas';
+
+    public function leitura()
+    {
+        return $this->belongsTo(Leitura::class, 'leitura_id');
+    }
+
+    public function cliente()
+    {
+        return $this->belongsTo(Cliente::class, 'cliente_id');
+    }
+
+
 }

@@ -35,34 +35,30 @@
                   <form1 class="stepper-one row g-3 needs-validation custom-input" >
 
 
-                    <div class="col-6">
+                    <div class="col-4">
                       <label class="form-label" for="passwordwizard">Nome<span class="txt-danger">*</span></label>
                       <input class="form-control"  type="text" name="nome"  >
                     </div>
 
-                    <div class="col-3">
-                      <label class="form-label" for="passwordwizard">Valor Contrato<span class="txt-danger">*</span></label>
+                    <div class="col-4">
+                      <label class="form-label" for="passwordwizard">Valor de Contracto<span class="txt-danger">*</span></label>
                       <input class="form-control"  type="text" name="valor_contrato"  >
                     </div>
 
-                    <div class="col-3">
+                    <div class="col-4" hidden>
                         <label class="form-label" for="passwordwizard">Consumo (m&sup3;)<span class="txt-danger">*</span></label>
-                          <select class="form-select"  name="consumo">
+                          <select class="form-select"  name="consumo" readonly style="background-color: #f5f5f5; color: #555;">
                                 <option value="1">1m&sup3;</option>
-                                <option value="2">2m&sup3;</option>
-                                <option value="3">3m&sup3;</option>
-                                <option value="4">4m&sup3;</option>
-                                <option value="5">5m&sup3;</option>
                           </select>
                     </div>
 
-                    <div class="col-3">
-                      <label class="form-label" for="passwordwizard">Valor C.(m&sup3;)<span class="txt-danger">*</span></label>
+                    <div class="col-4">
+                      <label class="form-label" for="passwordwizard">Valor Consumo Por 1m&sup3;<span class="txt-danger">*</span></label>
                       <input class="form-control"  type="text" name="valor_consumo"  >
                     </div>
 
-                    <div class="col-3">
-                        <label class="form-label" for="passwordwizard">Consumo Minimo (m&sup3;)<span class="txt-danger">*</span></label>
+                    <div class="col-4">
+                        <label class="form-label" for="passwordwizard">Consumo Minimo Em m&sup3;<span class="txt-danger">*</span></label>
                           <select class="form-select"  name="consumo_minimo">
                                 <option value="1">1m&sup3;</option>
                                 <option value="2">2m&sup3;</option>
@@ -77,7 +73,7 @@
                           </select>
                     </div>
 
-                    <div class="col-3">
+                    <div class="col-4">
                         <label class="form-label" for="passwordwizard">Prazo Pagamento<span class="txt-danger">*</span></label>
                           <select class="form-select"  name="prazo_pagamento">
                                 <option value="10">Dia 10 de Cada Mes</option>
@@ -113,7 +109,7 @@
                           </select>
                     </div>
 
-                    <div class="col-3">
+                    <div class="col-4">
                       <label class="form-label" for="passwordwizard">Multa Em (%)<span class="txt-danger">*</span></label>
                       <input class="form-control"  type="text" name="multa"  >
                     </div>

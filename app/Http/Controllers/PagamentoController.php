@@ -158,7 +158,7 @@ class PagamentoController extends Controller
             $pagamento->forma_pagamento_id = $request->input('forma_pagamento');
             $pagamento->tipo_pagamento_id = 2;
             $pagamento->descricao = $request->input('descricao');
-            $pagamento->tipo_banco = $request->input('banco');
+            $pagamento->tipo_banco = $request->input('banco_carteira');
 
             if($pagamento->save()){
 
@@ -269,7 +269,7 @@ class PagamentoController extends Controller
             $pagamento->forma_pagamento_id = $request->input('forma_pagamento');
             $pagamento->tipo_pagamento_id = 2;
             $pagamento->descricao = $request->input('descricao');
-            $pagamento->tipo_banco = $request->input('banco');
+            $pagamento->tipo_banco = $request->input('banco_carteira');
 
             if($pagamento->save()){
 
