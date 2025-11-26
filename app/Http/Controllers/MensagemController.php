@@ -19,13 +19,16 @@ class MensagemController extends Controller
     //
     public function index()
     {
-        $mensagens = Mensagem::orderBy('updated_at', 'desc')->get();
+
+        $userActual = Auth::user();
+        $mensagens = Mensagem::where('empresa_id',$userActual->empresa_id)->orderBy('updated_at', 'desc')->get();
         $contatos = MensagemSessao::orderBy('updated_at', 'desc')->get();
-        $pacotes = CompraCredito::orderBy('updated_at', 'desc')->get();
+        $pacotes = CompraCredito::where('empresa_id',$userActual->empresa_id)->orderBy('updated_at', 'desc')->get();
 
         // 🟢 Gráfico 1: Consumo de créditos por mês e canal (WhatsApp e SMS)
         $consumoPorCanal = DB::table('mensagem')
                     ->selectRaw("DATE_FORMAT(created_at, '%M') as mes, canal, SUM(credito) as total_credito")
+                    ->where('empresa_id',$userActual->empresa_id)
                     ->groupBy('mes', 'canal')
                     ->orderBy('mes')
                     ->get();
@@ -35,6 +38,7 @@ class MensagemController extends Controller
 
         // 🟢 Gráfico 2: Consumo de crédito e lucro por mês
         $consumoLucroPorMes = Mensagem::selectRaw("DATE_FORMAT(created_at, '%M') as mes, SUM(credito) as total_credito, SUM(credito - custo_real) as lucro")
+            ->where('empresa_id',$userActual->empresa_id)
             ->groupBy('mes')
             ->orderBy('mes')
             ->get();
