@@ -14,6 +14,18 @@
             <div class="row">
                 <div class="col-7">
                     <h2>Registo de Contrato</h2>
+                    <p>Campos Possíveis:  
+                        @{{cliente_nome}}  
+                        @{{cliente_documento}}  
+                        @{{cliente_documento_numero}}  
+                        @{{cliente_nacionalidade}}
+                        @{{cliente_documento_entidade_emissora}} 
+                        @{{cliente_documento_data_emissao}}  
+                        @{{cliente_bairro}}  
+                        @{{cliente_quarteirao}}  
+                        @{{cliente_casa}}  
+                        @{{cliente_telefone}}
+                    </p>
                 </div> 
                 <div class="col-5">
 
@@ -134,10 +146,10 @@ $(document).ready(function() {
             // 1️⃣ CAPTURAR O CONTEÚDO DO QUILL
             let html = quill.root.innerHTML;
             $("#conteudo").val(html);
-            
+
             $.ajax({
                 type: "POST",
-                url: "{{route('contrato.templete')}}",
+                url: "{{route('templete.contrato')}}",
                 data: $(form).serialize(), // Corrigido para usar `form` em vez de `this`
 
                 beforeSend: function () {

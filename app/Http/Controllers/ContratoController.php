@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Contrato;
+use App\Models\ContractoTemplete;
+use App\Models\FuroClienteContrato;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
@@ -36,6 +38,75 @@ class ContratoController extends Controller
         return view('contratos.create',  [
 
         ]);
+    }
+
+    public function contratoCliente($codigo)
+    {
+        $userActual = Auth::user();
+
+        $cliente = FuroClienteContrato::where('empresa_id',$userActual->empresa_id)->where('codigo', $codigo)->first();
+        $contrato = ContractoTemplete::where('empresa_id',$userActual->empresa_id)->first();
+
+        // Conteúdo do template
+        $texto = $contrato->conteudo;
+
+        // Dados reais
+        $dados = [
+            '{{cliente_nome}}' => $cliente->cliente->nome,
+            '{{cliente_documento}}' => $cliente->cliente->tipo_documento,
+            '{{cliente_documento_numero}}' => $cliente->cliente->numero_documento,
+            '{{cliente_nacionalidade}}' => 'Mocambicana',
+            '{{cliente_documento_entidade_emissora}}' => 'Maputo',
+            '{{cliente_documento_data_emissao}}' => now()->format('d-m-Y'),
+            '{{cliente_bairro}}' => $cliente->bairro,
+            '{{cliente_quarteirao}}' => $cliente->quarteirao,
+            '{{cliente_casa}}' => $cliente->casa,
+            '{{cliente_telefone}}' => $cliente->telefone_notificar,
+        ];
+
+        // Substituir
+        $conteudoFinal = str_replace(array_keys($dados), array_values($dados), $texto);
+
+        $pdf = \PDF::loadView('contratos.pdf', [
+             'conteudo' => $conteudoFinal
+        ])->setPaper('a4', 'Portrait');
+
+        $fikeName = 'Contracto - '.$cliente->cliente->nome;
+
+        return $pdf->stream($fikeName.'.pdf');
+
+    }
+
+    public function registarTemplete(Request $request)
+    {
+
+        DB::beginTransaction();
+
+        try {
+
+            $userActual = Auth::user();
+
+            // Cria Empresa e colocar Saldo de SMSCredito
+            $contrato = new ContractoTemplete();
+            $contrato->empresa_id = $userActual->empresa_id;
+            $contrato->conteudo = $request->conteudo;
+
+            if ($contrato->save()) {
+
+                DB::commit();
+                return response()->json(['status' => 1, 'message' => 'Templete Contrato Registado Com Sucesso']);
+
+            }
+
+            } catch (\Exception $e) {
+            DB::rollBack();
+            //$errorMessage = DatabaseErrorHandler::handle($e);
+            return response()->json([
+                'status' => 0,
+                'message' => $e->getMessage(),
+            ]);
+        }
+
     }
 
     public function store(Request $request)

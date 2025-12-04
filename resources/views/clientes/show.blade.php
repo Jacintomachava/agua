@@ -66,7 +66,7 @@
               <a class="btn btn-warning btn-xs activate-btn" href="{{route('cliente.edit',['codigo'=>$cliente->codigo])}}" >
                   Imprimir Extracto
               </a>
-              <a class="btn btn-info btn-xs activate-btn" href="{{route('cliente.edit',['codigo'=>$cliente->codigo])}}" >
+              <a class="btn btn-info btn-xs activate-btn" target="_blank" href="{{route('contrato.cliente',['codigo'=>$cliente->codigo])}}" >
                   Imprimir Contracto
               </a>
               <a class="btn btn-secondary btn-xs activate-btn" href="{{route('cliente.edit',['codigo'=>$cliente->codigo])}}" >

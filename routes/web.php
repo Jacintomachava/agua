@@ -73,6 +73,8 @@ Route::get('/contrato', [ContratoController::class, 'create'])->name('contrato.c
 Route::post('/contrato', [ContratoController::class, 'store'])->name('contrato.store');
 //templete Contracto
 Route::get('/templete/contrato', [ContratoController::class, 'templete'])->name('contrato.templete');
+Route::post('/contrato/templete', [ContratoController::class, 'registarTemplete'])->name('templete.contrato');
+Route::get('/contracto/cliente/{codigo}', [ContratoController::class, 'contratoCliente'])->name('contrato.cliente');
 
 //Cliente
 Route::get('/clientes', [ClienteController::class, 'index'])->name('cliente.index');
