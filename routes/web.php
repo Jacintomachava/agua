@@ -15,6 +15,10 @@ use App\Http\Controllers\PagamentoController;
 use App\Http\Controllers\MensagemController;
 use App\Http\Controllers\MapaController;
 use App\Http\Controllers\FinancaController;
+use App\Http\Controllers\SubscricaoController;
+use App\Http\Controllers\PagamentoSubscricaoController;
+use App\Http\Controllers\CoWorkController;
+use App\Http\Controllers\CredencialController;
 
 /*
 |--------------------------------------------------------------------------
@@ -40,9 +44,14 @@ Route::get('/', [AuthUserController::class, 'login'])->name('login');
 Route::get('/recuperar/senha', [UserController::class, 'recuperarSenhaIndex'])->name('recuperarSenha.index');
 Route::post('/nova/senha', [UserController::class, 'recuperarSenhaTelefone'])->name('recuperarSenha.telefone');
 Route::get('/repor/senha/{user_id}', [UserController::class, 'reporSenha'])->name('repor.senha');
+Route::get('/alterar/senha', [UserController::class, 'senhaIndex'])->name('senha.index');
+Route::post('/editar/senha', [UserController::class, 'senhaUpdate'])->name('senha.update');
 
 //Empresa Gravar
 Route::post('/registar/empresa', [EmpresaController::class, 'store'])->name('empresa.store');
+//Empresa Co_work
+Route::get('/empresa/cowork', [EmpresaController::class, 'create'])->name('empresa.create');
+Route::post('/empresa/cowork', [EmpresaController::class, 'storeCoWork'])->name('empresa.storeCoWork');
 
 //Home
 Route::get('/home', [DashbordController::class, 'indexHome'])->name('dashbord.indexHome');
@@ -62,12 +71,24 @@ Route::post('/registar/furo', [FuroController::class, 'store'])->name('furo.stor
 Route::get('/contratos', [ContratoController::class, 'index'])->name('contrato.index');
 Route::get('/contrato', [ContratoController::class, 'create'])->name('contrato.create');
 Route::post('/contrato', [ContratoController::class, 'store'])->name('contrato.store');
+//templete Contracto
+Route::get('/templete/contrato', [ContratoController::class, 'templete'])->name('contrato.templete');
 
 //Cliente
 Route::get('/clientes', [ClienteController::class, 'index'])->name('cliente.index');
 Route::get('/cliente', [ClienteController::class, 'create'])->name('cliente.create');
+Route::get('/actualizar/cliente/{codigo}', [ClienteController::class, 'edit'])->name('cliente.edit');
+Route::post('/update/cliente', [ClienteController::class, 'update'])->name('cliente.update');
 Route::post('/cliente', [ClienteController::class, 'store'])->name('cliente.store');
 Route::get('/meus/clientes', [ClienteController::class, 'meuCliente'])->name('cliente.meuClientes');
+Route::get('/detalhe/cliente/{codigo}', [ClienteController::class, 'show'])->name('cliente.show');
+Route::get('/cortar/agua/{codigo}', [ClienteController::class, 'cortar'])->name('cliente.cortar');
+Route::get('/ligar/agua/{codigo}', [ClienteController::class, 'ligar'])->name('cliente.ligar');
+Route::post('/registar/cortar', [ClienteController::class, 'registarCortar'])->name('cliente.registarCortar');
+Route::post('/registar/ligar', [ClienteController::class, 'registarLigar'])->name('cliente.registarLigacao');
+Route::get('/localizcao/clientes', [ClienteController::class, 'mapa'])->name('mapa.clientes');
+//PDF Clientes
+Route::get('/pdf/clientes', [ClienteController::class, 'PDFCliente'])->name('pdf.clientes');
 
 //Leitura
 Route::get('/leituras', [LeituraController::class, 'index'])->name('leituras.index');
@@ -86,6 +107,9 @@ Route::get('/pagamentos/leituras/{contratoID}', [PagamentoController::class, 'sh
 Route::post('/pagamentos', [PagamentoController::class, 'store'])->name('pagamentos.store');
 Route::post('/pagamento', [PagamentoController::class, 'storeParcial'])->name('pagamento.storeParcial');
 Route::get('/pagamento/leitura/{contratoID}', [PagamentoController::class, 'showParcial'])->name('pagamentos.showParcial');
+//Pagamento de Subscricao
+Route::post('/pagamento/subscricao', [PagamentoSubscricaoController::class, 'store'])->name('pagamentoSubscricao.store');
+Route::get('/pagamento/mensalidade/{factura}', [PagamentoSubscricaoController::class, 'show'])->name('pagamentoSubscricao.show');
 
 // Mensagem
 Route::get('/mensagem', [MensagemController::class, 'index'])->name('mensagem.index');
@@ -93,6 +117,7 @@ Route::get('/mensagem/{contacto}', [MensagemController::class, 'show'])->name('m
 Route::post('/mensagem', [MensagemController::class, 'store'])->name('mensagem.store');
 Route::post('/enviar/mensagem', [MensagemController::class, 'storeSMS'])->name('mensagem.storeSMS');
 Route::get('/escrever/mensagem', [MensagemController::class, 'create'])->name('mensagem.create');
+Route::post('/comprar/credito', [MensagemController::class, 'storeCompraSMS'])->name('mensagem.storeCompraSMS');
 
 //Mapa Tubagem 
 Route::get('/mapa/tubagem', [MapaController::class, 'index'])->name('mapa.index');
@@ -102,3 +127,19 @@ Route::post('/rota/tubagem/update', [MapaController::class, 'update'])->name('ma
 
 //Financas
 Route::get('/financas', [FinancaController::class, 'index'])->name('financas.index');
+
+//Subscricao
+Route::get('/mensalidades/sistema', [SubscricaoController::class, 'index'])->name('subscricao.index');
+
+//CoWork
+Route::get('/dashbord/cowork', [CoWorkController::class, 'index'])->name('cowork.index');
+Route::get('/minhas/empresas', [CoWorkController::class, 'minhasEmpresas'])->name('minhas.empresas');
+Route::get('/minhas/mensalidades', [CoWorkController::class, 'minhasMensalidades'])->name('minhas.mensalidades');
+Route::get('/credito/mensagem', [CoWorkController::class, 'creditoMensagem'])->name('credito.mensagem');
+Route::get('/levantamentos', [CoWorkController::class, 'levantamento'])->name('levantamento');
+Route::post('/fazer/levantamento', [CoWorkController::class, 'fazerLevantamento'])->name('fazer.levantamento');
+
+//Credencial
+Route::get('/credencial/mpesa', [CredencialController::class, 'index'])->name('credencial.index');
+Route::get('/registar/credencial', [CredencialController::class, 'create'])->name('credencial.create');
+Route::post('/registar/credenciais', [CredencialController::class, 'store'])->name('credencial.store');

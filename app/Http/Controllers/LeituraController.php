@@ -226,6 +226,7 @@ class LeituraController extends Controller
             $cliente = FuroClienteContrato::where('contador', $request->input('contador'))->first();
             $cliente->latitude = $request->input('latitude');
             $cliente->longitude = $request->input('longitude');
+            $cliente->localizacao_activa = true;
 
             if ($cliente->save()) {
 
@@ -249,7 +250,7 @@ class LeituraController extends Controller
     {
         $userActual = Auth::user();
 
-        $cliente = FuroClienteContrato::where('empresa_id',$userActual->empresa_id)->where('contador',$contratoID)->first();
+        $cliente = FuroClienteContrato::where('empresa_id',$userActual->empresa_id)->where('codigo',$contratoID)->first();
         $ultimaLeitura = Leitura::where('furo_cliente_contrato_id', $cliente->id)
                         ->orderByDesc('id')             //Pegar O ultimo valor
                         ->value('valor_leitura') ?? 0;  //Pagar o valor

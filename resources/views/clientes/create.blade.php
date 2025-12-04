@@ -184,6 +184,11 @@
                       </div>
 
                       <div class="col-4">
+                        <label class="form-label" for="confirmpasswordwizard">Leitura Contador<span class="txt-danger">*</span></label>
+                        <input class="form-control"  type="text" name="leitura"  value="0" placeholder="Ultima Leitura" >
+                      </div>
+
+                      <div class="col-4" >
                          <label class="form-label" for="passwordwizard">Furo<span class="txt-danger">*</span></label>
                            <select class="form-select"  name="furo">
                               @foreach($furos as $furo)
@@ -192,7 +197,7 @@
                            </select>
                       </div>
 
-                      <div class="col-4">
+                      <div class="col-4" hidden>
                          <label class="form-label" for="passwordwizard">Mes a Cobrar<span class="txt-danger">*</span></label>
                            <select class="form-select"  name="mes">
                               @foreach($meses as $mese)
@@ -204,8 +209,55 @@
                     </form1>
 
                     <form1 class="stepper-three row g-3 needs-validation custom-input" >
+
+
+                      <div class="col-4">
+                          <label class="form-label" for="passwordwizard">Prazo Pagamento<span class="txt-danger">*</span></label>
+                            <select class="form-select"  name="prazo_pagamento">
+                                  <option value="10">Dia 10 de Cada Mes</option>
+                                  <option value="1">Dia 1 de Cada Mes</option>
+                                  <option value="2">Dia 2 de Cada Mes</option>
+                                  <option value="3">Dia 3 de Cada Mes</option>
+                                  <option value="4">Dia 4 de Cada Mes</option>
+                                  <option value="5">Dia 5 de Cada Mes</option>
+                                  <option value="6">Dia 6 de Cada Mes</option>
+                                  <option value="7">Dia 7 de Cada Mes</option>
+                                  <option value="8">Dia 8 de Cada Mes</option>
+                                  <option value="9">Dia 9 de Cada Mes</option>
+                                  <option value="11">Dia 11 de Cada Mes</option>
+                                  <option value="12">Dia 12 de Cada Mes</option>
+                                  <option value="13">Dia 13 de Cada Mes</option>
+                                  <option value="14">Dia 14 de Cada Mes</option>
+                                  <option value="15">Dia 15 de Cada Mes</option>
+                                  <option value="16">Dia 16 de Cada Mes</option>
+                                  <option value="17">Dia 17 de Cada Mes</option>
+                                  <option value="18">Dia 18 de Cada Mes</option>
+                                  <option value="19">Dia 19 de Cada Mes</option>
+                                  <option value="20">Dia 20 de Cada Mes</option>
+                                  <option value="21">Dia 21 de Cada Mes</option>
+                                  <option value="22">Dia 22 de Cada Mes</option>
+                                  <option value="23">Dia 23 de Cada Mes</option>
+                                  <option value="24">Dia 24 de Cada Mes</option>
+                                  <option value="25">Dia 25 de Cada Mes</option>
+                                  <option value="26">Dia 26 de Cada Mes</option>
+                                  <option value="27">Dia 27 de Cada Mes</option>
+                                  <option value="28">Dia 28 de Cada Mes</option>
+                                  <option value="29">Dia 29 de Cada Mes</option>
+                                  <option value="30">Dia 30 de Cada Mes</option>
+                            </select>
+                      </div>
+
+                      <div class="col-4">
+                          <label class="form-label" for="passwordwizard">Prazo Pagamento<span class="txt-danger">*</span></label>
+                            <select class="form-select"  name="multa">
+                                  <option value="25">25%</option>
+                                  <option value="50">50%</option>
+                                  <option value="75">75%</option>
+                                  <option value="100">100%</option>
+                            </select>
+                      </div>
                       
-                      <div class="col-6">
+                      <div class="col-4">
                          <label class="form-label" for="passwordwizard">Contrato<span class="txt-danger">*</span></label>
                            <select class="form-select"  name="contrato">
                               @foreach($contratos as $contrato)
@@ -214,32 +266,44 @@
                            </select>
                       </div>
 
-                      <div class="col-6">
+
+                      
+
+                      <div class="col-4">
                          <label class="form-label" for="passwordwizard">Forma Pagamento<span class="txt-danger">*</span></label>
                            <select class="form-select"  name="forma_pagamento" id="forma" onchange="getBancos()" >
+                              <option value="">Seleciona a Forma Pagamento</option>
                               @foreach($formasPagamentos as $formasPagamento)
                                 <option value="{{$formasPagamento->id}}">{{$formasPagamento->nome}}</option>
                               @endforeach
                            </select>
                       </div>
 
-                      <div class="col-6">
+                      <div class="col-4">
                         <label class="form-label">Banco Carteira</label>
                         <select class="form-select" name="banco_carteira" id="bancos">
                             <option value="">Selecione o Banco/Carteira</option>
                         </select>
                       </div>
 
-                      <div class="col-6">
+                      <div class="col-4">
                         <label class="form-label" for="confirmpasswordwizard">Valor<span class="txt-danger">*</span></label>
                         <input class="form-control"  type="text" name="valor_pago" placeholder="Valor" >
                       </div>
 
+                      
+                      <div class="row"></div>
+                      <div class="col-4"></div>
+                      
+                      <div class="col-4">
+                          <button id="botao_salvar" type="submit" class="btn btn-success w-100">
+                            <span id="botao_texto">{{__('Registar Cliente')}}</span>
+                            <i id="icon_enviar" class="ri-arrow-right-line label-icon align-middle fs-16 ms-2"></i>
+                          </button>
+                      </div>
 
-                      <button id="botao_salvar" type="submit" class="btn btn-success w-100">
-                          <span id="botao_texto">{{__('Registar Cliente')}}</span>
-                          <i id="icon_enviar" class="ri-arrow-right-line label-icon align-middle fs-16 ms-2"></i>
-                      </button>
+
+                      
                     </form1>
                     
                    </form>  
@@ -262,7 +326,7 @@
                     Please make sure fill all the filed before click on next button.</p>
               </div>
               <div class="card-body custom-input">
-                <form class="form-wizard" >
+                <form5 class="form-wizard2" >
                   <div class="tab">
                     <div class="row g-3">
                       <div class="col-sm-6">
@@ -347,7 +411,7 @@
                   </div>
                   <!-- Circles which indicates the steps of the form:-->
                   <div class="text-center"><span class="step"></span><span class="step"></span><span class="step"></span><span class="step"></span></div>
-                </form>
+                </form5>
               </div>
             </div>
           </div>
@@ -372,43 +436,52 @@ $(document).ready(function() {
     $("#msform").validate({
         // Adicionar regras para cada campo
         rules: {
-            plano: {
-                required: true
-            },
-            turma: {
-                required: true
-            },
-            classe: {
-                required: true
-            },
-            endereco: {
+            cliente: {
                 required: true,
                 minlength: 2,
             },
-            numero_documento: {
+            tipo_documento: {
                 required: true
             },
-            tipo_documento: {
+            numero_documento: {
+                required: true,
+                minlength: 2,
+            },
+            telefone: {
+                required: true,
+                minlength: 9,
+                maxlength: 9
+            },
+            provincia: {
+                required: true
+            },
+            numero_contador: {
                 required: true
             },
             provincia: {
                 required: true
             },
-            data_nascimento: {
+            bairro: {
+                required: true,
+                minlength: 2,
+            },
+            quarteirao: {
+                required: true,
+                number:true
+            },
+            casa: {
+                required: true,
+                number:true
+            },
+            forma_pagamento: {
                 required: true,
             },
-            genero: {
+            banco_carteira: {
                 required: true
             },
-            nome_casa: {
-                minlength: 3,
-            },
-            nomealuno: {
+            valor_pago: {
                 required: true,
-                minlength: 3,
-            },
-            imagem: {
-                required: true
+                min: 10
             }
        
      },

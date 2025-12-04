@@ -20,6 +20,17 @@ class ContratoController extends Controller
         ]);
     }
 
+    public function templete()
+    {
+        $userActual = Auth::user();
+
+        $contrato = ContractoTemplete::where('empresa_id',$userActual->empresa_id)->first();
+
+        return view('contratos.templete',  [
+            'contrato' => $contrato,
+        ]);
+    }
+
     public function create()
     {
         return view('contratos.create',  [

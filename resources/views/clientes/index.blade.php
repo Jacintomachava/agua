@@ -14,11 +14,17 @@
             <div class="header-top">
                 <h2>
                     <img class="img-40 img-fluid m-r-20" src="{{ URL('/assets/images/job-search/2.jpg')}}" alt="">
-                    Lista de Clientes Contratos
+                    Lista de Clientes
                 </h2>
                 <div class="card-header-right-icon">
                     <a href="{{route('cliente.create')}}">
                         <button class="btn btn-pill btn-primary btn-sm">Cadastrar Cliente</button>
+                    </a>
+                    <a href="{{route('mapa.clientes')}}">
+                        <button class="btn btn-pill btn-success btn-sm">Mapa</button>
+                    </a>
+                    <a href="{{route('pdf.clientes')}}" target="_blank">
+                        <button class="btn btn-pill btn-secondary btn-sm">Imprimir Cliente</button>
                     </a>
                 </div>
             </div>
@@ -37,16 +43,16 @@
                     <thead>
                         <tr>
                             <th></th>
+                            <th>#</th>
                             <th>Nome</th>
                             <th>Telefone</th>
-                            <th>Contrato</th>
-                            <th>Ligacao</th>
-                            <th>Contador</th>
-                            <th>Valor</th>
-                            <th>estado</th>
                             <th>Bairro</th>
-                            <th>Quarteirao</th>
-                            <th>Casa</th>
+                            <th>Q.</th>
+                            <th>C.</th>
+                            <th>Act/Inat</th>
+                            <th>Ult. Lei.</th>
+                            <th>Saldo</th>
+                            <th>Divida</th>
                             <th>Acção</th>
                         </tr>
                     </thead>
@@ -55,9 +61,12 @@
                         @foreach($clientes as $cliente)
                             <tr>
                                 <td></td>
+                                <td>{{$cliente->contador}}</td>
                                 <td>{{$cliente->cliente->nome }}</td>
                                 <td>{{$cliente->telefone_notificar}}</td>
-                                <td>{{$cliente->contrato->nome}}</td>
+                                <td>{{$cliente->bairro}}</td>
+                                <td>{{$cliente->quarteirao}}</td>
+                                <td>{{$cliente->casa}} @if($cliente->localizacao_activa==1) <i  class="fa fa-map-marker" style="color: red;" ></i> @else  @endif</td>
                                 <td>
 
                                     @if($cliente->ligacao_activa==1)
@@ -70,19 +79,30 @@
                                       </a>
                                     @endif
                                 </td>
-                                <td>{{$cliente->contador}}</td>
-                                <td>{{$cliente->contrato->valor_contrato}}</td>
-                                <td>{{$cliente->estado_pagamento}}</td>
-                                <td>{{$cliente->bairro}}</td>
-                                <td>{{$cliente->quarteirao}}</td>
-                                <td>{{$cliente->casa}}</td>
+                                <td>{{$cliente->ultima_leitura}}</td>
+                                <td>{{ number_format($cliente->saldo, 2,',','.') }} </td>
+                                <td>{{ number_format($cliente->divida, 2,',','.') }}</td>
+
                                 <td>
-                                    <a class="btn btn-warning btn-xs activate-btn" href="" >
+                                     <a class="btn btn-info btn-xs activate-btn"  href="{{route('cliente.show',['codigo'=>$cliente->codigo])}}">
+                                        Detalhes
+                                     </a>
+                                     <a class="btn btn-warning btn-xs activate-btn" href="{{route('cliente.edit',['codigo'=>$cliente->codigo])}}" >
                                         Editar
+                                     </a>
+                                     @if($cliente->ligacao_activa==1)
+                                        <a class="btn btn-danger btn-xs activate-btn" href="{{route('cliente.cortar',['codigo'=>$cliente->codigo])}}" >
+                                            Cortar
+                                        </a>
+                                     @else
+                                        <a class="btn btn-secondary btn-xs activate-btn" href="{{route('cliente.ligar',['codigo'=>$cliente->codigo])}}" >
+                                            Ligar
+                                        </a>
+                                     @endif
+                                     <a class="btn btn-success btn-xs activate-btn" href="{{route('cliente.geolocalizacao',['contratoID'=>$cliente->codigo])}}"  >
+                                        Geo.
                                     </a>
-                                     <a class="btn btn-danger btn-xs activate-btn"  >
-                                        Repor Senha
-                                    </a>
+                                     
                                 </td>
                             </tr>
                         @endforeach

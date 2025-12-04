@@ -12,7 +12,7 @@
         <div class="left-sidebar-chat">
           <div class="input-group">
             <span class="input-group-text">
-              Contactos dos Encarregados
+              Contactos dos Clientes
             </span>
           </div>
         </div>
@@ -37,7 +37,7 @@
                     <div class="active-profile"><img class="img-fluid rounded-circle" src="{{ URL('/assets/images/avtar/11.jpg') }}" alt="user">
                       <div class="status bg-success"></div>
                     </div>
-                    <div> <span>{{$contato->telefone}}</span>
+                    <div> <span>  @if($contato->nome!=null) {{$contato->nome}}   @else {{$contato->telefone}} @endif </span>
                       <p>{{ Str::limit($contato->ultima_conversa, 18) }}</p>
                     </div>
                   </div>
@@ -75,7 +75,7 @@
                   <li class="common-space">
                   
                     <div class="chat-time"><img class="img-fluid rounded-circle" src="{{ URL('/assets/images/avtar/3.jpg') }}" alt="user">
-                      <div> <span>{{$contato->telefone}}</span>
+                      <div> <span>{{$contato->nome}}</span>
                         <p>{{$contato->telefone}}</p>
                       </div>
                     </div>
@@ -99,8 +99,8 @@
               <div class="active-profile"><img class="img-fluid rounded-circle" src="{{ URL('/assets/images/blog/comment.jpg') }}" alt="user">
                 <div class="status bg-success"></div>
               </div>
-              <div> <span>{{$contacto}}</span>
-                <p>Online </p>
+              <div> <span>{{$contato->nome}} </span>
+                <p>{{$contato->telefone}} </p>
               </div>
             </div>
             <div class="d-flex gap-2">
@@ -231,7 +231,7 @@ $(document).ready(function() {
 
             $.ajax({
                 type: "POST",
-                url: "{{ route('responder.chat') }}",
+                url: "#",
                 data: formData,
                 processData: false, // Não processa os dados, necessário para FormData
                 contentType: false, // Define o content type como multipart/form-data

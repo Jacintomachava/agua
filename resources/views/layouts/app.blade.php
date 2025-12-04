@@ -44,10 +44,10 @@
 
         <div class="col-auto header-right-wrapper page-title">
           <div>
-            <h2>Escola</h2>
+            <h2>{{Auth::user()->tipo}}</h2>
             <nav>
               <ol class="breadcrumb justify-content-sm-start align-items-center mb-0">
-                <li class="breadcrumb-item"><a href="#">Slogam</a></li>
+                <li class="breadcrumb-item"><a href="#"></a></li>
               </ol>
             </nav>
           </div>
@@ -141,7 +141,7 @@
                                 </div><span>Mudar Furo</span></a>
                               </li>
                             @endif  
-                              <li><a href="#">
+                              <li><a href="{{route('senha.index')}}">
                                 <div class="profile-icon">
                                   <svg>
                                     <use href="{{ URL('/assets/svg/icon-sprite.svg#stroke-form') }}"></use>

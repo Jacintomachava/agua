@@ -11,6 +11,10 @@ class Leitura extends Model
 
     protected $table = 'leituras';
 
+    protected $casts = [
+        'data_leitura' => 'date',
+    ];
+
     public function empresa()
     {
         return $this->belongsTo(Empresa::class, 'empresa_id');

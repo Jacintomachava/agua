@@ -13,9 +13,9 @@
           <div class="card-header">
             <div class="row">
                 <div class="col-7">
-                    <h2>Enviar Mensagem Para os Clientes</h2>
+                    <h2>Enviar Mensagem </h2>
                     <p class="f-m-light mt-1">
-                        Faça o envio de SMS para seus clientes 
+                        Faça o envio de SMS  
                     </p>
                 </div> 
                 <div class="col-5">

@@ -45,4 +45,9 @@ class FuroClienteContrato extends Model
     {
         return $this->belongsTo(Mes::class, 'mes_id');
     }
+
+    public function provincia()
+    {
+        return $this->belongsTo(Provincia::class, 'provincia_id');
+    }
 }

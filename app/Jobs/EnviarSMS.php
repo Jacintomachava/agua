@@ -79,6 +79,7 @@ class EnviarSMS implements ShouldQueue
                     $actualizarMensagem->tipo = 'Enviada';
                     $actualizarMensagem->credito = $mensagem->qtd * 1.8;
                     $actualizarMensagem->custo_real = $mensagem->qtd * 1.2;
+                    $actualizarMensagem->lucro = $mensagem->qtd * 1.8 - $mensagem->qtd * 1.2;
                     $actualizarMensagem->save();
                     //Diminuir
                     $saldo->save();

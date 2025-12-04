@@ -10,4 +10,9 @@ class CompraCredito extends Model
     use HasFactory;
 
     protected $table = 'compra_credito';
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }

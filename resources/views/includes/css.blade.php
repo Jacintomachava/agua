@@ -26,6 +26,10 @@
     <link rel="stylesheet" type="text/css" href="{{ URL('/assets/css/vendors/slick.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ URL('/assets/css/vendors/slick-theme.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ URL('/assets/css/vendors/scrollbar.css') }}">
+    <!-- Plugins css start-->
+    <link rel="stylesheet" type="text/css" href="{{ URL('/assets/css/vendors/quill.snow.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ URL('/assets/css/vendors/quill.bubble.css') }}">
+    <!-- Plugins css Ends-->
     <link rel="stylesheet" type="text/css" href="{{ URL('/assets/css/vendors/animate.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ URL('/assets/css/vendors/datatables.css') }}">
     <!-- Plugins css Ends-->

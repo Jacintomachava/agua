@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "12d94ab2134c090732b27064f10deaa0",
+    "content-hash": "b48a6f5d86d7b75530c6e5dbc449dbdf",
     "packages": [
         {
             "name": "barryvdh/laravel-dompdf",
@@ -1284,6 +1284,80 @@
                 }
             ],
             "time": "2025-08-22T14:27:06+00:00"
+        },
+        {
+            "name": "karson/mpesa-php-sdk",
+            "version": "1.5.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/karson/mpesa-php-sdk.git",
+                "reference": "81cb54d44ece74c0703fbe7eebd78b0ce2acf8c2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/karson/mpesa-php-sdk/zipball/81cb54d44ece74c0703fbe7eebd78b0ce2acf8c2",
+                "reference": "81cb54d44ece74c0703fbe7eebd78b0ce2acf8c2",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "ext-json": "*",
+                "guzzlehttp/guzzle": "^7.0",
+                "php": ">=7.3"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.3.3"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "Mpesa": "Karson\\MpesaPhpSdk\\Facade"
+                    },
+                    "providers": [
+                        "Karson\\MpesaPhpSdk\\Providers\\ServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "files": [
+                    "src/Mpesa.php"
+                ],
+                "psr-4": {
+                    "Karson\\MpesaPhpSdk\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Karson Adam",
+                    "email": "karson@turbohost.co.mz",
+                    "role": "Developer"
+                }
+            ],
+            "homepage": "https://github.com/karson/mpesa-php-sdk",
+            "keywords": [
+                "karson",
+                "mpesa",
+                "mpesa-api",
+                "mpesa-sdk",
+                "payment-gateway",
+                "vodacom-mozambique"
+            ],
+            "support": {
+                "issues": "https://github.com/karson/mpesa-php-sdk/issues",
+                "source": "https://github.com/karson/mpesa-php-sdk/tree/1.5.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/karson",
+                    "type": "github"
+                }
+            ],
+            "time": "2022-06-15T05:39:35+00:00"
         },
         {
             "name": "laravel/framework",

@@ -1,0 +1,83 @@
+@extends('layouts.app')
+
+@push('css')
+<head>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+</head>
+@endpush
+
+@section('conteudo')
+
+<div class="col-xl-12 order-md-iii">
+    <div class="card title-line overflow-hidden member-wrapper">
+        <div class="card-header card-no-border">
+            <div class="header-top">
+                <h2>
+                    <img class="img-40 img-fluid m-r-20" src="{{ URL('/assets/images/job-search/2.jpg')}}" alt="">
+                    Lista das minhas Empresas
+                </h2>
+                <div class="card-header-right-icon">
+                    <a href="{{route('empresa.create')}}">
+                        <button class="btn btn-pill btn-primary btn-sm">Cadastrar Empresa</button>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div> <!-- Fechamento da div "card title-line overflow-hidden member-wrapper" -->
+</div> <!-- Fechamento da div "col-xl-12 order-md-iii" -->
+
+<div class="col-sm-12" style="margin-top: -2%">
+    <div class="card">
+        <div class="card-header pb-0 card-no-border">
+        </div>
+        <div class="card-body">
+
+            <div class="table-responsive custom-scrollbar">
+                <table class="display" id="basic-1">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Nome</th>
+                            <th>Estado</th>
+                            <th>Telefone</th>
+                            <th>Valor/Cliente</th>
+                            <th>Percentagem</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        @foreach($empresas as $coWork)
+                            <tr>
+                                <td></td>
+                                <td>{{$coWork->empresa->nome}}</td>
+                                <td>
+                                    @if($coWork->empresa->estado==1)
+                                        <a class="btn btn-success btn-xs activate-btn" >
+                                            Activo
+                                        </a>
+                                    @else
+                                        <a class="btn btn-danger btn-xs activate-btn"  >
+                                          Inativo
+                                        </a>
+                                    @endif
+                                </td>
+                                <td>{{$coWork->empresa->telefone }}</td>
+                                <td>{{$coWork->empresa->valor_por_cliente}}</td>
+                                <td>{{$coWork->percentagem}}%</td>
+                            </tr>
+                        @endforeach
+
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@endsection
+
+@push('js')
+
+
+@endpush

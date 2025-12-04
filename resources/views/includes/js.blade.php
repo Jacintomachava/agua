@@ -18,6 +18,8 @@
     <script src="{{ URL('/assets/js/slick/slick.min.js') }}"></script>
     <script src="{{ URL('/assets/js/slick/slick.js') }}"></script>
     <script src="{{ URL('/assets/js/header-slick.js') }}"></script>
+    <script src="{{ URL('/assets/js/editors/quill.js') }}"></script>
+    <script src="{{ URL('/assets/js/custom-add-product3.js') }}"></script>
     <script src="{{ URL('/assets/js/form-wizard/form-wizard.js') }}"></script>
     <script src="{{ URL('/assets/js/form-wizard/image-upload.js') }}"></script>
     <script src="{{ URL('/assets/js/height-equal.js') }}"></script>

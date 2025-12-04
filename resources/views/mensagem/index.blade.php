@@ -6,10 +6,17 @@
 
 @section('conteudo')
 
-<div class="alert alert-light-primary" role="alert" >
-    <p style="font-size: 7pt;">SMS cada Envio de SMS vala a 2 creditos <i style="font-size: 7pt;">(uma SMS normal)</i></p>
-    <p style="font-size: 7pt;">WhatsApp cada Envio de Mensagem vala a 2 creditos <i style="font-size: 7pt;">(conversa iniciado pelo sistema)</i></p>
-    <p style="font-size: 7pt;">WhatsApp cada Envio de Mensagem vala a 1.5 creditos <i style="font-size: 7pt;">(resposta da conversa iniciado pelo utilizador)</i></p>
+<div class="row alert alert-light-primary" role="alert" >
+  <div class="col-sm-6" > 
+    <p style="font-size: 7pt;">SMS cada envio de uma SMS vale 1.85 creditos <i style="font-size: 7pt;">(uma SMS normal)</i></p>
+    <p style="font-size: 7pt;">Cada Mensagem de WhatsApp vala a 0.02 creditos <i style="font-size: 7pt;">(resposta da conversa iniciado pelo utilizador)</i></p>
+  </div>  
+  <div class="col-sm-3" >
+    Crédito {{$saldo->saldo}}
+  </div>
+  <div class="col-sm-3" >
+    SMS Pendentes {{$creditoSMSPendente}}
+  </div>
 </div>
 
 <div class="col-xxl-12" > 
@@ -56,7 +63,7 @@
                             @foreach($contatos as $contato)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td> <!-- Número sequencial -->
-                                    <td>{{ $contato->telefone }}</td>
+                                    <td>@if($contato->nome!=null) {{$contato->nome}} @else {{$contato->telefone}} @endif</td>
                                     <td>{{ $contato->conversas }}</td>
                                     <td>{{ \Carbon\Carbon::parse($contato->updated_at)->format('d-M-Y') }}</td>
                                     <td>{{ \Carbon\Carbon::parse($contato->updated_at)->format('H:i') }}</td>
@@ -100,11 +107,11 @@
                           <table class="table">
                             <thead class="table-dark">
                               <tr>
-                                <th scope="col">#</th>
                                 <th scope="col">Pacote</th>
-                                <th scope="col">Número Crédito</th>
-                                <th scope="col">Preço por Crédito</th>
-                                <th scope="col">Valor Total</th>
+                                <th scope="col">Nr. Crédito</th>
+                                <th scope="col">Preço </th>
+                                <th scope="col">Valor</th>
+                                <th scope="col">Comprado Por:</th>
                                 <th scope="col">Data</th>
                               </tr>
                             </thead>
@@ -112,11 +119,11 @@
 
                             @foreach($pacotes as $pacote)
                                 <tr>
-                                    <td>{{ $loop->iteration }}</td> <!-- Número sequencial -->
                                     <td>{{ $pacote->tipo_pacote }}</td>
                                     <td>{{ $pacote->numero_credito }}</td>
                                     <td>{{ $pacote->preco_por_credito }}MZN/Crédito</td>
                                     <td>{{ $pacote->valor }}MZN</td>
+                                    <td>{{ $pacote->user->nome }}</td>
                                     <td>{{ \Carbon\Carbon::parse($pacote->updated_at)->format('d-M-Y') }}</td>
                                 </tr>
                             @endforeach
@@ -137,6 +144,9 @@
 
               <a href="{{route('mensagem.create')}}">
                     <button class="btn btn-pill btn-primary btn-sm" >Enviar SMS</button>
+              </a>
+              <a href="#">
+                    <button class="btn btn-pill btn-primary btn-sm" data-bs-toggle="modal" data-bs-target=".bd-example-modal-lg">Comprar Crédito</button>
               </a>
               <br>
               <div class="col-sm-12"> 
@@ -161,7 +171,7 @@
 
                           @foreach($mensagens as $mensagem)
                             <tr>
-                              <td>{{$mensagem->telefone}}</td>
+                              <td>@if($mensagem->nome!=null) {{$mensagem->nome}} @else {{$mensagem->telefone}} @endif </td>
                               <td>{{$mensagem->canal}}</td>
                               <td>
                                 {{$mensagem->tipo}}
@@ -220,30 +230,18 @@
             @csrf
 
             <div class="row">
+                
+
                 <div class="col-6">
-                    <label class="form-label" for="passwordwizard">Pacote<span class="txt-danger">*</span></label>
-                    <select class="form-select"  name="pacote" >
-                        <option value="STANDARD">STANDARD</option>
-                        <option value="PLUS">PLUS</option>
-                        <option value="PROFESSIONAL">PROFESSIONAL</option>
-                        <option value="GRÁTIS">GRÁTIS</option>
-                    </select>
+                    <label class="form-label" for="passwordwizard">Digite Valor<span class="txt-danger">*</span></label>
+                    <input class="form-control" type="text" name="valor" placeholder="valor Mpesa" >
                 </div>
 
                 <div class="col-6">
-                    <label class="form-label" for="passwordwizard">Número Crédito<span class="txt-danger">*</span></label>
-                    <input class="form-control" type="text" name="numero_credito" placeholder="Número Crédito" >
+                    <label class="form-label" for="passwordwizard">Telefone Mpesa<span class="txt-danger">*</span></label>
+                    <input class="form-control" type="text" name="telefone" placeholder="Numero Mpesa" >
                 </div>
 
-                <div class="col-6">
-                    <label class="form-label" for="passwordwizard">Preço Por Crédito<span class="txt-danger">*</span></label>
-                    <input class="form-control" type="text" name="preco_credito" placeholder="Preço Por Crédito" >
-                </div>
-
-                <div class="col-6">
-                    <label class="form-label" for="passwordwizard">Valor Total<span class="txt-danger">*</span></label>
-                    <input class="form-control" type="text" name="valor_total" placeholder="Valor Total" >
-                </div>
 
             </div>
 
@@ -279,23 +277,21 @@ $(document).ready(function() {
     $("#form").validate({
         // Adicionar regras para cada campo
         rules: {
-            pacote: {
-                required: true
+            valor: {
+                required: true,
+                min: 100,
+                max: 10000
             },
-            numero_credito: {
-                required: true
-            },
-            preco_credito: {
-                required: true
-            },
-            valor_total: {
-                required: true
+            telefone: {
+                required: true,
+                minlength: 9,
+                maxlength: 9,
             }
         },
         submitHandler: function(form) {
             $.ajax({
                 type: "POST",
-                url: "{{route('mensagem.store')}}",
+                url: "{{route('mensagem.storeCompraSMS')}}",
                 data: $(form).serialize(), // Corrigido para usar `form` em vez de `this`
 
                 beforeSend: function () {

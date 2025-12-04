@@ -67,7 +67,7 @@
 
                 <li class="sidebar-list"><i class="fa fa-thumb-tack"></i>
                     <label class="badge badge-light-primary">1</label><a class="sidebar-link sidebar-title" href="{{route('financas.index')}}">
-                        <span class="lan-3"><i style="font-size: 15pt; padding-right: 5pt;" class="icofont icofont-cur-dollar-true"></i>Finanças</span></a>
+                        <span class="lan-3"><i style="font-size: 15pt; padding-right: 5pt;" class="icofont icofont-chart-histogram"></i>Finanças</span></a>
                 </li>
 
 
@@ -76,6 +76,16 @@
                         <svg class="stroke-icon">
                         <use href="{{ URL('/assets/svg/icon-sprite.svg#stroke-chat') }}"></use>
                         </svg><span class="lan-3">Credito</span></a>
+                </li>
+
+                <li class="sidebar-list"><i class="fa fa-thumb-tack"></i>     
+                    <label class="badge badge-light-primary">1</label><a class="sidebar-link sidebar-title" href="{{route('subscricao.index')}}">
+                        <span class="lan-3"><i style="font-size: 19pt; padding-right: 5pt;" class="icofont icofont-cart-alt"></i>Subscrição </span></a>
+                </li>
+
+                <li class="sidebar-list"><i class="fa fa-thumb-tack"></i>
+                    <label class="badge badge-light-primary">1</label><a class="sidebar-link sidebar-title" href="{{route('cowork.index')}}">
+                        <span class="lan-3"><i style="font-size: 19pt; padding-right: 5pt;" class="icofont icofont-pie-chart"></i>Comissões</span></a>
                 </li>
 
 
@@ -88,6 +98,7 @@
                         <li><a class="lan-1" href="{{route('furo.index')}}">Furos</a></li>
                         <li><a class="lan-2" href="{{route('contrato.index')}}">T. Contractos</a></li>
                         <li><a class="lan-2" href="{{route('mapa.index')}}">Tubo Geral</a></li>
+                        <li><a class="lan-2" href="{{route('credencial.index')}}">Credenciais</a></li>
                     </ul>
                 </li>
                 

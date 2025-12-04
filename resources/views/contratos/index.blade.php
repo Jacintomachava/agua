@@ -20,6 +20,9 @@
                     <a href="{{route('contrato.create')}}">
                         <button class="btn btn-pill btn-primary btn-sm">Cadastrar Contrato</button>
                     </a>
+                    <a href="{{route('contrato.templete')}}">
+                        <button class="btn btn-pill btn-primary btn-sm">Cadastrar Templete</button>
+                    </a>
                 </div>
             </div>
         </div>

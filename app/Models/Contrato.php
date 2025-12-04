@@ -10,4 +10,6 @@ class Contrato extends Model
     use HasFactory;
 
     protected $table = 'contratos';
+
+    
 }

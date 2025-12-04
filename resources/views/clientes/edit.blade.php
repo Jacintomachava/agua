@@ -1,0 +1,616 @@
+@extends('layouts.app')
+
+@push('css')
+
+<style type="text/css">
+
+.area{
+    margin: 10px auto;
+    box-shadow: 0 10px 100px #ccc;
+    padding: 20px;
+    box-sizing: border-box;
+    max-width: 500px;
+}
+
+.area video{
+    width: 100%;
+    height: auto;
+    background-color: whitesmoke;
+}
+
+.area textarea{
+    width: 100%;
+    margin-top: 10px;
+    height: 80px;
+    box-sizing: border-box;
+}
+
+.area button{
+    -webkit-appearance: none;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px;
+    text-align: center;
+    background-color: #068c84;
+    color: white;
+    text-transform: uppercase;
+    border: 1px solid white;
+    box-shadow: 0 1px 5px #666;
+}
+
+.area button:focus{
+    outline: none;
+    background-color: #0989b0;
+}
+
+.area img{
+    max-width: 100%;
+    height: 400px;
+}
+
+.area .caminho-imagem{
+    padding: 5px 10px;
+    border-radius: 3px;
+    background-color: #068c84;
+    text-align: center;
+}
+
+.area .caminho-imagem a{
+    color: white;
+    text-decoration: none;
+}
+
+.area .caminho-imagem a:hover{
+    color: yellow;
+}
+</style>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+
+@endpush
+
+@section('conteudo')
+
+
+    <h2>
+        <div class="col-12">
+          <div class="error" id="error" style="color: red; text-align: center">
+          </div>
+        </div>
+    </h2>
+
+    <div class="container-fluid">
+        <div class="row">
+          <div class="col-xl-12">
+            <div class="card height-equal title-line">
+              <div class="card-header">
+                <h2>Dados de Cliente</h2>
+              </div>
+              <div class="card-body basic-wizard important-validation">
+                <div class="stepper-horizontal custom-scrollbar" id="stepper1">
+                  <div class="stepper-one stepper step editing active">
+                    <div class="step-circle"><span>1</span></div>
+                    <div class="step-title">Dados do Cliente</div>
+                    <div class="step-bar-left"></div>
+                    <div class="step-bar-right"></div>
+                  </div>
+                  <div class="stepper-two step">
+                    <div class="step-circle"><span>2</span></div>
+                    <div class="step-title">Dados de Ligacao</div>
+                    <div class="step-bar-left"></div>
+                    <div class="step-bar-right"></div>
+                  </div>
+                  <div class="stepper-three step">
+                    <div class="step-circle"><span>3</span></div>
+                    <div class="step-title">Pagamento</div>
+                    <div class="step-bar-left"></div>
+                    <div class="step-bar-right"></div>
+                  </div>
+                </div>
+                <div id="msform1">
+                  <form class="row g-3 needs-validation custom-input" id="msform" enctype="multipart/form-data">
+
+                    @csrf
+                    
+                    <form1 class="stepper-one row g-3 needs-validation custom-input" >
+
+                      <div class="col-4">
+                        <label class="form-label" for="confirmpasswordwizard">Nome Cliente<span class="txt-danger">*</span></label>
+                        <input class="form-control"  type="text" name="cliente" value="{{$cliente->cliente->nome}}" placeholder="Nome Cliente" >
+                      </div>
+
+                      <div class="col-4">
+                        <label class="form-label" for="passwordwizard">Tipo Documento<span class="txt-danger">*</span></label>
+                          <select class="form-select"  name="tipo_documento">
+                                <option value="">Seleciona o tipo de Documento</option>
+                                <option value="B.I" @if($cliente->cliente->tipo_documento=='B.I')  selected @endif >B.I</option>
+                                <option value="Cédula" @if($cliente->cliente->tipo_documento=='Cédula')  selected @endif>Cédula</option>
+                                <option value="Boletim de Nascimento" @if($cliente->cliente->tipo_documento=='Boletim de Nascimento')  selected @endif>Boletim de Nascimento</option>
+                                <option value="Passaporte" @if($cliente->cliente->tipo_documento=='Passaporte')  selected @endif>Passaporte</option>
+                          </select>
+                      </div>
+
+                      <div class="col-4">
+                        <label class="form-label" for="confirmpasswordwizard">Número Documento</label>
+                        <input class="form-control"  type="text" name="numero_documento" value="{{$cliente->cliente->numero_documento}}" placeholder="Número Documento" >
+                      </div>
+
+                      <div class="col-4">
+                        <label class="form-label" for="confirmpasswordwizard">Telefone<span class="txt-danger">*</span></label>
+                        <input class="form-control"  type="text" name="telefone" value="{{$cliente->telefone_notificar}}" placeholder="Telefone" >
+                      </div>
+
+                      <div class="col-4">
+                        <label class="form-label">Provincia</label>
+                        <select class="form-select"  name="provincia" id="provincia" onchange="getDistritos()" >
+                                <option value="">Selecione a Provincia</option>
+                                @foreach($provincias as $provincia)
+                                  <option value="{{$provincia->id}}" @if($cliente->provincia_id==$provincia->id)  selected @endif>{{$provincia->nome}}</option>
+                                @endforeach
+                        </select>
+                      </div>
+
+                      <div class="col-4">
+                        <label class="form-label">Distrito</label>
+                        <select class="form-select" name="distrito" id="distrito">
+                            <option value="">Selecione o Distrito</option>
+                            @foreach($distritos as $distrito)
+                              <option value="{{$distrito->id}}" @if($cliente->distrito_id==$distrito->id)  selected @endif>{{$distrito->nome}}</option>
+                            @endforeach
+                        </select>
+                      </div>
+
+
+                    </form1>
+
+                    <form1 class="stepper-two row g-3 needs-validation custom-input">
+
+                      <div class="col-4">
+                        <label class="form-label" for="confirmpasswordwizard">Numero de Contador<span class="txt-danger">*</span></label>
+                        <input class="form-control"  type="text" name="numero_contador" value="{{$cliente->contador}}" placeholder="Numero Contador" >
+                      </div>
+
+                      <div class="col-4">
+                        <label class="form-label" for="confirmpasswordwizard">Bairro<span class="txt-danger">*</span></label>
+                        <input class="form-control"  type="text" name="bairro" value="{{$cliente->bairro}}" placeholder="Bairro" >
+                      </div>
+
+                      <div class="col-4">
+                        <label class="form-label" for="confirmpasswordwizard">Quarteirao<span class="txt-danger">*</span></label>
+                        <input class="form-control"  type="text" name="quarteirao" value="{{$cliente->quarteirao}}" placeholder="Quarteirao" >
+                      </div>
+
+                      <div class="col-4">
+                        <label class="form-label" for="confirmpasswordwizard">Casa<span class="txt-danger">*</span></label>
+                        <input class="form-control"  type="text" name="casa" value="{{$cliente->casa}}" placeholder="Casa" >
+                      </div>
+
+                      <div class="col-4">
+                        <label class="form-label" for="confirmpasswordwizard">Leitura Contador<span class="txt-danger">*</span></label>
+                        <input class="form-control"  type="text" name="leitura"  value="0" value="{{$cliente->leitura}}" placeholder="Ultima Leitura" >
+                      </div>
+
+                      <div class="col-4" >
+                         <label class="form-label" for="passwordwizard">Furo<span class="txt-danger">*</span></label>
+                           <select class="form-select"  name="furo">
+                              @foreach($furos as $furo)
+                                <option value="{{$furo->id}}" @if($cliente->furo_id==$furo->id)  selected @endif >{{$furo->nome}}</option>
+                              @endforeach
+                           </select>
+                      </div>
+
+                      <div class="col-4" hidden>
+                         <label class="form-label" for="passwordwizard">Mes a Cobrar<span class="txt-danger">*</span></label>
+                           <select class="form-select"  name="mes">
+                              @foreach($meses as $mese)
+                                <option value="{{$mese->id}}">{{$mese->nome}}</option>
+                              @endforeach
+                           </select>
+                      </div>
+
+                    </form1>
+
+                    <form1 class="stepper-three row g-3 needs-validation custom-input" >
+
+
+                      <div class="col-4">
+                          <label class="form-label" for="passwordwizard">Prazo Pagamento<span class="txt-danger">*</span></label>
+                            <select class="form-select"  name="prazo_pagamento">
+                                  <option value="10" @if($cliente->data_multa==10)  selected @endif >Dia 10 de Cada Mes</option>
+                                  <option value="1" @if($cliente->data_multa==1)  selected @endif>Dia 1 de Cada Mes</option>
+                                  <option value="2" @if($cliente->data_multa==2)  selected @endif>Dia 2 de Cada Mes</option>
+                                  <option value="3" @if($cliente->data_multa==3)  selected @endif>Dia 3 de Cada Mes</option>
+                                  <option value="4" @if($cliente->data_multa==4)  selected @endif>Dia 4 de Cada Mes</option>
+                                  <option value="5" @if($cliente->data_multa==5)  selected @endif>Dia 5 de Cada Mes</option>
+                                  <option value="6" @if($cliente->data_multa==6)  selected @endif>Dia 6 de Cada Mes</option>
+                                  <option value="7" @if($cliente->data_multa==7)  selected @endif>Dia 7 de Cada Mes</option>
+                                  <option value="8" @if($cliente->data_multa==8)  selected @endif>Dia 8 de Cada Mes</option>
+                                  <option value="9" @if($cliente->data_multa==9)  selected @endif>Dia 9 de Cada Mes</option>
+                                  <option value="11" @if($cliente->data_multa==11)  selected @endif>Dia 11 de Cada Mes</option>
+                                  <option value="12" @if($cliente->data_multa==12)  selected @endif>Dia 12 de Cada Mes</option>
+                                  <option value="13" @if($cliente->data_multa==13)  selected @endif>Dia 13 de Cada Mes</option>
+                                  <option value="14" @if($cliente->data_multa==14)  selected @endif>Dia 14 de Cada Mes</option>
+                                  <option value="15" @if($cliente->data_multa==15)  selected @endif>Dia 15 de Cada Mes</option>
+                                  <option value="16" @if($cliente->data_multa==16)  selected @endif>Dia 16 de Cada Mes</option>
+                                  <option value="17" @if($cliente->data_multa==17)  selected @endif>Dia 17 de Cada Mes</option>
+                                  <option value="18" @if($cliente->data_multa==18)  selected @endif>Dia 18 de Cada Mes</option>
+                                  <option value="19" @if($cliente->data_multa==19)  selected @endif>Dia 19 de Cada Mes</option>
+                                  <option value="20" @if($cliente->data_multa==20)  selected @endif>Dia 20 de Cada Mes</option>
+                                  <option value="21" @if($cliente->data_multa==21)  selected @endif>Dia 21 de Cada Mes</option>
+                                  <option value="22" @if($cliente->data_multa==22)  selected @endif>Dia 22 de Cada Mes</option>
+                                  <option value="23" @if($cliente->data_multa==23)  selected @endif>Dia 23 de Cada Mes</option>
+                                  <option value="24" @if($cliente->data_multa==24)  selected @endif>Dia 24 de Cada Mes</option>
+                                  <option value="25" @if($cliente->data_multa==25)  selected @endif>Dia 25 de Cada Mes</option>
+                                  <option value="26" @if($cliente->data_multa==26)  selected @endif>Dia 26 de Cada Mes</option>
+                                  <option value="27" @if($cliente->data_multa==27)  selected @endif>Dia 27 de Cada Mes</option>
+                                  <option value="28" @if($cliente->data_multa==28)  selected @endif>Dia 28 de Cada Mes</option>
+                                  <option value="29" @if($cliente->data_multa==29)  selected @endif>Dia 29 de Cada Mes</option>
+                                  <option value="30" @if($cliente->data_multa==30)  selected @endif>Dia 30 de Cada Mes</option>
+                            </select>
+                      </div>
+
+                      <div class="col-4">
+                          <label class="form-label" for="passwordwizard">Prazo Pagamento<span class="txt-danger">*</span></label>
+                            <select class="form-select"  name="multa">
+                                  <option value="25" @if($cliente->multa==25)  selected @endif >25%</option>
+                                  <option value="50" @if($cliente->multa==50)  selected @endif>50%</option>
+                                  <option value="75" @if($cliente->multa==75)  selected @endif>75%</option>
+                                  <option value="100" @if($cliente->multa==100)  selected @endif>100%</option>
+                            </select>
+                      </div>
+                      
+                      <div class="col-4">
+                         <label class="form-label" for="passwordwizard">Contrato<span class="txt-danger">*</span></label>
+                           <select class="form-select"  name="contrato">
+                              @foreach($contratos as $contrato)
+                                <option value="{{$contrato->id}}" @if($cliente->contrato_id==$contrato->id)  selected @endif>{{$contrato->nome}} - {{$contrato->valor_contrato}} e {{$contrato->valor}}MT/{{$contrato->metro_cubico}}m&sup3;</option>
+                              @endforeach
+                           </select>
+                      </div>
+
+
+                      
+
+                      <div class="col-4">
+                         <label class="form-label" for="passwordwizard">Forma Pagamento<span class="txt-danger">*</span></label>
+                           <select class="form-select"  name="forma_pagamento" id="forma" onchange="getBancos()" >
+                              <option value="">Seleciona a Forma Pagamento</option>
+                              @foreach($formasPagamentos as $formasPagamento)
+                                <option value="{{$formasPagamento->id}}" @if($cliente->forma_pagamento_id==$formasPagamento->id)  selected @endif >{{$formasPagamento->nome}}</option>
+                              @endforeach
+                           </select>
+                      </div>
+
+                      <div class="col-4">
+                        <label class="form-label">Banco Carteira</label>
+                        <select class="form-select" name="banco_carteira" id="bancos">
+                            <option value="">Selecione o Banco/Carteira</option>
+                              @foreach($bancos as $banco)
+                                <option value="{{$banco->id}}" @if($cliente->tipo_banco==$banco->id)  selected @endif >{{$banco->nome}}</option>
+                              @endforeach
+                        </select>
+                      </div>
+
+                      <div class="col-4">
+                        <label class="form-label" for="confirmpasswordwizard">Valor<span class="txt-danger">*</span></label>
+                        <input class="form-control"  type="text" name="valor_pago" value="{{$cliente->valor_pago}}" placeholder="Valor" >
+                      </div>
+
+                      
+                      <div class="row"></div>
+                      <div class="col-4"></div>
+                      
+                      <div class="col-4">
+                          <button id="botao_salvar" type="submit" class="btn btn-success w-100">
+                            <span id="botao_texto">{{__('Editar Cliente')}}</span>
+                            <i id="icon_enviar" class="ri-arrow-right-line label-icon align-middle fs-16 ms-2"></i>
+                          </button>
+                      </div>
+
+
+                      
+                    </form1>
+                    
+                   </form>  
+                  </div>
+                  <br>
+                  <div class="wizard-footer d-flex gap-2 justify-content-end">
+                    <button class="btn btn-light-primary" id="backbtn" onclick="backStep()"> Voltar</button>
+                    <button class="btn btn-primary" id="nextbtn" onclick="nextStep()">Próximo</button>
+                  </div>
+              </div>
+            </div>
+          </div>
+
+          <!--  Colocar escondindo -->
+          <div class="col-xl-6" hidden>
+            <div class="card height-equal title-line">
+              <div class="card-header">
+                <h2>Student Validation Form</h2>
+                <p class="f-m-light mt-1">
+                    Please make sure fill all the filed before click on next button.</p>
+              </div>
+              <div class="card-body custom-input">
+                <form5 class="form-wizard2" >
+                  <div class="tab">
+                    <div class="row g-3">
+                      <div class="col-sm-6">
+                        <label for="name">Name</label>
+                        <input class="form-control" name="name" type="text" placeholder="Enter your name" >
+                      </div>
+                      <div class="col-sm-6">
+                        <label class="form-label" for="student-email-wizard">Email<span class="txt-danger">*</span></label>
+                        <input class="form-control" name="email" type="email"  placeholder="johan@gmail.com">
+                      </div>
+                      <div class="col-12">
+                        <label class="form-label" for="password-wizard">Password<span class="txt-danger">*</span></label>
+                        <input class="form-control" id="password-wizard" type="password" placeholder="Enter password" required="">
+                      </div>
+                      <div class="col-12">
+                        <label class="form-label" for="confirmpassowrd">Confirm Password<span class="txt-danger">*</span></label>
+                        <input class="form-control" id="confirmpassowrd" type="password" placeholder="Enter confirm password" required="">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="tab">
+                    <div class="row g-3 avatar-upload">
+                      <div class="col-12">
+                        <div>
+                          <div class="avatar-edit">
+                            <input id="imageUpload" type="file" accept=".png, .jpg, .jpeg">
+                            <label for="imageUpload"></label>
+                          </div>
+                          <div class="avatar-preview">
+                            <div id="image"></div>
+                          </div>
+                        </div>
+                        <h6>Add Profile</h6>
+                      </div>
+                      <div class="col-12">
+                        <label class="form-label" for="exampleFormControlInput1">Portfolio URL</label>
+                        <input class="form-control" id="exampleFormControlInput1" type="url" placeholder="https://yuri">
+                      </div>
+                      <div class="col-12"> 
+                        <label class="form-label" for="projectDescription">Project Description</label>
+                        <textarea class="form-control" id="projectDescription" rows="2"></textarea>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="tab">
+                    <h5 class="mb-2">Social Links </h5>
+                    <div class="row g-3">
+                      <div class="col-sm-6">
+                        <label class="form-label" for="twitterControlInput">Twitter</label>
+                        <input class="form-control" id="twitterControlInput" type="url" placeholder="https://twitter.com">
+                      </div>
+                      <div class="col-sm-6">
+                        <label class="form-label" for="githubControlInput">Github</label>
+                        <input class="form-control" id="githubControlInput" type="url" placeholder="https:/github.com">
+                      </div>
+                      <div class="col-12"> 
+                        <div class="input-group">
+                          <input class="form-control" id="inputGroupFile04" type="file" aria-describedby="inputGroupFileAddon04" aria-label="Upload">
+                          <button class="btn btn-outline-secondary" id="inputGroupFileAddon04" type="button">Submit</button>
+                        </div>
+                      </div>
+                      <div class="col-12">
+                        <select class="form-select" aria-label="Default select example">
+                          <option selected="">Positions</option>
+                          <option value="1">Web Designer</option>
+                          <option value="2">Software Engineer</option>
+                          <option value="3">UI/UX Designer </option>
+                          <option value="3">Web Developer</option>
+                        </select>
+                      </div>
+                      <div class="col-12"> 
+                        <label class="form-label" for="quationsTextarea">Why do you want to take this position?</label>
+                        <textarea class="form-control" id="quationsTextarea" rows="2"></textarea>
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="text-end pt-3">
+                      <button class="btn btn-secondary" id="prevBtn" type="button" onclick="nextPrev(-1)">Previous</button>
+                      <button class="btn btn-primary" id="nextBtn" type="button" onclick="nextPrev(1)">Next</button>
+                    </div>
+                  </div>
+                  <!-- Circles which indicates the steps of the form:-->
+                  <div class="text-center"><span class="step"></span><span class="step"></span><span class="step"></span><span class="step"></span></div>
+                </form5>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+@endsection
+
+
+@push('js')
+
+
+<script>
+
+$(document).ready(function() {
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+    $("#msform").validate({
+        // Adicionar regras para cada campo
+        rules: {
+            cliente: {
+                required: true,
+                minlength: 2,
+            },
+            tipo_documento: {
+                required: true
+            },
+            numero_documento: {
+                required: true,
+                minlength: 2,
+            },
+            telefone: {
+                required: true,
+                minlength: 9,
+                maxlength: 9
+            },
+            provincia: {
+                required: true
+            },
+            numero_contador: {
+                required: true
+            },
+            provincia: {
+                required: true
+            },
+            bairro: {
+                required: true,
+                minlength: 2,
+            },
+            quarteirao: {
+                required: true,
+                number:true
+            },
+            casa: {
+                required: true,
+                number:true
+            },
+            forma_pagamento: {
+                required: true,
+            },
+            banco_carteira: {
+                required: true
+            },
+            valor_pago: {
+                required: true,
+                min: 10
+            }
+       
+     },
+        submitHandler: function(form) {
+            $.ajax({
+                type: "POST",
+                url: "{{route('cliente.store')}}",
+                data: $(form).serialize(), // Corrigido para usar `form` em vez de `this`
+
+                beforeSend: function () {
+                    // Desabilita o botão de envio e altera o ícone para mostrar que está autenticando
+                    $('#botao_salvar').attr('disabled', true);
+                    $('#icon_enviar').removeClass('ri-arrow-right-line').addClass('spinner-border ri-loader-2-line');
+                    $('#botao_texto').text('Matriculando Aluno...');
+                },
+
+                success: function(response) {
+                    // Habilita o botão e retorna o ícone original
+                    $('#botao_salvar').attr('disabled', false);
+                    $('#icon_enviar').removeClass('spinner-border ri-loader-2-line').addClass('ri-arrow-right-line');
+                    $('#botao_texto').text('Matricular Aluno');
+
+                    // Redireciona ou exibe uma mensagem de erro com base na resposta
+                    if(response.status == 1) {
+
+                            Swal.fire({
+                                      icon: 'success',
+                                      title: 'Sucesso!',
+                                      text: response.message,
+                            });
+
+                            window.location.reload();
+
+                            } else if(response.status == 0) {
+
+                            Swal.fire({
+                                  icon: 'error',
+                                  title: 'Erro!',
+                                  text: response.message,
+                            });
+                    }
+
+                },
+                error: function(errors) {
+                    // Habilita o botão e retorna o ícone original em caso de erro
+                    $('#botao_salvar').attr('disabled', false);
+                    $('#icon_enviar').removeClass('spinner-border ri-loader-2-line').addClass('ri-arrow-right-line');
+                    $('#botao_texto').text('Matricular Aluno');
+
+                    // Exibe a mensagem de erro
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Erro!',
+                        text: errors.responseJSON.message,
+                    });
+
+                }
+            });
+        }
+    });
+});
+
+</script>
+
+
+<script>
+
+    function getDistritos() {
+        let provinciaID = document.getElementById('provincia').value;
+        let distritoSelect = document.getElementById('distrito');
+        
+        // Limpa o select de distritos
+        distritoSelect.innerHTML = '<option value="">Carregando...</option>';
+
+        if (provinciaID) {
+            fetch(`/api/distritos/${provinciaID}`)
+                .then(response => response.json())
+                .then(data => {
+                    distritoSelect.innerHTML = '<option value="">Selecione o Distrito</option>';
+                    data.forEach(distrito => {
+                        distritoSelect.innerHTML += `<option value="${distrito.id}">${distrito.nome}</option>`;
+                    });
+                })
+                .catch(error => {
+                    distritoSelect.innerHTML = '<option value="">Erro ao carregar</option>';
+                    console.error('Erro:', error);
+                });
+        } else {
+            distritoSelect.innerHTML = '<option value="">Selecione a Província primeiro</option>';
+        }
+    }
+
+</script>
+
+<script>
+
+    function getBancos() {
+        let provinciaID = document.getElementById('forma').value;
+        let distritoSelect = document.getElementById('bancos');
+        
+        // Limpa o select de distritos
+        distritoSelect.innerHTML = '<option value="">Carregando...</option>';
+
+        if (provinciaID) {
+            fetch(`/api/bancos/carteiras/${provinciaID}`)
+                .then(response => response.json())
+                .then(data => {
+                    distritoSelect.innerHTML = '<option value="">Selecione o Banco Carteira</option>';
+                    data.forEach(distrito => {
+                        distritoSelect.innerHTML += `<option value="${distrito.id}">${distrito.nome}</option>`;
+                    });
+                })
+                .catch(error => {
+                    distritoSelect.innerHTML = '<option value="">Erro ao carregar</option>';
+                    console.error('Erro:', error);
+                });
+        } else {
+            distritoSelect.innerHTML = '<option value="">Selecione a Forma de pagamento primeiro</option>';
+        }
+    }
+
+</script>
+
+
+@endpush
+
