@@ -37,22 +37,42 @@ class PagamentoController extends Controller
         
         if (auth()->user()->hasRole('Admin')) {
             // usuário é admin
-            $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->get();
+            $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->where('estado_leitura',1)->get();
         }
 
         if (auth()->user()->hasRole('SuperAdmin')) {
             // usuário é admin
-            $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->get();
+            $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->where('estado_leitura',1)->get();
         }
 
         if (auth()->user()->hasRole('Leitura')) {
             // usuário é Leitura
-            $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->where('furo_id',$userActual->furo_id)->get();
+            $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->where('estado_leitura',1)->where('furo_id',$userActual->furo_id)->get();
         }
         
         return view('pagamento.index',  [
              'leituras' => $leituras,
         ]);
+    }
+
+    public function reciboLeitura($contratoID)
+    {
+        $userActual = Auth::user();
+
+        $leitura = Leitura::where('empresa_id',$userActual->empresa_id)->where('id',$contratoID)->first();
+        $empresa = Empresa::where('id',$userActual->empresa_id)->first();
+        $pagamentos = Pagamento::where('leitura_id',$leitura->id)->get();
+
+        $pdf = \PDF::loadView('pagamento.recibo', [
+             'leitura' => $leitura,
+             'empresa' => $empresa,
+             'pagamentos' => $pagamentos,
+        ])->setPaper('a4', 'Portrait');
+
+        $fikeName = 'Recibo - '.$leitura->numero_factura;
+
+        return $pdf->stream($fikeName.'.pdf');
+
     }
 
     public function show($contratoID)
@@ -69,12 +89,19 @@ class PagamentoController extends Controller
                 ->orderByDesc('id')             //Pegar O ultimo valor
                 ->value('valor_a_pagar') ?? 0;  //Pagar o valor
 
+        $totalAPagar = ($leitura->valor_a_pagar + $leitura->furoClienteContrato->divida) + (($leitura->valor_a_pagar + $leitura->furoClienteContrato->divida) * $leitura->multa / 100); 
+        $saldoDisponivel = $leitura->furoClienteContrato->saldo;
+        
+        // saldo que pode usar = o menor entre saldo e total a pagar
+        $saldoAUsar = min($saldoDisponivel, $totalAPagar);
+
         return view('pagamento.pagamento',  [
              'leitura' => $leitura,
              'valor' => $valor,
              'cliente' => $cliente,
              'formasPagamentos' => $formasPagamentos,
              'bancos' => $bancos,
+             'saldoAUsar' => $saldoAUsar,
         ]);
     }
 
@@ -126,7 +153,9 @@ class PagamentoController extends Controller
             $cliente = FuroClienteContrato::where('empresa_id',$userActual->empresa_id)->where('contador',$leitura->furoClienteContrato->contador)->first();
 
             $valorPago = $request->input('valor_pago');
+            $saldoAUsar = $request->input('saldo');
             $valorTotal = $request->input('valor_total');
+            $multa = $request->input('multa');
             $consumo = $request->input('consumo');
             $novaDivida = $request->input('nova_divida');
             $novaDivida = substr($novaDivida, 0, -3);
@@ -146,6 +175,10 @@ class PagamentoController extends Controller
             $leitura->estado_pagamento = $estado;
             $leitura->valor_pago = $valorPago;
             $leitura->saldo = $consumo - $valorPago;
+            $leitura->saldo_usado = $saldoAUsar;
+            $leitura->multa = $multa;
+            $leitura->data_pagamento = $data;
+            $leitura->divida_anterior = $novaDivida;
             $leitura->save();
 
             $pagamento = new Pagamento();
@@ -160,6 +193,10 @@ class PagamentoController extends Controller
             $pagamento->descricao = $request->input('descricao');
             $pagamento->tipo_banco = $request->input('banco_carteira');
 
+            if($saldoAUsar>0 && $request->input('forma_pagamento')<4){
+                    return response()->json(['status' => 0, 'message' => 'O Metodo de pagamento deve ser outro']);
+            }
+
             if($pagamento->save()){
 
                 $recibo = new Recibo();
@@ -170,6 +207,7 @@ class PagamentoController extends Controller
                 $recibo->tipo_pagamento_id = 1;
                 $recibo->factura_id = $fatura->id;
                 $recibo->valor = $valorPago;
+                $recibo->leitura_id = $leitura->id;
                 $recibo->pagamento_id = $pagamento->id;
 
                 $valorFormatado     = number_format($valorPago, 2, ',', '.');
@@ -238,6 +276,7 @@ class PagamentoController extends Controller
             $valorPago = $request->input('valor_pago');
             $valorTotal = $request->input('valor_total');
             $novaDivida = $request->input('nova_divida');
+            $multa = $request->input('multa');
             $novaDivida = substr($novaDivida, 0, -3);
             $estado = null;
 
@@ -255,6 +294,7 @@ class PagamentoController extends Controller
             }
 
             $leitura->estado_pagamento = $estado;
+            $leitura->multa = $multa;
             $leitura->valor_pago = $leitura->valor_pago + $valorPago;
             $leitura->saldo = $novaDivida;
             $leitura->save();

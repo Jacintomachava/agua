@@ -6,6 +6,7 @@ use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use App\Jobs\LeituraJob;
 use App\Jobs\EnviarSMS;
+use App\Jobs\EnviarMensagemPeriodicaJob;
 use App\Jobs\MensalidadeSistemaJob;
 
 class Kernel extends ConsoleKernel
@@ -21,6 +22,7 @@ class Kernel extends ConsoleKernel
         $schedule->job(new LeituraJob)->everyMinute(); //->monthlyOn(15, '00:00');
         //$schedule->job(new EnviarSMS)->everyMinute(); //->monthlyOn(15, '00:00');
         $schedule->job(new MensalidadeSistemaJob)->everyMinute(); //->monthlyOn(15, '00:00');
+        $schedule->job(new EnviarMensagemPeriodicaJob)->everyMinute(); //->monthlyOn(15, '00:00');
     }
 
     /**

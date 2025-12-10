@@ -121,6 +121,15 @@
                       </div>
 
                       <div class="col-4">
+                        <label class="form-label">Nacionalidade</label>
+                        <select class="form-select"  name="nacionalidade"  >
+                                @foreach($nacionalidades as $nacionalidade)
+                                  <option value="{{$nacionalidade->id}}">{{$nacionalidade->nome}}</option>
+                                @endforeach
+                        </select>
+                      </div>
+
+                      <div class="col-4">
                         <label class="form-label" for="passwordwizard">Tipo Documento<span class="txt-danger">*</span></label>
                           <select class="form-select"  name="tipo_documento">
                                 <option value="">Seleciona o tipo de Documento</option>
@@ -137,7 +146,22 @@
                       </div>
 
                       <div class="col-4">
-                        <label class="form-label" for="confirmpasswordwizard">Telefone<span class="txt-danger">*</span></label>
+                        <label class="form-label">Local Emissao Documento</label>
+                        <select class="form-select"  name="local_emissao"  >
+                                <option value="">Selecione a Provincia</option>
+                                @foreach($provincias as $provincia)
+                                  <option value="{{$provincia->id}}">{{$provincia->nome}}</option>
+                                @endforeach
+                        </select>
+                      </div>
+
+                      <div class="col-4">
+                        <label class="form-label" for="confirmpasswordwizard">Data Emissao Documento</label>
+                        <input class="form-control"  type="date" name="data_emissao" placeholder="Data de Emissao" >
+                      </div>
+
+                      <div class="col-4">
+                        <label class="form-label" for="confirmpasswordwizard">Telefone Cliente<span class="txt-danger">*</span></label>
                         <input class="form-control"  type="text" name="telefone" placeholder="Telefone" >
                       </div>
 
@@ -289,6 +313,11 @@
                       <div class="col-4">
                         <label class="form-label" for="confirmpasswordwizard">Valor<span class="txt-danger">*</span></label>
                         <input class="form-control"  type="text" name="valor_pago" placeholder="Valor" >
+                      </div>
+
+                      <div class="col-4">
+                        <label class="form-label" for="confirmpasswordwizard">Divida<span class="txt-danger">*</span></label>
+                        <input class="form-control"  type="text" name="divida" value="0" placeholder="Divida" >
                       </div>
 
                       

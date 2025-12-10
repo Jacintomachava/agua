@@ -15,7 +15,7 @@
                 <div class="col-7">
                     <h2>Enviar Mensagem </h2>
                     <p class="f-m-light mt-1">
-                        Faça o envio de SMS  
+                        Faça o resgisto de SMS periodico  
                     </p>
                 </div> 
                 <div class="col-5">
@@ -35,27 +35,21 @@
                   <form1 class="stepper-one row g-3 needs-validation custom-input" >
 
 
-                    <div class="col-7">
-                      <label class="form-label" for="passwordwizard">Destinatarios<span class="txt-danger">*</span></label>
-                        <select class="form-select"  name="destinatario">
-                              <option value="">Seleciona o Destinatarios</option>
-                              <option value="clientes">Clientes</option>
-                              <option value="utilizadores">Utilizadores</option>
-                        </select>
-                    </div>
-                    <div class="col-2"></div>
-                    <div class="col-3"></div>
+                      <div class="col-7">
+                        <label class="form-label" for="passwordwizard">Destinatarios<span class="txt-danger">*</span></label>
+                          <select class="form-select"  name="destinatario">
+                                <option value="clientes">Clientes</option>
+                          </select>
+                      </div>
+                      <div class="col-2"></div>
+                      <div class="col-3"></div>
 
-                    <div class="col-7">
-                      <label class="form-label" for="passwordwizard">Seleciona o Furo<span class="txt-danger">*</span></label>
-                        <select class="form-select"  name="furo">
-                          @foreach($furos as $furo)
-                              <option value="{{$furo->id}}">{{$furo->nome}}</option>
-                          @endforeach
-                        </select>
-                    </div>
-                    <div class="col-2"></div>
-                    <div class="col-3"><h1>Resumo:</h1></div>
+                      <div class="col-7">
+                        <label class="form-label" for="passwordwizard">Titulo<span class="txt-danger">*</span></label>
+                        <input class="form-control"  type="text" name="titulo"  placeholder="Ex: Mensagem de pre-aviso" >
+                      </div>
+                      <div class="col-2"></div>
+                      <div class="col-3"><h1>Resumo:</h1></div>
 
                     <div class="col-7">
                         <label class="form-label" for="mensagem">Mensagem <span class="txt-danger">*</span></label>
@@ -73,11 +67,9 @@
                       </div>
                     </div>
 
-                    
-
                     <div class="col-7">
-                      <label class="form-label" for="passwordwizard">Data Envio<span class="txt-danger">*</span></label>
-                      <input class="form-control"  type="date" name="data_envio" value="{{ date('Y-m-d') }}" min="{{ date('Y-m-d') }}"  >
+                      <label class="form-label" for="passwordwizard">Dia da Repeticao<span class="txt-danger">*</span></label>
+                      <input class="form-control"  type="number" name="dia"  placeholder="Dia que vai repetir o envio da mensagem" >
                     </div>
                     <div class="col-2"></div>
                     <div class="col-3"></div>
@@ -155,26 +147,35 @@ $(document).ready(function() {
             },
             destinatario: {
                 required: true
+            },
+            titulo: {
+                required: true
+            },
+            dia: {
+                required: true,
+                number: true,
+                min: 1,
+                max: 31
             }
      },
         submitHandler: function(form) {
             $.ajax({
                 type: "POST",
-                url: "{{route('mensagem.storeSMS')}}",
+                url: "{{route('SMSperidica.store')}}",
                 data: $(form).serialize(), // Corrigido para usar `form` em vez de `this`
 
                 beforeSend: function () {
                     // Desabilita o botão de envio e altera o ícone para mostrar que está autenticando
                     $('#botao_salvar').attr('disabled', true);
                     $('#icon_enviar').removeClass('ri-arrow-right-line').addClass('spinner-border ri-loader-2-line');
-                    $('#botao_texto').text('Regsitando Furo...');
+                    $('#botao_texto').text('Regitando Mensagem...');
                 },
 
                 success: function(response) {
                     // Habilita o botão e retorna o ícone original
                     $('#botao_salvar').attr('disabled', false);
                     $('#icon_enviar').removeClass('spinner-border ri-loader-2-line').addClass('ri-arrow-right-line');
-                    $('#botao_texto').text('Registar Furo');
+                    $('#botao_texto').text('Registar Mensagem');
 
                     // Redireciona ou exibe uma mensagem de erro com base na resposta
                     if(response.status == 1) {
@@ -204,7 +205,7 @@ $(document).ready(function() {
                     // Habilita o botão e retorna o ícone original em caso de erro
                     $('#botao_salvar').attr('disabled', false);
                     $('#icon_enviar').removeClass('spinner-border ri-loader-2-line').addClass('ri-arrow-right-line');
-                    $('#botao_texto').text('Registar Furo');
+                    $('#botao_texto').text('Registar Mensagem');
 
                     // Exibe a mensagem de erro
                     Swal.fire({

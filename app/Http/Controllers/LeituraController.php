@@ -31,21 +31,22 @@ class LeituraController extends Controller
 
         $leituras = null;
         $furos = null;
+        $mesAtual = Carbon::now()->month;
         $provincias = Provincia::all();
         
         if (auth()->user()->hasRole('Admin')) {
             // usuário é admin
-            $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->get();
+            $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->where('mes_id',$mesAtual-1)->get();
         }
 
         if (auth()->user()->hasRole('SuperAdmin')) {
             // usuário é admin
-            $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->get();
+            $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->where('mes_id',$mesAtual-1)->get();
         }
 
         if (auth()->user()->hasRole('Leitura')) {
             // usuário é Leitura
-            $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->where('furo_id',$userActual->furo_id)->get();
+            $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->where('furo_id',$userActual->furo_id)->where('mes_id',$mesAtual-1)->get();
         }
 
         
@@ -63,6 +64,62 @@ class LeituraController extends Controller
         return view('leitura.geolocalizacao',  [
              'cliente' => $cliente,
         ]);
+    }
+
+    
+
+    public function todasLeituras()
+    {
+        $userActual = Auth::user();
+        $mesAtual = Carbon::now()->month;
+        $leituras = null;
+
+        if (auth()->user()->hasRole('Admin')) {
+            // usuário é admin
+            $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->get();
+        }
+
+        if (auth()->user()->hasRole('SuperAdmin')) {
+            // usuário é admin
+            $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->get();
+        }
+
+        if (auth()->user()->hasRole('Leitura')) {
+            // usuário é Leitura
+            $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->where('furo_id',$userActual->furo_id)->get();
+        }
+
+        return view('leitura.index',  [
+             'leituras' => $leituras,
+        ]);
+
+    }
+
+    public function pendentes()
+    {
+        $userActual = Auth::user();
+        $mesAtual = Carbon::now()->month;
+        $leituras = null;
+
+        if (auth()->user()->hasRole('Admin')) {
+            // usuário é admin
+            $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->where('estado_leitura',0)->where('mes_id',$mesAtual-1)->get();
+        }
+
+        if (auth()->user()->hasRole('SuperAdmin')) {
+            // usuário é admin
+            $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->where('estado_leitura',0)->where('mes_id',$mesAtual-1)->get();
+        }
+
+        if (auth()->user()->hasRole('Leitura')) {
+            // usuário é Leitura
+            $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->where('estado_leitura',0)->where('furo_id',$userActual->furo_id)->where('mes_id',$mesAtual-1)->get();
+        }
+
+        return view('leitura.index',  [
+             'leituras' => $leituras,
+        ]);
+
     }
 
     public function fatura($leituraID)
@@ -88,6 +145,58 @@ class LeituraController extends Controller
 
     }
 
+    public function facturaLeitura($codigo)
+    {
+        $userActual = Auth::user();
+
+        $empresa = Empresa::where('id',$userActual->empresa_id)->first();
+
+        $leitura = Leitura::where('empresa_id',$userActual->empresa_id)->where('estado_leitura',1)->where('id',$codigo)->first();
+
+        $pdf = \PDF::loadView('leitura.factura1', [
+             'leitura' => $leitura,
+             'empresa' => $empresa,
+        ])->setPaper('a4', 'Portrait');
+
+        $fikeName = 'Todas Facturas - '.$empresa->nome;
+
+        return $pdf->stream($fikeName.'.pdf');
+
+    }
+
+    public function facturasTodos()
+    {
+        $userActual = Auth::user();
+        $mesAtual = Carbon::now()->month;
+        $leituras = null;
+
+        $empresa = Empresa::where('id',$userActual->empresa_id)->first();
+
+        if (auth()->user()->hasRole('Admin')) {
+            // usuário é admin
+            $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->where('estado_leitura',1)->where('mes_id',$mesAtual-1)->get();
+        }
+
+        if (auth()->user()->hasRole('SuperAdmin')) {
+            // usuário é admin
+            $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->where('estado_leitura',1)->where('mes_id',$mesAtual-1)->get();
+        }
+
+        if (auth()->user()->hasRole('Leitura')) {
+            // usuário é Leitura
+            $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->where('estado_leitura',1)->where('furo_id',$userActual->furo_id)->where('mes_id',$mesAtual-1)->get();
+        }
+
+        $pdf = \PDF::loadView('leitura.facturasTodos', [
+             'leituras' => $leituras,
+             'empresa' => $empresa,
+        ])->setPaper('a4', 'Portrait');
+
+        $fikeName = 'Todas Facturas - '.$empresa->nome;
+
+        return $pdf->stream($fikeName.'.pdf');
+    }
+
     public function localizarCasa($contratoID)
     {
         $userActual = Auth::user();
@@ -103,9 +212,11 @@ class LeituraController extends Controller
     public function edit($contratoID)
     {
         $userActual = Auth::user();
+        $mesAtual = Carbon::now()->month;
 
         $leitura = Leitura::where('empresa_id',$userActual->empresa_id)->where('id',$contratoID)->first();
         $ultimaLeitura = Leitura::where('furo_cliente_contrato_id', $leitura->furo_cliente_contrato_id)
+                ->where('mes_id','<>',$mesAtual)
                 ->orderByDesc('id')             //Pegar O ultimo valor
                 ->value('valor_leitura') ?? 0;  //Pagar o valor
 
@@ -143,6 +254,7 @@ class LeituraController extends Controller
             $leitura->estado_leitura = true;
             $leitura->leitura_feita_por = $userActual->id;
             $leitura->numero_factura = $numeroFatura;
+            $leitura->prazo_pagamento = Carbon::now()->setDay($furoClienteContrato->data_multa);
 
             
             if($consumo < $consumoMinimo){
@@ -243,6 +355,27 @@ class LeituraController extends Controller
                 'message' => $e->getMessage(),
             ]);
         }
+
+    }
+
+    //Extracto de pagamentos
+    public function extracto($codigo)
+    {
+        $userActual = Auth::user();
+
+        $cliente = FuroClienteContrato::where('empresa_id',$userActual->empresa_id)->where('codigo',$codigo)->first();
+        $leituras = Leitura::where('furo_cliente_contrato_id', $cliente->id)->where('estado_leitura',1)->get();
+        $empresa = Empresa::where('id',$userActual->empresa_id)->first();
+
+        $pdf = \PDF::loadView('pagamento.pdfExtracto', [
+             'cliente' => $cliente,
+             'leituras' => $leituras,
+             'empresa' => $empresa,
+        ])->setPaper('a4', 'Portrait');
+
+        $fikeName = 'Extracto - '.$cliente->cliente->nome;
+
+        return $pdf->stream($fikeName.'.pdf');
 
     }
 

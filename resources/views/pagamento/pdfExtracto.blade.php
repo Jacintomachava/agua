@@ -4,13 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lista de Cliente</title>
+    <title>Extracto Leitura</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
-            font-size: 12pt;
+            font-size: 9pt;
         }
         .header, .footer {
             text-align: center;
@@ -112,8 +112,8 @@
     <img alt="{{$empresa->nome}}" 
         src="{{ public_path('/logotipo/'.$empresa->logotipo) }}" 
         width="100" height="90"><br>
-    <h6>{{ strtoupper($empresa->nome) }}</h6>
-    <h6>LISTA DE CLIENTE</h6>
+    <h5>{{ strtoupper($empresa->nome) }}</h5>
+    <h5>Extracto de cliente </h5>
 </div>
 <div class="content">
 
@@ -121,56 +121,80 @@
         use Illuminate\Support\Str;
     @endphp
 
-    @php $orderNumber = 1; @endphp
+    <p style="text-align: right;">
+        Multa:<b> {{$cliente->contrato->multa}}%</b><br>
+        Prazo:<b> Dia {{$cliente->contrato->prazo_pagamento}}</b><br>
+        Taxa: <b>{{Str::upper($cliente->contrato->valor)}}MT/m&sup3;</b>
+    </p>
 
+    <b>DADOS CLIENTE</b> 
+    <hr>
+     Cliente: <b>{{ Str::upper($cliente->cliente->nome) }} </b> 
+     <br>
+     Bairro: <b>{{$cliente->bairro}}</b>  <span style="margin-left: 10%">Quarteirao: </span><b>{{$cliente->cliente->quarteirao}} </b>
+     <span style="margin-left: 10%">Casa: </span><b>{{$cliente->cliente->casa}} </b><br>
+     <span>Contracto: </span><b>{{$cliente->contrato->valor_contrato}} </b>
+     <span style="margin-left: 10%">valor Pago: </span><b>{{$cliente->valor_pago}} </b>
+     <span style="margin-left: 10%">Divida: </span><b>{{$cliente->saldo}} </b>
+    <hr> 
     <table class="table table-bordered" style="font-size: 7pt; ">
         <tr style="background: #0a0a0cff; color: #e8ecf3ff">
-            <th>#</th>
-            <th>Codigo</th>
-            <th>Nome</th>
-            <th>Telefone</th>
-            <th>Bairro</th>
-            <th>Q.</th>
-            <th>C.</th>
-            <th>Geo.</th>
+            <th>Mês</th>
             <th>Leitura</th>
-            <th>Saldo</th>
+            <th>Consumo</th>
+            <th>Valor</th>
             <th>Divida</th>
-            <th>Act/Ina.</th>
-            <th>Data</th>
+            <th>Multa</th>
+            <th>Saldo</th>
+            <th>Total</th>
+            <th>Prazo</th>
+            <th>Estado</th>
+            <th>valor Pag.</th>
+            <th>Data Pag.</th>
         </tr>
-     @foreach($clientes as $cliente)
-        <tr>
-            <td>{{ $orderNumber }}</td>
-            <td>{{$cliente->contador}}</td>
-            <td>{{$cliente->cliente->nome}}</td>
-            <td>{{$cliente->telefone_notificar }}</td>
-            <td>{{$cliente->bairro}}</td>
-            <td>{{$cliente->cliente->quarteirao}}</td>
-            <td>{{$cliente->cliente->casa}}</td>
+     @foreach($leituras as $leitura)
+        <tr style="text-align: center">
+            <td>{{$leitura->mes->nome}}-{{$leitura->ano->ano}} </td>
+            <td>{{$leitura->valor_leitura}}m&sup3;</td>
+            <td>{{$leitura->consumo}}m&sup3;</td>
+            <td>{{$leitura->valor_a_pagar}}</td>
+            <td>{{$leitura->saldo}}</td>
+            <td>{{$leitura->saldo_usado}}</td>
+            <td>{{$leitura->multa}}</td>
+            <td>{{$leitura->valor_a_pagar}}</td>
+            <td>{{ \Carbon\Carbon::parse($cliente->prazo_pagamento)->format('d-M-Y') }}</td>
             <td>
-                @if($cliente->localizacao_activa==1)
-                    <span style="color: #07b664ff">Activa</span>
+                @if($leitura->estado_pagamento=='Pago')
+                    <span style="color: #07b664ff">Pago</span>
+                @elseif($leitura->estado_pagamento=='Parcial')    
+                    <span style="color: #b7c40cff">Parcial</span>
                 @else
-                    <span style="color: #dd1313ff">Pendente</span>
+                    <span style="color: #dd1313ff">Pendente </span>
                 @endif
             </td>
-            <td>{{$cliente->ultima_leitura}}</td>
-            <td>{{ number_format($cliente->saldo, 2, ',', '.') }}</td>
-            <td>{{ number_format($cliente->divida, 2, ',', '.') }}</td>
             <td>
-                @if($cliente->ligacao_activa==1)
-                    <span style="color: #07b664ff">Activa</span>
+                
+                @if($leitura->estado_pagamento=='Pendente')
+                    ...
                 @else
-                    <span style="color: #dd1313ff">Cortado</span>
+                   {{$leitura->valor_pago}}
                 @endif
             </td>
-            <td>{{ \Carbon\Carbon::parse($cliente->created_at)->format('d-M-Y') }}</td>
-
-            @php $orderNumber++;  @endphp
+            <td>
+                @if($leitura->estado_pagamento=='Pendente')
+                    ...
+                @else
+                   {{ \Carbon\Carbon::parse($cliente->data_pagamento)->format('d-M-Y') }}
+                @endif
+            </td>
         </tr>
       @endforeach
     </table>
+
+    <p style="text-align: left; font-size: 8pt;">
+        Saldo Actual:<b> {{$cliente->saldo}}</b><br>
+        Divida Actual:<b> {{$cliente->divida}}</b><br>
+    </p>
 
 
     <br><br>

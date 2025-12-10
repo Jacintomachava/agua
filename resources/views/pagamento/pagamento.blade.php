@@ -46,11 +46,6 @@
                     </div>
 
                     <div class="col-3">
-                      <label class="form-label" for="passwordwizard">Bairro<span class="txt-danger">*</span></label>
-                      <input class="form-control"  type="text" name="bairro" value="{{$leitura->furoClienteContrato->bairro}}" readonly style="background-color: #f5f5f5; color: #555;">
-                    </div>
-
-                    <div class="col-3">
                       <label class="form-label" for="passwordwizard">Quarteirao<span class="txt-danger">*</span></label>
                       <input class="form-control"  type="text" name="quarteirao" value="{{$leitura->furoClienteContrato->quarteirao}}" readonly style="background-color: #f5f5f5; color: #555;" >
                     </div>
@@ -76,8 +71,13 @@
                     </div>
 
                     <div class="col-3">
+                      <label class="form-label" for="passwordwizard">Saldo<span class="txt-danger">*</span></label>
+                      <input class="form-control"  type="text" name="bairro" value="{{$saldoAUsar}}" readonly style="background-color: #f5f5f5; color: #555;">
+                    </div>
+
+                    <div class="col-3">
                       <label class="form-label" for="passwordwizard">Valor Total<span class="txt-danger">*</span></label>
-                      <input class="form-control"  type="text" name="valor_total" value="{{ number_format(($leitura->valor_a_pagar + $leitura->furoClienteContrato->divida) + (($leitura->valor_a_pagar + $leitura->furoClienteContrato->divida) * $leitura->multa / 100), 2,',','.') }}" readonly style="background-color: #f5f5f5; color: #555;">
+                      <input class="form-control"  type="text" name="valor_total" value="{{ $leitura->valor_a_pagar + $leitura->furoClienteContrato->divida-$saldoAUsar) + (($leitura->valor_a_pagar + $leitura->furoClienteContrato->divida) * $leitura->multa / 100}}" readonly style="background-color: #f5f5f5; color: #555;">
                     </div>
 
                     <div class="col-3">
@@ -88,6 +88,7 @@
                       <div class="col-3">
                          <label class="form-label" for="passwordwizard">Forma Pagamento<span class="txt-danger">*</span></label>
                            <select class="form-select"  name="forma_pagamento" id="forma" onchange="getBancos()" >
+                                <option value="">Selecione a Forma Pgamento</option>
                               @foreach($formasPagamentos as $formasPagamento)
                                 <option value="{{$formasPagamento->id}}">{{$formasPagamento->nome}}</option>
                               @endforeach
@@ -202,8 +203,21 @@ $(document).ready(function() {
         rules: {
             valor_pago: {
                 required: true,
-                max: {{ ($leitura->valor_a_pagar + $leitura->furoClienteContrato->divida) + (($leitura->valor_a_pagar + $leitura->furoClienteContrato->divida) * $leitura->multa / 100) }},
-                min: 100
+                min: 0
+            },
+            valor_total:{
+                required: true,
+                min: 0
+            },
+            forma_pagamento: {
+                required: true,
+            },
+            banco_carteira:{
+                 required: true,
+            },
+            multa:{
+                required: true,
+                min: 0
             }
        },
         submitHandler: function(form) {

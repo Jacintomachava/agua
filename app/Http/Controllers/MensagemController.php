@@ -15,6 +15,7 @@ use App\Models\Credencial;
 use App\Models\Empresa;
 use App\Models\FuroClienteContrato;
 use App\Models\SaldoSMS;
+use App\Models\MensagemPeriodica;
 use App\Services\SMSService;
 use App\Models\MensagemSessao;
 use Illuminate\Support\Facades\DB;
@@ -33,6 +34,7 @@ class MensagemController extends Controller
         $pacotes = CompraCredito::where('empresa_id',$userActual->empresa_id)->orderBy('updated_at', 'desc')->get();
         $saldo = SaldoSMS::where('empresa_id',$userActual->empresa_id)->first();
         $creditoSMSPendente = Mensagem::where('empresa_id',$userActual->empresa_id)->sum('credito');
+        $mensagensPeriodicas = MensagemPeriodica::where('empresa_id',$userActual->empresa_id)->get();
 
 
         // 🟢 Gráfico 1: Consumo de créditos por mês e canal (WhatsApp e SMS)
@@ -57,6 +59,7 @@ class MensagemController extends Controller
         // Retorna a view com os dados carregados
         return view('mensagem.index', [
             'mensagens' => $mensagens,
+            'mensagensPeriodicas' => $mensagensPeriodicas,
             'contatos' => $contatos,
             'pacotes' => $pacotes,
             'saldo' => $saldo,

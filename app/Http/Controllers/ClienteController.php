@@ -19,6 +19,7 @@ use App\Models\Furo;
 use App\Models\Empresa;
 use App\Models\Tubagem;
 use App\Models\Mensagem;
+use App\Models\Nacionalidade;
 use App\Models\Leitura;
 use Carbon\Carbon;
 use App\Services\SMSService;
@@ -34,6 +35,7 @@ class ClienteController extends Controller
         $clientes = null;
         $furos = null;
         $provincias = Provincia::all();
+        $nacionalidades = Nacionalidade::all();
 
         
         if (auth()->user()->hasRole('Admin')) {
@@ -59,6 +61,7 @@ class ClienteController extends Controller
              'clientes' => $clientes,
              'furos' => $furos,
              'provincias' => $provincias,
+             'nacionalidades' => $nacionalidades,
         ]);
     }
 
@@ -339,6 +342,7 @@ class ClienteController extends Controller
         $contratos = Contrato::where('empresa_id',$userActual->empresa_id)->get();
         $formasPagamentos = FormaPagamento::all();
         $bancos = BancoCarteira::all();
+        $nacionalidades = Nacionalidade::all();
 
 
         if (auth()->user()->hasRole('Admin')) {
@@ -367,6 +371,7 @@ class ClienteController extends Controller
              'contratos' => $contratos,
              'formasPagamentos' => $formasPagamentos,
              'bancos' => $bancos,
+             'nacionalidades' => $nacionalidades,
         ]);
     }
 
@@ -395,6 +400,7 @@ class ClienteController extends Controller
             $codigoCliente = $userActual->empresa->codigo.'.'.str_pad(count($totalCliente) + 1, 3, '0', STR_PAD_LEFT).'.'.$year_last_two_digits;
 
             $valorPago = $request->input('valor_pago');
+            $dividaAnterior = $request->input('divida');
             $valorAPagar = $contrato->valor_contrato;
             $estado = 'Pendente';
             $saldo =  $valorPago - $valorAPagar;
@@ -410,6 +416,9 @@ class ClienteController extends Controller
             $cliente->casa = $request->input('casa');
             $cliente->distrito_id = $request->input('distrito');
             $cliente->furo_id = $request->input('furo');
+            $cliente->nacionalidade_id = $request->input('nacionalidade');
+            $cliente->local_emissao_id = $request->input('local_emissao');
+            $cliente->data_emissao = $request->input('data_emissao');
 
             if ($cliente->save()) {
 
@@ -426,12 +435,16 @@ class ClienteController extends Controller
                     $estado = 'Parcial';
                 }
 
+                $dividaContracto = 0;
+
                 if($saldo > 0){
                     $furoClienteContrato->saldo = $saldo;
                 }
                 if($divida > 0){
-                    $furoClienteContrato->divida = $divida;
+                    $dividaContracto = $divida;  
                 }
+
+                $furoClienteContrato->divida = $dividaContracto+$dividaAnterior;
                 $furoClienteContrato->valor_pago = $valorPago;
                 $furoClienteContrato->valor_a_pagar = $valorAPagar;
                 $furoClienteContrato->multa = $request->input('multa');

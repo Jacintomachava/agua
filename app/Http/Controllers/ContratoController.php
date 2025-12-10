@@ -16,9 +16,11 @@ class ContratoController extends Controller
         $userActual = Auth::user();
 
         $contratos = Contrato::where('empresa_id',$userActual->empresa_id)->get();
+        $contrato = ContractoTemplete::where('empresa_id',$userActual->empresa_id)->first();
 
         return view('contratos.index',  [
              'contratos' => $contratos,
+             'contrato' => $contrato,
         ]);
     }
 
@@ -29,6 +31,17 @@ class ContratoController extends Controller
         $contrato = ContractoTemplete::where('empresa_id',$userActual->empresa_id)->first();
 
         return view('contratos.templete',  [
+            'contrato' => $contrato,
+        ]);
+    }
+
+    public function contratoTemplete()
+    {
+        $userActual = Auth::user();
+
+        $contrato = ContractoTemplete::where('empresa_id',$userActual->empresa_id)->first();
+
+        return view('contratos.editTemplete',  [
             'contrato' => $contrato,
         ]);
     }
@@ -74,6 +87,36 @@ class ContratoController extends Controller
         $fikeName = 'Contracto - '.$cliente->cliente->nome;
 
         return $pdf->stream($fikeName.'.pdf');
+
+    }
+
+    public function updateTemplete(Request $request)
+    {
+        DB::beginTransaction();
+
+        try {
+
+            $userActual = Auth::user();
+            // Cria Empresa e colocar Saldo de SMSCredito
+            $contrato = ContractoTemplete::where('empresa_id',$userActual->empresa_id)->first();
+            $contrato->empresa_id = $userActual->empresa_id;
+            $contrato->conteudo = $request->conteudo;
+
+            if ($contrato->save()) {
+
+                DB::commit();
+                return response()->json(['status' => 1, 'message' => 'Templete Contrato Registado Com Sucesso']);
+
+            }
+
+            } catch (\Exception $e) {
+            DB::rollBack();
+            //$errorMessage = DatabaseErrorHandler::handle($e);
+            return response()->json([
+                'status' => 0,
+                'message' => $e->getMessage(),
+            ]);
+        }
 
     }
 

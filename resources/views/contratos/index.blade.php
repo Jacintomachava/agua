@@ -20,9 +20,17 @@
                     <a href="{{route('contrato.create')}}">
                         <button class="btn btn-pill btn-primary btn-sm">Cadastrar Contrato</button>
                     </a>
-                    <a href="{{route('contrato.templete')}}">
-                        <button class="btn btn-pill btn-primary btn-sm">Cadastrar Templete</button>
-                    </a>
+                    @if($contrato!=null)
+                        <a href="{{route('contrato.editarTemplete')}}">
+                            <button class="btn btn-pill btn-primary btn-sm">Editar Templete</button>
+                        </a>
+                    @else
+                        <a href="{{route('contrato.templete')}}">
+                            <button class="btn btn-pill btn-primary btn-sm">Cadastrar Templete</button>
+                        </a>
+                    @endif
+                    
+                    
                 </div>
             </div>
         </div>

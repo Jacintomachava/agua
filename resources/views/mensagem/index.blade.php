@@ -27,14 +27,63 @@
             <li class="nav-item" role="presentation"><a class="nav-link nav-border txt-info tab-info" id="bottom-home-encarregado" data-bs-toggle="tab" href="#bottom-encarregado" role="tab" aria-controls="bottom-encarregado" aria-selected="false" tabindex="-1"><i class="icofont icofont-ui-call"> </i>Contactos</a></li>
             <li class="nav-item" role="presentation"><a class="nav-link nav-border txt-info tab-info" id="bottom-contact-tab" data-bs-toggle="tab" href="#bottom-contact" role="tab" aria-controls="bottom-contact" aria-selected="false" tabindex="-1"><i class="icofont icofont-pie-chart"></i>Uso Credito</a></li>
             <li class="nav-item" role="presentation"><a class="nav-link nav-border txt-info tab-info" id="bottom-home-tab" data-bs-toggle="tab" href="#bottom-home" role="tab" aria-controls="bottom-home" aria-selected="false" tabindex="-1"><i class="icofont icofont-coins"> </i>Credito Comprado</a></li>
-            <li class="nav-item" role="presentation"><a class="nav-link nav-border txt-info tab-info" id="bottom-home-tab-club" data-bs-toggle="tab" href="#bottom-register" role="tab" aria-controls="bottom-home" aria-selected="false" tabindex="-1"><i class="icofont icofont-money-bag"> </i>Lucro</a></li>
+            <li class="nav-item" role="presentation"><a class="nav-link nav-border txt-info tab-info" id="bottom-home-tab-club" data-bs-toggle="tab" href="#bottom-register" role="tab" aria-controls="bottom-home" aria-selected="false" tabindex="-1"><i class="icofont icofont-ui-message"> </i>Mensagem Periodica</a></li>
         </ul>
         <!-- Inscricoes -->
         <div class="tab-content" id="bottom-tabContent">
           <div class="tab-pane fade" id="bottom-register" role="tabpanel" aria-labelledby="bottom-home-tab">
               
-              <br>
-              <div id="grafico2" style="width: 600px; height: 400px;"></div>
+                <br>
+                <div class="col-sm-12"> 
+                  <div class="card title-line">
+                    <div class="card-block row">
+                      <div class="col-sm-12 col-lg-12 col-xl-12">
+                        <div class="table-responsive custom-scrollbar">
+                          <table class="table">
+                            <thead class="table-dark">
+                              <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Titulo</th>
+                                <th scope="col">Descricao</th>
+                                <th scope="col">Estado</th>
+                                <th scope="col">Data Envio</th>
+                                <th scope="col">Acção</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+
+                            @foreach($mensagensPeriodicas as $mensagensPeriodica)
+                                <tr>
+                                    <td>{{ $loop->iteration }}</td> <!-- Número sequencial -->
+                                    <td>{{ $mensagensPeriodica->titulo }}</td>
+                                    <td data-container="body" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="{{$mensagensPeriodica->descricao}}">
+                                      <i>{{ Str::limit($mensagensPeriodica->descricao, 10) }}</i>
+                                    </td>
+                                    <td>@if($mensagensPeriodica->estado) Activo @else Inactivo @endif</td>
+                                    <td>Dia {{$mensagensPeriodica->dia_do_mes}} de cada mes</td>
+                                    <td>
+                                      <form action="{{ route('mensagens.toggle', $mensagensPeriodica->id) }}" method="POST">
+                                          @csrf
+                                          @method('PUT')
+
+                                          @if($mensagensPeriodica->estado)
+                                              <button class="btn btn-danger btn-xs">Inativar</button>
+                                          @else
+                                              <button class="btn btn-success btn-xs">Activar</button>
+                                          @endif
+                                      </form>
+                                      
+                                    </td>
+                                </tr>
+                            @endforeach
+
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
           </div>  
           
@@ -145,8 +194,11 @@
               <a href="{{route('mensagem.create')}}">
                     <button class="btn btn-pill btn-primary btn-sm" >Enviar SMS</button>
               </a>
+              <a href="{{route('SMSperidica.create')}}">
+                    <button class="btn btn-pill btn-warning btn-sm" >Mensagem Periodicas</button>
+              </a>
               <a href="#">
-                    <button class="btn btn-pill btn-primary btn-sm" data-bs-toggle="modal" data-bs-target=".bd-example-modal-lg">Comprar Crédito</button>
+                    <button class="btn btn-pill btn-success btn-sm" data-bs-toggle="modal" data-bs-target=".bd-example-modal-lg">Comprar Crédito</button>
               </a>
               <br>
               <div class="col-sm-12"> 

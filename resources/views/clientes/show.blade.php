@@ -12,9 +12,6 @@
           <h5 class="text-white">{{$cliente->cliente->nome}}</h5>
           <div class="card-header-right dark-color-header">
               <h5 class="text-white">
-                @role('Admin')    
-
-                @endrole
                 {{$cliente->codigo}} 
               </h5>
           </div>
@@ -41,29 +38,29 @@
             </div>
 
             <div class="col-md-4"> 
-              <b>Nome de Aluno:</b><span style="padding-left: 3%"> {{$cliente->cliente->nome}}</span><br>
-              <b>Tipo Documento:</b><span style="padding-left: 3%"> {{$cliente->cliente->tipo_documento}}</span><br>
-              <b>Distrito:</b><span style="padding-left: 3%"> {{$cliente->distrito->nome}}</span><br>
-              <b>Bairro:</b><span style="padding-left: 3%"> {{$cliente->bairro}}</span><br>
-              <b>Telefone:</b><span style="padding-left: 3%"> {{$cliente->telefone_notificar}}</span><br>
-              <b>Saldo:</b><span style="padding-left: 3%"> {{$cliente->saldo}}</span><br>
+              <b>Nome de Aluno:</b><span style="padding-left: 1%"> {{$cliente->cliente->nome}}</span><br>
+              <b>Tipo Documento:</b><span style="padding-left: 1%"> {{$cliente->cliente->tipo_documento}}</span><br>
+              <b>Distrito:</b><span style="padding-left: 1%"> {{$cliente->distrito->nome}}</span><br>
+              <b>Bairro:</b><span style="padding-left: 1%"> {{$cliente->bairro}}</span><br>
+              <b>Telefone:</b><span style="padding-left: 1%"> {{$cliente->telefone_notificar}}</span><br>
+              <b>Saldo:</b><span style="padding-left: 1%"> {{number_format($cliente->saldo, 2, ',', '.') }} MT</span><br>
 
             </div>
 
             <div class="col-md-5"> 
-              <b>Data Registo:</b><span style="padding-left: 3%"> {{ \Carbon\Carbon::parse($cliente->created_at)->format('d-M-Y') }}</span><br>
-              <b>Numero de Documento:</b><span style="padding-left: 3%">{{$cliente->cliente->numero_documento}}</span><br>
-              <b>Quarteirao:</b><span style="padding-left: 3%">{{$cliente->cliente->quarteirao}}</span><br>
-              <b>Casa:</b><span style="padding-left: 3%">{{ $cliente->cliente->casa }}</span><br>
-              <b>Contracto:</b><span style="padding-left: 3%"> @if($cliente->ligacao_activa==1) Activa @else Cortada @endif</span><br>
-              <b>Divida:</b><span style="padding-left: 3%">{{ $cliente->divida }}</span><br>
+              <b>Data Registo:</b><span style="padding-left: 1%"> {{ \Carbon\Carbon::parse($cliente->created_at)->format('d-M-Y') }}</span><br>
+              <b>Numero de Documento:</b><span style="padding-left: 1%">{{$cliente->cliente->numero_documento}}</span><br>
+              <b>Quarteirao:</b><span style="padding-left: 1%">{{$cliente->cliente->quarteirao}}</span><br>
+              <b>Casa:</b><span style="padding-left: 1%">{{ $cliente->cliente->casa }}</span><br>
+              <b>Contracto:</b><span style="padding-left: 1%"> @if($cliente->ligacao_activa==1) Activa @else Cortada @endif</span><br>
+              <b>Divida:</b><span style="padding-left: 1%">{{number_format($cliente->divida, 2, ',', '.')  }} MT</span><br>
             </div>
 
         </div>
         </div>
         <div class="card-footer bg-dark">
           <h6 class="mb-0 txt-light"> 
-              <a class="btn btn-warning btn-xs activate-btn" href="{{route('cliente.edit',['codigo'=>$cliente->codigo])}}" >
+              <a class="btn btn-warning btn-xs activate-btn" target="_blank" href="{{route('extracto.cliente',['codigo'=>$cliente->codigo])}}" >
                   Imprimir Extracto
               </a>
               <a class="btn btn-info btn-xs activate-btn" target="_blank" href="{{route('contrato.cliente',['codigo'=>$cliente->codigo])}}" >
@@ -99,13 +96,13 @@
                         <center>@if($cliente->ligacao_activa==1) Activa @else Cortada @endif </center><br>
                     </div>
                     <div class="col-md-4"> 
-                      <b>Valor de Contracto: </b><span style="padding-left: 3%">{{$cliente->contrato->valor_contrato}} MT</span><br>
+                      <b>Valor de Contracto: </b><span style="padding-left: 3%">{{number_format($cliente->contrato->valor_contrato, 2, ',', '.') }} MT</span><br>
                       <b>Consumo Minimo:</b><span style="padding-left: 3%"> {{$cliente->contrato->consumo_minimo}}/m&sup3;</span><br>
                     </div>
 
                     <div class="col-md-5"> 
-                      <b>Valor Consumo: </b><span style="padding-left: 3%"> {{$cliente->contrato->valor}}MT/m&sup3; </span><br>
-                      <b>valor Consumo Minimo: </b><span style="padding-left: 3%"> {{$cliente->contrato->valor*$cliente->contrato->consumo_minimo}}MT </span><br>
+                      <b>Valor Consumo: </b><span style="padding-left: 3%"> {{number_format($cliente->contrato->valor, 2, ',', '.') }}MT/m&sup3; </span><br>
+                      <b>valor Consumo Minimo: </b><span style="padding-left: 3%"> {{number_format($cliente->contrato->valor*$cliente->contrato->consumo_minimo, 2, ',', '.') }}MT </span><br>
                    </div>
               </div>
 

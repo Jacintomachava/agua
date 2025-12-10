@@ -18,7 +18,9 @@ use App\Http\Controllers\FinancaController;
 use App\Http\Controllers\SubscricaoController;
 use App\Http\Controllers\PagamentoSubscricaoController;
 use App\Http\Controllers\CoWorkController;
+use App\Http\Controllers\MensagemPeriodicaController;
 use App\Http\Controllers\CredencialController;
+use App\Http\Controllers\TempleteSMSController;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,7 +39,7 @@ Auth::routes();
 // Autenticacao
 Route::post('/autenticar', [AuthUserController::class, 'logar'])->name('autenticacao');
 Route::get('/pre-registo', [AuthUserController::class, 'preRegisto'])->name('pre_registo');
-Route::get('/', [AuthUserController::class, 'login'])->name('welcame');
+//Route::get('/', [AuthUserController::class, 'login'])->name('welcame');
 Route::get('/', [AuthUserController::class, 'login'])->name('login');
 
 // Recuperar Senha
@@ -46,6 +48,17 @@ Route::post('/nova/senha', [UserController::class, 'recuperarSenhaTelefone'])->n
 Route::get('/repor/senha/{user_id}', [UserController::class, 'reporSenha'])->name('repor.senha');
 Route::get('/alterar/senha', [UserController::class, 'senhaIndex'])->name('senha.index');
 Route::post('/editar/senha', [UserController::class, 'senhaUpdate'])->name('senha.update');
+
+//Mensagens Periodicas
+Route::get('/mensagem/templete', [TempleteSMSController::class, 'create'])->name('SMSperidica.create');
+Route::post('/mensagem/templete', [TempleteSMSController::class, 'store'])->name('SMSperidica.store');
+Route::put('/mensagens-periodicas/{id}/toggle', [TempleteSMSController::class, 'toggleEstado'])
+    ->name('mensagens.toggle');
+
+Route::get('/leituras/pendentes', [LeituraController::class, 'pendentes'])->name('leituras.pendentes');
+Route::get('/todas/leituras', [LeituraController::class, 'todasLeituras'])->name('todas.leituras');
+Route::get('/facturas/todos', [LeituraController::class, 'facturasTodos'])->name('facturas.todos');
+Route::get('/facturas/leitura/{id}', [LeituraController::class, 'facturaLeitura'])->name('facturas.leitura');
 
 //Empresa Gravar
 Route::post('/registar/empresa', [EmpresaController::class, 'store'])->name('empresa.store');
@@ -75,6 +88,8 @@ Route::post('/contrato', [ContratoController::class, 'store'])->name('contrato.s
 Route::get('/templete/contrato', [ContratoController::class, 'templete'])->name('contrato.templete');
 Route::post('/contrato/templete', [ContratoController::class, 'registarTemplete'])->name('templete.contrato');
 Route::get('/contracto/cliente/{codigo}', [ContratoController::class, 'contratoCliente'])->name('contrato.cliente');
+Route::get('/editar/templete/', [ContratoController::class, 'contratoTemplete'])->name('contrato.editarTemplete');
+Route::post('/update/templete/', [ContratoController::class, 'updateTemplete'])->name('update.templete');
 
 //Cliente
 Route::get('/clientes', [ClienteController::class, 'index'])->name('cliente.index');
@@ -101,9 +116,12 @@ Route::get('/cliente/leitura/{contratoID}', [LeituraController::class, 'edit'])-
 Route::post('/fazer/leitura', [LeituraController::class, 'update'])->name('leitura.update');
 Route::get('/localizar/casa/{contratoID}', [LeituraController::class, 'localizarCasa'])->name('localizar.casa');
 Route::get('/leitura/fatura/{leituraID}', [LeituraController::class, 'fatura'])->name('leitura.fatura');
+//Extractos Pagamento Leitura
+Route::get('/extracto/cliente/{codigo}', [LeituraController::class, 'extracto'])->name('extracto.cliente');
 
 //Pagamento
 Route::get('/pagamento/leitura', [PagamentoController::class, 'index'])->name('pagamento.index');
+Route::get('/pagamento/leitura/{id}', [PagamentoController::class, 'reciboLeitura'])->name('recibo.leitura');
 Route::get('/imprimir/factura', [PagamentoController::class, 'fatura'])->name('fatura.index');
 Route::get('/pagamentos/leituras/{contratoID}', [PagamentoController::class, 'show'])->name('pagamento.show');
 Route::post('/pagamentos', [PagamentoController::class, 'store'])->name('pagamentos.store');
@@ -145,3 +163,4 @@ Route::post('/fazer/levantamento', [CoWorkController::class, 'fazerLevantamento'
 Route::get('/credencial/mpesa', [CredencialController::class, 'index'])->name('credencial.index');
 Route::get('/registar/credencial', [CredencialController::class, 'create'])->name('credencial.create');
 Route::post('/registar/credenciais', [CredencialController::class, 'store'])->name('credencial.store');
+

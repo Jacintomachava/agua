@@ -17,7 +17,15 @@
                     Lista de Clientes
                 </h2>
                 <div class="card-header-right-icon">
-
+                    <a href="{{route('leituras.pendentes')}}">
+                        <button class="btn btn-pill btn-warning btn-sm">Leituras Pendentes</button>
+                    </a>
+                    <a href="{{route('facturas.todos')}}" target="_blank">
+                        <button class="btn btn-pill btn-success btn-sm">Facturas de Todos</button>
+                    </a>
+                    <a href="{{route('todas.leituras')}}" >
+                        <button class="btn btn-pill btn-secondary btn-sm">Meses Anteriores</button>
+                    </a>
                 </div>
             </div>
         </div>
@@ -35,15 +43,16 @@
                     <thead>
                         <tr>
                             <th></th>
+                            <th>Codigo</th>
                             <th>Nome</th>
-                            <th>Bairro</th>
-                            <th>Q.</th>
-                            <th>C.</th>
                             <th>Mês</th>
                             <th>Leitura</th>
-                            <th>Ultima Leitura</th>
-                            <th>Leitura Actual</th>
+                            <th>V. Leitura</th>
+                            <th>Consumo</th>
                             <th>Valor</th>
+                            <th>Divida</th>
+                            <th>Multa</th>
+                            <th>Total</th>
                             <th>Acção</th>
                         </tr>
                     </thead>
@@ -52,11 +61,9 @@
                         @foreach($leituras as $leitura)
                             <tr>
                                 <td></td>
+                                <td>{{$leitura->furoClienteContrato->codigo }}</td>
                                 <td>{{$leitura->furoClienteContrato->cliente->nome }}</td>
-                                <td>{{$leitura->furoClienteContrato->bairro}}</td>
-                                <td>{{$leitura->furoClienteContrato->quarteirao}}</td>
-                                <td>{{$leitura->furoClienteContrato->casa}}</td>
-                                <td>{{$leitura->mes->nome}} - {{$leitura->ano->ano}}</td>
+                                <td>{{$leitura->mes->nome}} </td>
 
                                 <td>
                                     @if($leitura->estado_leitura==0)
@@ -71,19 +78,40 @@
                                 </td>
 
                                 <td>
-
-                                    {{$leitura->valor_leitura - $leitura->consumo}}
-                                    
-                                </td>
-
-                                <td>
                                     @if($leitura->estado_leitura==0)
                                         ...
                                     @else
-                                        {{$leitura->valor_leitura }}
+                                        {{$leitura->valor_leitura}}
                                     @endif
                                 </td>
-
+                                <td>
+                                    @if($leitura->estado_leitura==0)
+                                       ...
+                                    @else
+                                       {{$leitura->consumo}}m&sup3;
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($leitura->estado_leitura==0)
+                                       ...
+                                    @else
+                                       {{$leitura->valor_a_pagar}}
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($leitura->estado_leitura==0)
+                                       ...
+                                    @else
+                                       {{$leitura->divida_anterior}}
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($leitura->estado_leitura==0)
+                                       ...
+                                    @else
+                                       {{$leitura->multa}}
+                                    @endif
+                                </td>
                                 <td>
                                     @if($leitura->estado_leitura==0)
                                         ...
@@ -94,18 +122,19 @@
 
 
                                 <td>
-                                    <a class="btn btn-warning btn-xs activate-btn" href="{{route('leitura.edit',['contratoID'=>$leitura->id])}}" >
+                                    <a class="btn btn-warning btn-xs activate-btn" href="{{route('leitura.edit',['contratoID'=>$leitura->id])}}">
                                         Leitura
                                     </a>
-                                    <a class="btn btn-info btn-xs activate-btn" target="_blank" href="{{route('leitura.fatura',['leituraID'=>$leitura->id])}}" >
-                                        Fatura
-                                    </a>
-                                    <a class="btn btn-danger btn-xs activate-btn" href="{{route('localizar.casa',['contratoID'=>$leitura->furoClienteContrato->contador])}}"  >
-                                        Localizacao
-                                    </a>
-                                    <a class="btn btn-success btn-xs activate-btn" href="{{route('cliente.geolocalizacao',['contratoID'=>$leitura->furoClienteContrato->contador])}}"  >
-                                        Geolo.
-                                    </a>
+                                    
+                                    @if($leitura->estado_leitura==0)
+                                        <a class="btn btn-danger btn-xs activate-btn" href="{{route('localizar.casa',['contratoID'=>$leitura->furoClienteContrato->contador])}}">
+                                            Localizar
+                                        </a>
+                                    @else
+                                        <a class="btn btn-info btn-xs activate-btn" target="_blank" href="{{route('facturas.leitura',['id'=>$leitura->id])}}">
+                                            Fatura
+                                        </a>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach

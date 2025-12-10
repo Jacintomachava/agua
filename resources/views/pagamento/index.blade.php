@@ -17,7 +17,12 @@
                     Pagamento Leituras
                 </h2>
                 <div class="card-header-right-icon">
-                    ...
+                    <a href="{{route('leituras.pendentes')}}">
+                        <button class="btn btn-pill btn-warning btn-sm">Pag. Pendentes</button>
+                    </a>
+                    <a href="{{route('facturas.todos')}}" target="_blank">
+                        <button class="btn btn-pill btn-success btn-sm">Pag. Parcial</button>
+                    </a>
                 </div>
             </div>
         </div>
@@ -35,12 +40,13 @@
                     <thead>
                         <tr>
                             <th></th>
+                            <th>Nº</th>
                             <th>Nome</th>
                             <th>Mês</th>
-                            <th>Leitura</th>
                             <th>Valor</th>
                             <th>Divida</th>
                             <th>Multa</th>
+                            <th>Saldo</th>
                             <th>Total</th>
                             <th>Pagamento</th>
                             <th>Acção</th>
@@ -51,20 +57,10 @@
                         @foreach($leituras as $leitura)
                             <tr>
                                 <td></td>
+                                <td>{{$leitura->furoClienteContrato->contador }}</td>
                                 <td>{{$leitura->furoClienteContrato->cliente->nome }}</td>
                                 <td>{{$leitura->mes->nome}} - {{$leitura->ano->ano}}</td>
 
-                                <td>
-                                    @if($leitura->estado_leitura==0)
-                                        <a class="btn btn-danger btn-xs activate-btn"  >
-                                            Pendente
-                                        </a>
-                                    @else
-                                        <a class="btn btn-success btn-xs activate-btn" >
-                                            Feita
-                                        </a>
-                                    @endif
-                                </td>
                                 <td>
                                     
                                     @if($leitura->estado_leitura==0)
@@ -97,6 +93,8 @@
                                     @endif
                                 </td>
 
+                                <td>{{$leitura->furoClienteContrato->saldo}}</td>
+
                                 <td>
 
                                     @if($leitura->estado_leitura==0)
@@ -112,9 +110,9 @@
                                     @if($leitura->estado_leitura==0)
                                         ({{($leitura->valor_a_pagar+$leitura->furoClienteContrato->divida)+($leitura->valor_a_pagar+$leitura->furoClienteContrato->divida)*$leitura->multa/100}} MT)
                                     @elseif($leitura->estado_leitura==1 && $leitura->estado_pagamento=='Pendente')
-                                        ({{($leitura->valor_a_pagar+$leitura->furoClienteContrato->divida)+($leitura->valor_a_pagar+$leitura->furoClienteContrato->divida)*$leitura->multa/100}} MT)
+                                        
                                     @elseif($leitura->estado_leitura==1 && $leitura->estado_pagamento!='Pendente')
-                                        ({{$leitura->valor_pago}})
+                                        
                                     @endif
                                 </td>
 
@@ -123,19 +121,22 @@
                                     @if($leitura->estado_leitura==0)
                                         
                                     @elseif($leitura->estado_leitura==1 && $leitura->estado_pagamento=='Pendente')
-                                      <a class="btn btn-warning btn-xs activate-btn" href="{{route('pagamento.show',['contratoID'=>$leitura->id])}}" >
+                                      <a class="btn btn-danger btn-xs activate-btn" href="{{route('pagamento.show',['contratoID'=>$leitura->id])}}" >
                                         Pagar 
                                       </a>
                                     @elseif($leitura->estado_leitura==1 && $leitura->estado_pagamento=='Parcial')
-                                      <a class="btn btn-warning btn-xs activate-btn" href="{{route('pagamentos.showParcial',['contratoID'=>$leitura->id])}}" >
+                                      <a class="btn btn-danger btn-xs activate-btn" href="{{route('pagamentos.showParcial',['contratoID'=>$leitura->id])}}" >
                                         Pagar
                                       </a>
+                                      <a class="btn btn-success btn-xs activate-btn" href="{{route('fatura.index')}}" >
+                                         Recibo
+                                      </a>
                                     @elseif($leitura->estado_leitura==1 && $leitura->estado_pagamento=='Pago')
-                                        
-                                    @endif
-                                        <a class="btn btn-info btn-xs activate-btn" href="{{route('fatura.index')}}" >
-                                            Factura
+                                        <a class="btn btn-success btn-xs activate-btn" href="{{route('fatura.index')}}" >
+                                            Recibo
                                         </a>
+                                    @endif
+                                        
                                 </td>
                             </tr>
                         @endforeach
