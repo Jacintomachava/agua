@@ -19,6 +19,22 @@
   </div>
 </div>
 
+<div class="row">
+    <div class="col-md-8"></div>
+    <div class="col-md-4">
+      <a href="{{route('mensagem.create')}}">
+        <button class="btn btn-pill btn-primary btn-sm" >Enviar SMS</button>
+      </a>
+      <a href="{{route('SMSperidica.create')}}">
+            <button class="btn btn-pill btn-warning btn-sm" >Mensagem Periodicas</button>
+      </a>
+      <a href="#">
+            <button class="btn btn-pill btn-success btn-sm" data-bs-toggle="modal" data-bs-target=".bd-example-modal-lg">Comprar Crédito</button>
+      </a>
+    </div>
+</div>
+
+
 <div class="col-xxl-12" > 
     <div class="card title-line">
         <div class="card-body"> 
@@ -191,16 +207,6 @@
              <!-- Matriculas -->
             <div class="tab-pane fade show active" id="bottom-inbox" role="tabpanel" aria-labelledby="bottom-inbox-tab">
 
-              <a href="{{route('mensagem.create')}}">
-                    <button class="btn btn-pill btn-primary btn-sm" >Enviar SMS</button>
-              </a>
-              <a href="{{route('SMSperidica.create')}}">
-                    <button class="btn btn-pill btn-warning btn-sm" >Mensagem Periodicas</button>
-              </a>
-              <a href="#">
-                    <button class="btn btn-pill btn-success btn-sm" data-bs-toggle="modal" data-bs-target=".bd-example-modal-lg">Comprar Crédito</button>
-              </a>
-              <br>
               <div class="col-sm-12"> 
                 <div class="card title-line">
                   <div class="card-block row">

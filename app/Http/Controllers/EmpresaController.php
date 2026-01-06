@@ -29,6 +29,8 @@ class EmpresaController extends Controller
 
         try {
 
+            $todasEmpresas = Empresa::where('id','<>',1)->get();
+
             // Cria Empresa e colocar Saldo de SMSCredito
             $empresa = new Empresa();
             $empresa->nome = $request->input('nome_empresa');
@@ -36,6 +38,7 @@ class EmpresaController extends Controller
             $empresa->telefone = $request->input('telefone_user');
             $empresa->distrito_id = $request->input('distrito');
             $empresa->endereco = $request->input('bairro');
+            $empresa->codigo = str_pad(count($todasEmpresas) + 1, 2, '0', STR_PAD_LEFT);
 
             $anoActual = Carbon::now()->year;
             $ano = Ano::where('ano',$anoActual)->first();

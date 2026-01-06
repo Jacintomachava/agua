@@ -21,6 +21,7 @@ use App\Models\Tubagem;
 use App\Models\Mensagem;
 use App\Models\Nacionalidade;
 use App\Models\Leitura;
+use App\Models\User;
 use Carbon\Carbon;
 use App\Services\SMSService;
 use Illuminate\Support\Facades\DB;
@@ -394,10 +395,12 @@ class ClienteController extends Controller
             $totalFatura = Fatura::where('empresa_id',$userActual->empresa_id)->where('furo_id',$userActual->furo_id)->get();
             $totalRecibo = Recibo::where('empresa_id',$userActual->empresa_id)->where('furo_id',$userActual->furo_id)->get();
             $totalCliente = FuroClienteContrato::where('empresa_id',$userActual->empresa_id)->get();
+            $totalUser = User::where('empresa_id',$userActual->empresa_id)->get();
 
             $numeroFatura = str_pad(count($totalFatura) + 1, 7, '0', STR_PAD_LEFT).'-'.$anoActual;
             $numeroRecibo = str_pad(count($totalRecibo) + 1, 7, '0', STR_PAD_LEFT).'-'.$anoActual;
-            $codigoCliente = $userActual->empresa->codigo.'.'.str_pad(count($totalCliente) + 1, 3, '0', STR_PAD_LEFT).'.'.$year_last_two_digits;
+            $codigoCliente = $userActual->empresa->codigo.'.'.str_pad(count($totalCliente) + 1, 4, '0', STR_PAD_LEFT).'.'.$year_last_two_digits;
+            $codigoUser = $userActual->empresa->codigo.'.'.str_pad(count($totalUser) + 1, 5, '0', STR_PAD_LEFT).'.'.$year_last_two_digits;
 
             $valorPago = $request->input('valor_pago');
             $dividaAnterior = $request->input('divida');
@@ -509,7 +512,17 @@ class ClienteController extends Controller
                                 $recibo->valor = $valorAPagar;
                                 $recibo->pagamento_id = $pagamento->id;
 
-                                if($recibo->save()){
+                                $userCliente =new User();
+                                $userCliente->nome = $request->input('cliente');
+                                $userCliente->telefone = $request->input('telefone');
+                                $userCliente->codigo = $codigoCliente;
+                                $userCliente->tipo = 'Cliente';
+                                $userCliente->password = bcrypt($request->input('telefone'));
+                                $userCliente->distrito_id = $request->input('distrito');
+                                $userCliente->empresa_id = $userActual->empresa_id;
+                                $userCliente->furo_id = $request->input('furo');
+
+                                if($recibo->save() && $userCliente->save()){
 
                                     DB::commit();
                                     return response()->json(['status' => 1, 'message' => 'Contrato Registado Com Sucesso']);

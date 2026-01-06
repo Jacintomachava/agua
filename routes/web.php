@@ -21,6 +21,8 @@ use App\Http\Controllers\CoWorkController;
 use App\Http\Controllers\MensagemPeriodicaController;
 use App\Http\Controllers\CredencialController;
 use App\Http\Controllers\TempleteSMSController;
+use App\Http\Controllers\ClienteFuroController;
+use App\Http\Controllers\DashbordDonoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -48,6 +50,15 @@ Route::post('/nova/senha', [UserController::class, 'recuperarSenhaTelefone'])->n
 Route::get('/repor/senha/{user_id}', [UserController::class, 'reporSenha'])->name('repor.senha');
 Route::get('/alterar/senha', [UserController::class, 'senhaIndex'])->name('senha.index');
 Route::post('/editar/senha', [UserController::class, 'senhaUpdate'])->name('senha.update');
+
+//Cliente Furro
+Route::get('/cliente/furo', [ClienteFuroController::class, 'index'])->name('clienteFuro.index');
+
+//DashBord dos Donos
+Route::get('/dashbord', [DashbordDonoController::class, 'index'])->name('sasDashbord.index');
+Route::get('/listar/empresas', [DashbordDonoController::class, 'listarEmpresas'])->name('listarEmpresas.index');
+Route::get('/listar/coworks', [DashbordDonoController::class, 'listarCoworks'])->name('listarCoworks.index');
+Route::get('/listar/pagamentos', [DashbordDonoController::class, 'listarPagamentos'])->name('listarPagamentos.index');
 
 //Mensagens Periodicas
 Route::get('/mensagem/templete', [TempleteSMSController::class, 'create'])->name('SMSperidica.create');
@@ -126,7 +137,7 @@ Route::get('/imprimir/factura', [PagamentoController::class, 'fatura'])->name('f
 Route::get('/pagamentos/leituras/{contratoID}', [PagamentoController::class, 'show'])->name('pagamento.show');
 Route::post('/pagamentos', [PagamentoController::class, 'store'])->name('pagamentos.store');
 Route::post('/pagamento', [PagamentoController::class, 'storeParcial'])->name('pagamento.storeParcial');
-Route::get('/pagamento/leitura/{contratoID}', [PagamentoController::class, 'showParcial'])->name('pagamentos.showParcial');
+Route::get('/pagamento/leituras/{contratoID}', [PagamentoController::class, 'showParcial1'])->name('pagamentos.showParcial');
 //Pagamento de Subscricao
 Route::post('/pagamento/subscricao', [PagamentoSubscricaoController::class, 'store'])->name('pagamentoSubscricao.store');
 Route::get('/pagamento/mensalidade/{factura}', [PagamentoSubscricaoController::class, 'show'])->name('pagamentoSubscricao.show');

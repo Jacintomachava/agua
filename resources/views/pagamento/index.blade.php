@@ -128,11 +128,11 @@
                                       <a class="btn btn-danger btn-xs activate-btn" href="{{route('pagamentos.showParcial',['contratoID'=>$leitura->id])}}" >
                                         Pagar
                                       </a>
-                                      <a class="btn btn-success btn-xs activate-btn" href="{{route('fatura.index')}}" >
+                                      <a class="btn btn-success btn-xs activate-btn" target="_blank" href="{{route('recibo.leitura',['id'=>$leitura->id])}}" >
                                          Recibo
                                       </a>
                                     @elseif($leitura->estado_leitura==1 && $leitura->estado_pagamento=='Pago')
-                                        <a class="btn btn-success btn-xs activate-btn" href="{{route('fatura.index')}}" >
+                                        <a class="btn btn-success btn-xs activate-btn" target="_blank" href="{{route('recibo.leitura',['id'=>$leitura->id])}}" >
                                             Recibo
                                         </a>
                                     @endif

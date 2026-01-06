@@ -81,7 +81,7 @@
                     <div class="checkbox p-0">
                       <input id="checkbox1" type="checkbox">
                       <label class="text-muted" for="checkbox1">Lembrar Senha</label>
-                    </div><a class="link" href="{{route('recuperarSenha.index')}}">Recuperar Senha?</a>
+                    </div><a class="link" href="#">Recuperar Senha?</a>
                     <div class="text-end mt-3">
                         <button id="botao_salvar" type="submit" class="btn btn-success w-100">
                             <span id="botao_texto">{{__('Entrar')}}</span>
@@ -181,10 +181,14 @@
                             // Redireciona ou exibe uma mensagem de erro com base na resposta
                             if(response.status == 1) {
 
-                                if(response.empresa > 1){
+                                if(response.tipo =='Normal'){
                                   window.location.href = '/home';
-                                }else if(response.empresa== 1){
+                                }else if(response.tipo =='Dono'){
                                   window.location.href = '/dashbord';
+                                }else if(response.tipo =='CoWork'){
+                                  window.location.href = '/dashbord/cowork';
+                                }else if(response.tipo =='Cliente'){
+                                  window.location.href = '/cliente/furo';
                                 }
                                 
                             } else if(response.status == 0) {

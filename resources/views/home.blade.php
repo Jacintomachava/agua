@@ -150,11 +150,29 @@
 
 </div>
 
+@if(Auth::user()->empresa->subscricao==1)
 <div class="row">
    <div class="col-4">Geolocalizao de Clientes <img  src="{{ URL('/images/water-tap.png')}}" width="40" height="40" alt="looginpage"></div>
    <div class="col-4">Tubo Geral <b style="color: red; font-size: 20pt">________________</b></div>
    <div id="map" style="height: 600px; width: 100%;"></div>
 </div>
+@else
+<br><br>
+<center>
+<h1>
+    <span style="color:red; font-size: 25pt; ">
+        A Empresa <i style="color:blue; ">{{Auth::user()->empresa->nome}}</i> esta Suspenso por ter uma divida de 2 Meses da <i style="color:blue; ">Subscrição</i> paga para continuar a usar o Sistema. 
+        <a href="{{route('subscricao.index')}}" style="color:red; font-size: 25pt; ">
+           <br>Clique aqui para fazer pagamento</span> <br>
+        </a>
+        <a href="{{route('subscricao.index')}}">
+            <button class="btn btn-pill btn-primary btn-sm">Fazer Pagamento</button>
+        </a>
+</h1>
+</center>
+@endif
+
+
 
 @endsection
 

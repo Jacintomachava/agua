@@ -10,4 +10,9 @@ class Mensagem extends Model
     use HasFactory;
 
     protected $table = 'mensagem';
+
+    public function empresa()
+    {
+        return $this->belongsTo(Empresa::class, 'empresa_id');
+    }
 }

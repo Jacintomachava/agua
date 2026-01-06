@@ -132,7 +132,7 @@
                     <div class="checkbox p-0">
                       <input id="checkbox1" type="checkbox" name="termos">
                       <label class="text-muted" for="checkbox1">Aceitar Termos</label>
-                    </div><a class="link" href="#">Voltar</a>
+                    </div><a class="link" href="{{route('login')}}">Voltar</a>
                     <div class="text-end mt-3">
                         <button id="botao_salvar" type="submit" class="btn btn-success w-100">
                             <span id="botao_texto">{{__('Criar Conta')}}</span>

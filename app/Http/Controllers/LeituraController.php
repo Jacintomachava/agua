@@ -59,7 +59,7 @@ class LeituraController extends Controller
     {
         $userActual = Auth::user();
 
-        $cliente = FuroClienteContrato::where('empresa_id',$userActual->empresa_id)->where('contador',$contratoID)->first();
+        $cliente = FuroClienteContrato::where('empresa_id',$userActual->empresa_id)->where('codigo',$contratoID)->first();
 
         return view('leitura.geolocalizacao',  [
              'cliente' => $cliente,

@@ -87,6 +87,16 @@ class CoWorkController extends Controller
 
         if($userActual->tipo == 'Dono'){
 
+            $userActual = Auth::user();
+            
+            $divisoes = DivisaoLucroUser::where('user_id',$userActual->id)->get();
+            $saldo = User::where('id',$userActual->id)->first();
+
+             // Retorna a view com os dados carregados
+            return view('dono.divisao', [ 
+                'saldo' => $saldo->saldo,
+                'divisoes' => $divisoes,
+            ]);
 
         }
         

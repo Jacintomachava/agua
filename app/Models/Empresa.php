@@ -10,4 +10,9 @@ class Empresa extends Model
     use HasFactory;
 
     protected $table = 'empresas';
+
+    public function distrito()
+    {
+        return $this->belongsTo(Distrito::class, 'distrito_id');
+    }
 }

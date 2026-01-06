@@ -13,6 +13,7 @@ use App\Models\Fatura;
 use App\Models\Recibo;
 use App\Models\Ano;
 use App\Models\Mensagem;
+use App\Models\Empresa;
 use App\Models\Leitura;
 use App\Models\Mes;
 use App\Services\SMSService;
@@ -61,11 +62,13 @@ class PagamentoController extends Controller
 
         $leitura = Leitura::where('empresa_id',$userActual->empresa_id)->where('id',$contratoID)->first();
         $empresa = Empresa::where('id',$userActual->empresa_id)->first();
+        $cliente = FuroClienteContrato::where('empresa_id',$userActual->empresa_id)->where('id',$leitura->furoClienteContrato->id)->first();
         $pagamentos = Pagamento::where('leitura_id',$leitura->id)->get();
 
-        $pdf = \PDF::loadView('pagamento.recibo', [
+        $pdf = \PDF::loadView('pagamento.pdfRecibo', [
              'leitura' => $leitura,
              'empresa' => $empresa,
+             'cliente' => $cliente,
              'pagamentos' => $pagamentos,
         ])->setPaper('a4', 'Portrait');
 
@@ -105,7 +108,7 @@ class PagamentoController extends Controller
         ]);
     }
 
-    public function showParcial($contratoID)
+    public function showParcial1($contratoID)
     {
 
         $userActual = Auth::user();

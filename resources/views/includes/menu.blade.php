@@ -42,7 +42,7 @@
                 </a>
             </li>
 
-
+            @if(Auth::user()->empresa->subscricao==1 && Auth::user()->tipo=='Normal')
                 <li class="sidebar-list"><i class="fa fa-thumb-tack"></i>
                     <label class="badge badge-light-primary">1</label><a class="sidebar-link sidebar-title" href="{{route('dashbord.indexHome')}}">
                         <svg class="stroke-icon">
@@ -78,16 +78,6 @@
                         </svg><span class="lan-3">Credito</span></a>
                 </li>
 
-                <li class="sidebar-list"><i class="fa fa-thumb-tack"></i>     
-                    <label class="badge badge-light-primary">1</label><a class="sidebar-link sidebar-title" href="{{route('subscricao.index')}}">
-                        <span class="lan-3"><i style="font-size: 19pt; padding-right: 5pt;" class="icofont icofont-cart-alt"></i>Subscrição </span></a>
-                </li>
-
-                <li class="sidebar-list"><i class="fa fa-thumb-tack"></i>
-                    <label class="badge badge-light-primary">1</label><a class="sidebar-link sidebar-title" href="{{route('cowork.index')}}">
-                        <span class="lan-3"><i style="font-size: 19pt; padding-right: 5pt;" class="icofont icofont-pie-chart"></i>Comissões</span></a>
-                </li>
-
 
                 <li class="sidebar-list"><i class="fa fa-thumb-tack"></i>
                     <label class="badge badge-light-primary">7</label><a class="sidebar-link sidebar-title" href="#">
@@ -111,6 +101,47 @@
                         <li><a class="lan-2" href="{{route('nivel.index')}}">Roles</a></li>
                     </ul>
                 </li>
+                <li class="sidebar-list"><i class="fa fa-thumb-tack"></i>     
+                    <label class="badge badge-light-primary">1</label><a class="sidebar-link sidebar-title" href="{{route('subscricao.index')}}">
+                        <span class="lan-3"><i style="font-size: 19pt; padding-right: 5pt;" class="icofont icofont-cart-alt"></i>Subscrição </span></a>
+                </li>
+
+            @endif
+
+            @if(Auth::user()->tipo=='CoWork')
+
+                <li class="sidebar-list"><i class="fa fa-thumb-tack"></i>
+                    <label class="badge badge-light-primary">1</label><a class="sidebar-link sidebar-title" href="{{route('cowork.index')}}">
+                        <span class="lan-3"><i style="font-size: 19pt; padding-right: 5pt;" class="icofont icofont-pie-chart"></i>Comissões</span></a>
+                </li>
+            @endif
+
+             @if(Auth::user()->tipo=='Dono')
+
+                <li class="sidebar-list"><i class="fa fa-thumb-tack"></i>
+                    <label class="badge badge-light-primary">1</label><a class="sidebar-link sidebar-title" href="{{route('sasDashbord.index')}}">
+                        <span class="lan-3"><i style="font-size: 19pt; padding-right: 5pt;" class="icofont icofont-home"></i>Home</span></a>
+                </li>
+                <li class="sidebar-list"><i class="fa fa-thumb-tack"></i>
+                    <label class="badge badge-light-primary">1</label><a class="sidebar-link sidebar-title" href="{{route('listarEmpresas.index')}}">
+                        <span class="lan-3"><i style="font-size: 19pt; padding-right: 5pt;" class="icofont icofont-building"></i>Empresas</span></a>
+                </li>
+
+                <li class="sidebar-list"><i class="fa fa-thumb-tack"></i>
+                    <label class="badge badge-light-primary">1</label><a class="sidebar-link sidebar-title" href="{{route('listarCoworks.index')}}">
+                        <span class="lan-3"><i style="font-size: 19pt; padding-right: 5pt;" class="icofont icofont-users"></i>Coworks</span></a>
+                </li>
+                <li class="sidebar-list"><i class="fa fa-thumb-tack"></i>     
+                    <label class="badge badge-light-primary">1</label><a class="sidebar-link sidebar-title" href="{{route('subscricao.index')}}">
+                        <span class="lan-3"><i style="font-size: 19pt; padding-right: 5pt;" class="icofont icofont-cart-alt"></i>Subscrição </span></a>
+                </li>
+
+                <li class="sidebar-list"><i class="fa fa-thumb-tack"></i>
+                    <label class="badge badge-light-primary">1</label><a class="sidebar-link sidebar-title" href="{{route('cowork.index')}}">
+                        <span class="lan-3"><i style="font-size: 19pt; padding-right: 5pt;" class="icofont icofont-pie-chart"></i>Comissões</span></a>
+                </li>
+            @endif
+                
 
 
         </ul>

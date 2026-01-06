@@ -31,4 +31,9 @@ class Pagamento extends Model
         return $this->belongsTo(BancoCarteira::class, 'tipo_banco');
     }
 
+    public function leitura()
+    {
+        return $this->belongsTo(Leitura::class, 'leitura_id');
+    }
+
 }

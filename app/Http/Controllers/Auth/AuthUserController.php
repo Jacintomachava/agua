@@ -32,7 +32,7 @@ class AuthUserController extends Controller
 
             $user = Auth::user();
 
-            return response()->json(['status' => 1,'empresa'=> $user->empresa_id, 'message' => 'Autenticado com Sucesso']);
+            return response()->json(['status' => 1,'tipo'=> $user->tipo, 'message' => 'Autenticado com Sucesso']);
         }
 
         // Se o usuário não existir
