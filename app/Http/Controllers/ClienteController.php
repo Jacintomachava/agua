@@ -31,39 +31,39 @@ class ClienteController extends Controller
 {
     public function index()
     {
-        $userActual = Auth::user();
+        $user = Auth::user();
 
-        $clientes = null;
-        $furos = null;
+        // Coleções vazias (evita null)
+        $clientes = collect();
+        $furos = collect();
+
         $provincias = Provincia::all();
         $nacionalidades = Nacionalidade::all();
 
-        
-        if (auth()->user()->hasRole('Admin')) {
-            // usuário é admin
-            $clientes = FuroClienteContrato::where('empresa_id',$userActual->empresa_id)->get();
-            $furos = Furo::where('empresa_id',$userActual->empresa_id)->get();
+        // Query base
+        $clientesQuery = FuroClienteContrato::where('empresa_id', $user->empresa_id);
+        $furosQuery = Furo::where('empresa_id', $user->empresa_id);
+
+        // Leitura vê apenas seu furo
+        if ($user->hasRole('Leitura')) {
+            $clientesQuery->where('furo_id', $user->furo_id);
+            $furosQuery->where('id', $user->furo_id);
         }
 
-        if (auth()->user()->hasRole('SuperAdmin')) {
-            // usuário é admin
-            $clientes = FuroClienteContrato::where('empresa_id',$userActual->empresa_id)->get();
-            $furos = Furo::where('empresa_id',$userActual->empresa_id)->get();
+        // Admin e SuperAdmin veem tudo da empresa
+        if ($user->hasAnyRole(['Admin', 'SuperAdmin'])) {
+            // nenhuma restrição adicional
         }
 
-        if (auth()->user()->hasRole('Leitura')) {
-            // usuário é Leitura
-            $clientes = FuroClienteContrato::where('empresa_id',$userActual->empresa_id)->where('furo_id',$userActual->furo_id)->get();
-            $furos = Furo::where('empresa_id',$userActual->empresa_id)->where('furo_id',$userActual->furo_id)->get();
-        }
+        $clientes = $clientesQuery->get();
+        $furos = $furosQuery->get();
 
-        
-        return view('clientes.index',  [
-             'clientes' => $clientes,
-             'furos' => $furos,
-             'provincias' => $provincias,
-             'nacionalidades' => $nacionalidades,
-        ]);
+        return view('clientes.index', compact(
+            'clientes',
+            'furos',
+            'provincias',
+            'nacionalidades'
+        ));
     }
 
     public function meuCliente()
