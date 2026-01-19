@@ -188,7 +188,7 @@
                     <form1 class="stepper-two row g-3 needs-validation custom-input">
 
                       <div class="col-4">
-                        <label class="form-label" for="confirmpasswordwizard">Numero de Contador<span class="txt-danger">*</span></label>
+                        <label class="form-label" for="confirmpasswordwizard">Numero de Cliente<span class="txt-danger">*</span></label>
                         <input class="form-control"  type="text" name="numero_contador" placeholder="Numero Contador" >
                       </div>
 
@@ -208,7 +208,7 @@
                       </div>
 
                       <div class="col-4">
-                        <label class="form-label" for="confirmpasswordwizard">Leitura Contador<span class="txt-danger">*</span></label>
+                        <label class="form-label" for="confirmpasswordwizard">Leitura Actual de Contador<span class="txt-danger">*</span></label>
                         <input class="form-control"  type="text" name="leitura"  value="0" placeholder="Ultima Leitura" >
                       </div>
 

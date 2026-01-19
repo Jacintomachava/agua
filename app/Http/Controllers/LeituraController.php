@@ -36,17 +36,17 @@ class LeituraController extends Controller
         
         if (auth()->user()->hasRole('Admin')) {
             // usuário é admin
-            $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->where('mes_id',$mesAtual-1)->get();
+            $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->where('mes_id',Carbon::now()->subMonth()->month)->get();
         }
 
         if (auth()->user()->hasRole('SuperAdmin')) {
             // usuário é admin
-            $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->where('mes_id',$mesAtual-1)->get();
+            $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->where('mes_id',Carbon::now()->subMonth()->month)->get();
         }
 
         if (auth()->user()->hasRole('Leitura')) {
             // usuário é Leitura
-            $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->where('furo_id',$userActual->furo_id)->where('mes_id',$mesAtual-1)->get();
+            $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->where('furo_id',$userActual->furo_id)->where('mes_id',Carbon::now()->subMonth()->month)->get();
         }
 
         

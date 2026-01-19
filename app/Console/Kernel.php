@@ -22,7 +22,7 @@ class Kernel extends ConsoleKernel
         $schedule->job(new LeituraJob)->everyMinute(); //->monthlyOn(15, '00:00');
         //$schedule->job(new EnviarSMS)->everyMinute(); //->monthlyOn(15, '00:00');
         $schedule->job(new MensalidadeSistemaJob)->everyMinute(); //->monthlyOn(15, '00:00');
-        $schedule->job(new EnviarMensagemPeriodicaJob)->everyMinute(); //->monthlyOn(15, '00:00');
+        //$schedule->job(new EnviarMensagemPeriodicaJob)->everyMinute(); //->monthlyOn(15, '00:00');
     }
 
     /**

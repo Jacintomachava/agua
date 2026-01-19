@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Empresa;
+use App\Models\UserEmpresa;
 use App\Models\SaldoSMS;
 use App\Models\User;
 use App\Models\Ano;
@@ -29,7 +30,7 @@ class EmpresaController extends Controller
 
         try {
 
-            $todasEmpresas = Empresa::where('id','<>',1)->get();
+            $todasEmpresas = Empresa::all();
 
             // Cria Empresa e colocar Saldo de SMSCredito
             $empresa = new Empresa();
@@ -38,6 +39,7 @@ class EmpresaController extends Controller
             $empresa->telefone = $request->input('telefone_user');
             $empresa->distrito_id = $request->input('distrito');
             $empresa->endereco = $request->input('bairro');
+            $empresa->valor_por_cliente = 35;
             $empresa->codigo = str_pad(count($todasEmpresas) + 1, 2, '0', STR_PAD_LEFT);
 
             $anoActual = Carbon::now()->year;
@@ -110,7 +112,11 @@ class EmpresaController extends Controller
                         $userFuro->furo_id = $furo->id;
                         $userFuro->user_id = $user->id;
 
-                        if($roleUser->save() && $userFuro->save()){
+                        $userEmpresa = new UserEmpresa();
+                        $userEmpresa->user_id = $user->id;
+                        $userEmpresa->empresa_id = $empresa->id;
+
+                        if($roleUser->save() && $userFuro->save() && $userEmpresa->save()){
 
                             DB::commit();
                             return response()->json(['status' => 1, 'message' => 'Empresa Criada Com Sucesso']);

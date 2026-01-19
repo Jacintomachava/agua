@@ -77,7 +77,7 @@
                                         Editar
                                     </a>
                                      <a class="btn btn-danger btn-xs activate-btn"  >
-                                        Repor Senha
+                                        Desativar
                                     </a>
                                 </td>
                             </tr>

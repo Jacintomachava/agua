@@ -35,6 +35,7 @@ class LeituraJob implements ShouldQueue
     {
         $anoActual =  Carbon::now()->year;
         $mesAtual = Carbon::now()->month;
+
         $ano = Ano::where('ano',$anoActual)->first();
 
         $clientes = FuroClienteContrato::where('ligacao_activa',true)->get();
@@ -42,7 +43,7 @@ class LeituraJob implements ShouldQueue
 
         foreach ($clientes as $cliente) {
 
-            $verificarMes = Leitura::where('mes_id',$mesAtual-1)->where('ano_id',$ano->id)->where('furo_cliente_contrato_id',$cliente->id)->first();
+            $verificarMes = Leitura::where('mes_id',Carbon::now()->subMonth()->month)->where('ano_id',$ano->id)->where('furo_cliente_contrato_id',$cliente->id)->first();
 
             if($verificarMes==null){
 
@@ -53,7 +54,7 @@ class LeituraJob implements ShouldQueue
                 $leitura->furo_cliente_contrato_id = $cliente->id;
                 $leitura->furo_id = $cliente->furo_id;
                 $leitura->ano_id  = $ano->id;
-                $leitura->mes_id  = $mesAtual-1;
+                $leitura->mes_id  = Carbon::now()->subMonth()->month;
                 $leitura->save();
 
                 \Log::info("Leitura Preparada".$leitura->id);

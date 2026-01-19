@@ -22,11 +22,11 @@
                     </a>
                     @if($contrato!=null)
                         <a href="{{route('contrato.editarTemplete')}}">
-                            <button class="btn btn-pill btn-primary btn-sm">Editar Templete</button>
+                            <button class="btn btn-pill btn-warning btn-sm">Editar Templete</button>
                         </a>
                     @else
                         <a href="{{route('contrato.templete')}}">
-                            <button class="btn btn-pill btn-primary btn-sm">Cadastrar Templete</button>
+                            <button class="btn btn-pill btn-warning btn-sm">Cadastrar Templete</button>
                         </a>
                     @endif
                     
@@ -74,7 +74,7 @@
                                         Editar
                                     </a>
                                      <a class="btn btn-danger btn-xs activate-btn"  >
-                                        Repor Senha
+                                        Remover
                                     </a>
                                 </td>
                             </tr>
