@@ -54,92 +54,104 @@
                     </thead>
                     <tbody>
 
-                        @foreach($leituras as $leitura)
+                        @if($leituras==null)
                             <tr>
-                                <td></td>
-                                <td>{{$leitura->furoClienteContrato->contador }}</td>
-                                <td>{{$leitura->furoClienteContrato->cliente->nome }}</td>
-                                <td>{{$leitura->mes->nome}} - {{$leitura->ano->ano}}</td>
-
-                                <td>
-                                    
-                                    @if($leitura->estado_leitura==0)
-                                        ...
-                                    @elseif($leitura->estado_leitura==1 && $leitura->estado_pagamento=='Pendente')
-                                        {{$leitura->valor_a_pagar}} 
-                                    @elseif($leitura->estado_leitura==1 && $leitura->estado_pagamento!='Pendente')
-                                        ...
-                                    @endif
-                                    
+                                <td colspan="12" class="text-center">
+                                    <center>Sem Nenhum Leitura</center>
                                 </td>
+                            </tr>  
+                        @else
 
-                                <td>
-                                    
-                                    @if($leitura->estado_leitura==0)
-                                        ...
-                                    @elseif($leitura->estado_leitura==1 )
-                                        {{$leitura->furoClienteContrato->divida}}
-                                    @endif
-                                </td>
+                            @foreach($leituras as $leitura)
+                                <tr>
+                                    <td></td>
+                                    <td>{{$leitura->furoClienteContrato->contador }}</td>
+                                    <td>{{$leitura->furoClienteContrato->cliente->nome }}</td>
+                                    <td>{{$leitura->mes->nome}} - {{$leitura->ano->ano}}</td>
 
-                                <td>
-                                    
-                                    @if($leitura->estado_leitura==0)
-                                        ...
-                                    @elseif($leitura->estado_leitura==1 && $leitura->estado_pagamento=='Pendente')
-                                        {{$leitura->multa}}%
-                                    @elseif($leitura->estado_leitura==1 && $leitura->estado_pagamento!='Pendente')
-                                        ...
-                                    @endif
-                                </td>
-
-                                <td>{{$leitura->furoClienteContrato->saldo}}</td>
-
-                                <td>
-
-                                    @if($leitura->estado_leitura==0)
-                                        ...
-                                    @elseif($leitura->estado_leitura==1 && $leitura->estado_pagamento=='Pendente')
-                                        {{($leitura->valor_a_pagar+$leitura->furoClienteContrato->divida)+($leitura->valor_a_pagar+$leitura->furoClienteContrato->divida)*$leitura->multa/100}} MT
-                                    @elseif($leitura->estado_leitura==1 && $leitura->estado_pagamento!='Pendente')
-                                        {{$leitura->furoClienteContrato->divida}}
-                                    @endif
-                                </td>
-                                <td>
-                                   {{$leitura->estado_pagamento}}
-                                    @if($leitura->estado_leitura==0)
-                                        ({{($leitura->valor_a_pagar+$leitura->furoClienteContrato->divida)+($leitura->valor_a_pagar+$leitura->furoClienteContrato->divida)*$leitura->multa/100}} MT)
-                                    @elseif($leitura->estado_leitura==1 && $leitura->estado_pagamento=='Pendente')
+                                    <td>
                                         
-                                    @elseif($leitura->estado_leitura==1 && $leitura->estado_pagamento!='Pendente')
+                                        @if($leitura->estado_leitura==0)
+                                            ...
+                                        @elseif($leitura->estado_leitura==1 && $leitura->estado_pagamento=='Pendente')
+                                            {{$leitura->valor_a_pagar}} 
+                                        @elseif($leitura->estado_leitura==1 && $leitura->estado_pagamento!='Pendente')
+                                            ...
+                                        @endif
                                         
-                                    @endif
-                                </td>
+                                    </td>
 
-                                <td>
-
-                                    @if($leitura->estado_leitura==0)
+                                    <td>
                                         
-                                    @elseif($leitura->estado_leitura==1 && $leitura->estado_pagamento=='Pendente')
-                                      <a class="btn btn-danger btn-xs activate-btn" href="{{route('pagamento.show',['contratoID'=>$leitura->id])}}" >
-                                        Pagar 
-                                      </a>
-                                    @elseif($leitura->estado_leitura==1 && $leitura->estado_pagamento=='Parcial')
-                                      <a class="btn btn-danger btn-xs activate-btn" href="{{route('pagamentos.showParcial',['contratoID'=>$leitura->id])}}" >
-                                        Pagar
-                                      </a>
-                                      <a class="btn btn-success btn-xs activate-btn" target="_blank" href="{{route('recibo.leitura',['id'=>$leitura->id])}}" >
-                                         Recibo
-                                      </a>
-                                    @elseif($leitura->estado_leitura==1 && $leitura->estado_pagamento=='Pago')
+                                        @if($leitura->estado_leitura==0)
+                                            ...
+                                        @elseif($leitura->estado_leitura==1 )
+                                            {{$leitura->furoClienteContrato->divida}}
+                                        @endif
+                                    </td>
+
+                                    <td>
+                                        
+                                        @if($leitura->estado_leitura==0)
+                                            ...
+                                        @elseif($leitura->estado_leitura==1 && $leitura->estado_pagamento=='Pendente')
+                                            {{$leitura->multa}}%
+                                        @elseif($leitura->estado_leitura==1 && $leitura->estado_pagamento!='Pendente')
+                                            ...
+                                        @endif
+                                    </td>
+
+                                    <td>{{$leitura->furoClienteContrato->saldo}}</td>
+
+                                    <td>
+
+                                        @if($leitura->estado_leitura==0)
+                                            ...
+                                        @elseif($leitura->estado_leitura==1 && $leitura->estado_pagamento=='Pendente')
+                                            {{($leitura->valor_a_pagar+$leitura->furoClienteContrato->divida)+($leitura->valor_a_pagar+$leitura->furoClienteContrato->divida)*$leitura->multa/100}} MT
+                                        @elseif($leitura->estado_leitura==1 && $leitura->estado_pagamento!='Pendente')
+                                            {{$leitura->furoClienteContrato->divida}}
+                                        @endif
+                                    </td>
+                                    <td>
+                                    {{$leitura->estado_pagamento}}
+                                        @if($leitura->estado_leitura==0)
+                                            ({{($leitura->valor_a_pagar+$leitura->furoClienteContrato->divida)+($leitura->valor_a_pagar+$leitura->furoClienteContrato->divida)*$leitura->multa/100}} MT)
+                                        @elseif($leitura->estado_leitura==1 && $leitura->estado_pagamento=='Pendente')
+                                            
+                                        @elseif($leitura->estado_leitura==1 && $leitura->estado_pagamento!='Pendente')
+                                            
+                                        @endif
+                                    </td>
+
+                                    <td>
+
+                                        @if($leitura->estado_leitura==0)
+                                            
+                                        @elseif($leitura->estado_leitura==1 && $leitura->estado_pagamento=='Pendente')
+                                        <a class="btn btn-danger btn-xs activate-btn" href="{{route('pagamento.show',['contratoID'=>$leitura->id])}}" >
+                                            Pagar 
+                                        </a>
+                                        @elseif($leitura->estado_leitura==1 && $leitura->estado_pagamento=='Parcial')
+                                        <a class="btn btn-danger btn-xs activate-btn" href="{{route('pagamentos.showParcial',['contratoID'=>$leitura->id])}}" >
+                                            Pagar
+                                        </a>
                                         <a class="btn btn-success btn-xs activate-btn" target="_blank" href="{{route('recibo.leitura',['id'=>$leitura->id])}}" >
                                             Recibo
                                         </a>
-                                    @endif
-                                        
-                                </td>
-                            </tr>
-                        @endforeach
+                                        @elseif($leitura->estado_leitura==1 && $leitura->estado_pagamento=='Pago')
+                                            <a class="btn btn-success btn-xs activate-btn" target="_blank" href="{{route('recibo.leitura',['id'=>$leitura->id])}}" >
+                                                Recibo
+                                            </a>
+                                        @endif
+                                            
+                                    </td>
+                                </tr>
+                            @endforeach
+
+                        @endif
+
+
 
                     </tbody>
                 </table>
