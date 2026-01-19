@@ -58,6 +58,12 @@
                     </thead>
                     <tbody>
 
+                     @if($clientes==null)
+                        <tr>
+                            <th colspan="12"> Sem Nenhum Cliente Registado</th>
+                        </tr>    
+                     @else
+
                         @foreach($clientes as $cliente)
                             <tr>
                                 <td></td>
@@ -106,6 +112,8 @@
                                 </td>
                             </tr>
                         @endforeach
+                        
+                     @endif
 
                     </tbody>
                 </table>
