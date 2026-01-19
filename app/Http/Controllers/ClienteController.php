@@ -332,48 +332,51 @@ class ClienteController extends Controller
 
     public function create()
     {
-        $userActual = Auth::user();
+        $user = Auth::user();
 
-        $clientes = null;
-        $furos = null;
+        // Coleções vazias (evita null)
+        $clientes = collect();
+        $furos = collect();
+
+        // Dados fixos
         $provincias = Provincia::all();
-
-        $mesAtual = Carbon::now()->month;
-        $meses = Mes::where('numero','>',$mesAtual)->get();
-        $contratos = Contrato::where('empresa_id',$userActual->empresa_id)->get();
         $formasPagamentos = FormaPagamento::all();
         $bancos = BancoCarteira::all();
         $nacionalidades = Nacionalidade::all();
 
+        // Meses futuros
+        $mesAtual = Carbon::now()->month;
+        $meses = Mes::where('numero', '>', $mesAtual)->get();
 
-        if (auth()->user()->hasRole('Admin')) {
-            // usuário é admin
-            $clientes = FuroClienteContrato::where('empresa_id',$userActual->empresa_id)->get();
-            $furos = Furo::where('empresa_id',$userActual->empresa_id)->get();
+        // Contratos da empresa
+        $contratos = Contrato::where('empresa_id', $user->empresa_id)->get();
+
+        // Queries base
+        $clientesQuery = FuroClienteContrato::where('empresa_id', $user->empresa_id);
+        $furosQuery = Furo::where('empresa_id', $user->empresa_id);
+
+        // Perfil Leitura → apenas seu furo
+        if ($user->hasRole('Leitura')) {
+            $clientesQuery->where('furo_id', $user->furo_id);
+            $furosQuery->where('id', $user->furo_id);
         }
 
-        if (auth()->user()->hasRole('SuperAdmin')) {
-            // usuário é admin
-            $clientes = FuroClienteContrato::where('empresa_id',$userActual->empresa_id)->get();
-            $furos = Furo::where('empresa_id',$userActual->empresa_id)->get();
-        }
+        // Admin e SuperAdmin → veem tudo da empresa
+        // (nenhuma restrição extra)
 
-        if (auth()->user()->hasRole('Leitura')) {
-            // usuário é Leitura
-            $clientes = FuroClienteContrato::where('empresa_id',$userActual->empresa_id)->where('furo_id',$userActual->furo_id)->get();
-            $furos = Furo::where('empresa_id',$userActual->empresa_id)->where('furo_id',$userActual->furo_id)->get();
-        }
+        $clientes = $clientesQuery->get();
+        $furos = $furosQuery->get();
 
-        return view('clientes.create',  [
-             'clientes' => $clientes,
-             'furos' => $furos,
-             'provincias' => $provincias,
-             'meses' => $meses,
-             'contratos' => $contratos,
-             'formasPagamentos' => $formasPagamentos,
-             'bancos' => $bancos,
-             'nacionalidades' => $nacionalidades,
-        ]);
+        return view('clientes.create', compact(
+            'clientes',
+            'furos',
+            'provincias',
+            'meses',
+            'contratos',
+            'formasPagamentos',
+            'bancos',
+            'nacionalidades'
+        ));
     }
 
     public function store(Request $request)
