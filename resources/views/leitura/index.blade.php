@@ -58,86 +58,96 @@
                     </thead>
                     <tbody>
 
-                        @foreach($leituras as $leitura)
+                        @if($leituras==null)
                             <tr>
-                                <td></td>
-                                <td>{{$leitura->furoClienteContrato->codigo }}</td>
-                                <td>{{$leitura->furoClienteContrato->cliente->nome }}</td>
-                                <td>{{$leitura->mes->nome}} </td>
-
-                                <td>
-                                    @if($leitura->estado_leitura==0)
-                                        <a class="btn btn-danger btn-xs activate-btn"  >
-                                            Pendente
-                                        </a>
-                                    @else
-                                        <a class="btn btn-success btn-xs activate-btn" >
-                                            Feita
-                                        </a>
-                                    @endif
+                                <td colspan="12" class="text-center">
+                                    <center>Sem Nenhum Leitura</center>
                                 </td>
+                            </tr>  
+                        @else
 
-                                <td>
-                                    @if($leitura->estado_leitura==0)
+                            @foreach($leituras as $leitura)
+                                <tr>
+                                    <td></td>
+                                    <td>{{$leitura->furoClienteContrato->codigo }}</td>
+                                    <td>{{$leitura->furoClienteContrato->cliente->nome }}</td>
+                                    <td>{{$leitura->mes->nome}} </td>
+
+                                    <td>
+                                        @if($leitura->estado_leitura==0)
+                                            <a class="btn btn-danger btn-xs activate-btn"  >
+                                                Pendente
+                                            </a>
+                                        @else
+                                            <a class="btn btn-success btn-xs activate-btn" >
+                                                Feita
+                                            </a>
+                                        @endif
+                                    </td>
+
+                                    <td>
+                                        @if($leitura->estado_leitura==0)
+                                            ...
+                                        @else
+                                            {{$leitura->valor_leitura}}
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if($leitura->estado_leitura==0)
                                         ...
-                                    @else
-                                        {{$leitura->valor_leitura}}
-                                    @endif
-                                </td>
-                                <td>
-                                    @if($leitura->estado_leitura==0)
-                                       ...
-                                    @else
-                                       {{$leitura->consumo}}m&sup3;
-                                    @endif
-                                </td>
-                                <td>
-                                    @if($leitura->estado_leitura==0)
-                                       ...
-                                    @else
-                                       {{$leitura->valor_a_pagar}}
-                                    @endif
-                                </td>
-                                <td>
-                                    @if($leitura->estado_leitura==0)
-                                       ...
-                                    @else
-                                       {{$leitura->divida_anterior}}
-                                    @endif
-                                </td>
-                                <td>
-                                    @if($leitura->estado_leitura==0)
-                                       ...
-                                    @else
-                                       {{$leitura->multa}}
-                                    @endif
-                                </td>
-                                <td>
-                                    @if($leitura->estado_leitura==0)
+                                        @else
+                                        {{$leitura->consumo}}m&sup3;
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if($leitura->estado_leitura==0)
                                         ...
-                                    @else
-                                        {{$leitura->valor_a_pagar}} 
-                                    @endif
-                                </td>
+                                        @else
+                                        {{$leitura->valor_a_pagar}}
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if($leitura->estado_leitura==0)
+                                        ...
+                                        @else
+                                        {{$leitura->divida_anterior}}
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if($leitura->estado_leitura==0)
+                                        ...
+                                        @else
+                                        {{$leitura->multa}}
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if($leitura->estado_leitura==0)
+                                            ...
+                                        @else
+                                            {{$leitura->valor_a_pagar}} 
+                                        @endif
+                                    </td>
 
 
-                                <td>
-                                    <a class="btn btn-warning btn-xs activate-btn" href="{{route('leitura.edit',['contratoID'=>$leitura->id])}}">
-                                        Leitura
-                                    </a>
-                                    
-                                    @if($leitura->estado_leitura==0)
-                                        <a class="btn btn-danger btn-xs activate-btn" href="{{route('localizar.casa',['contratoID'=>$leitura->furoClienteContrato->contador])}}">
-                                            Localizar
+                                    <td>
+                                        <a class="btn btn-warning btn-xs activate-btn" href="{{route('leitura.edit',['contratoID'=>$leitura->id])}}">
+                                            Leitura
                                         </a>
-                                    @else
-                                        <a class="btn btn-info btn-xs activate-btn" target="_blank" href="{{route('facturas.leitura',['id'=>$leitura->id])}}">
-                                            Fatura
-                                        </a>
-                                    @endif
-                                </td>
-                            </tr>
-                        @endforeach
+                                        
+                                        @if($leitura->estado_leitura==0)
+                                            <a class="btn btn-danger btn-xs activate-btn" href="{{route('localizar.casa',['contratoID'=>$leitura->furoClienteContrato->contador])}}">
+                                                Localizar
+                                            </a>
+                                        @else
+                                            <a class="btn btn-info btn-xs activate-btn" target="_blank" href="{{route('facturas.leitura',['id'=>$leitura->id])}}">
+                                                Fatura
+                                            </a>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @endforeach
+
+                        @endif
 
                     </tbody>
                 </table>
