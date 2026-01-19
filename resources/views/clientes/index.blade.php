@@ -60,8 +60,10 @@
 
                      @if($clientes==null)
                         <tr>
-                            <th colspan="11"> Sem Nenhum Cliente Registado</th>
-                        </tr>    
+                            <td colspan="12" class="text-center">
+                                <center>Sem Nenhum Cliente Registado</center>
+                            </td>
+                        </tr>  
                      @else
 
                         @foreach($clientes as $cliente)
