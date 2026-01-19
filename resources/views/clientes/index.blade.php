@@ -60,7 +60,7 @@
 
                      @if($clientes==null)
                         <tr>
-                            <th colspan="12"> Sem Nenhum Cliente Registado</th>
+                            <th colspan="11"> Sem Nenhum Cliente Registado</th>
                         </tr>    
                      @else
 
@@ -112,7 +112,7 @@
                                 </td>
                             </tr>
                         @endforeach
-                        
+
                      @endif
 
                     </tbody>
