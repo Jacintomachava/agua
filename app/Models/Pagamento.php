@@ -36,4 +36,9 @@ class Pagamento extends Model
         return $this->belongsTo(Leitura::class, 'leitura_id');
     }
 
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
 }

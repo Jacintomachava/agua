@@ -71,7 +71,7 @@ class EnviarSMS implements ShouldQueue
                 // Enviar SMS
                 $resultado = SMSService::sendSMS($mensagem->telefone, $mensagem->descricao, 'LHAYSSO');
 
-                if($resultado){
+                if($resultado==200){
 
                     // Actaulizar Saldo
                     $saldo->saldo = $saldo->saldo - $mensagem->qtd * 1.8;
@@ -97,6 +97,15 @@ class EnviarSMS implements ShouldQueue
 
                     //\Log::info('📩 Hora normal de Atendimento...');
 
+                }elseif($resultado==402){
+
+                    \Log::warning('❌ Interação bloqueada por MOZSMS, Saldo insuficiente. ');
+
+                }else{
+
+                    // Actualizar SMS
+                    $actualizarMensagem->tipo = 'Inválido';
+                    $actualizarMensagem->save();
                 }
 
             }

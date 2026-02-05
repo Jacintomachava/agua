@@ -119,7 +119,7 @@ class EmpresaController extends Controller
                         if($roleUser->save() && $userFuro->save() && $userEmpresa->save()){
 
                             DB::commit();
-                            return response()->json(['status' => 1, 'message' => 'Empresa Criada Com Sucesso']);
+                            return response()->json(['status' => 1, 'message' => 'Empresa criada com sucesso, vai receber credenciais para entrar no sistema no telefone: '.$request->input('telefone_user')]);
 
                         }
 

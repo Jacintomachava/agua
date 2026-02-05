@@ -75,7 +75,7 @@
                     <label class="badge badge-light-primary">1</label><a class="sidebar-link sidebar-title" href="{{route('mensagem.index')}}">
                         <svg class="stroke-icon">
                         <use href="{{ URL('/assets/svg/icon-sprite.svg#stroke-chat') }}"></use>
-                        </svg><span class="lan-3">Credito</span></a>
+                        </svg><span class="lan-3">Credito & SMS</span></a>
                 </li>
 
 
@@ -103,7 +103,7 @@
                 </li>
                 <li class="sidebar-list"><i class="fa fa-thumb-tack"></i>     
                     <label class="badge badge-light-primary">1</label><a class="sidebar-link sidebar-title" href="{{route('subscricao.index')}}">
-                        <span class="lan-3"><i style="font-size: 19pt; padding-right: 5pt;" class="icofont icofont-cart-alt"></i>Subscrição </span></a>
+                        <span class="lan-3"><i style="font-size: 19pt; padding-right: 5pt;" class="icofont icofont-cart-alt"></i> Recarregar </span></a>
                 </li>
 
             @endif

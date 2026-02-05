@@ -46,10 +46,10 @@ class SMSService
 
         if ($httpCode === 200) {
             \Log::info("Mensagem Enviada com Sucesso $response");
-            return true; // ✅ Sucesso
+            return $httpCode; // ✅ Sucesso
         } else {
             \Log::error("HTTP Error: $httpCode\nResponse: $response\n");
-            return false; // ❌ Falhou
+            return $httpCode; // ❌ Falhou
         }
 
     }
@@ -96,7 +96,7 @@ class SMSService
         } else {
             //echo "HTTP Error: $httpCode\nResponse: $response\n";
             \Log::info("HTTP Error: $httpCode\nResponse: $response\n ");
-            return false; // ❌ Falhou
+            return $httpCode; // ❌ Falhou
         }
 
     }

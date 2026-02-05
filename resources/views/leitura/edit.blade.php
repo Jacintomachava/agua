@@ -122,25 +122,30 @@ $(document).ready(function() {
                     // Desabilita o botão de envio e altera o ícone para mostrar que está autenticando
                     $('#botao_salvar').attr('disabled', true);
                     $('#icon_enviar').removeClass('ri-arrow-right-line').addClass('spinner-border ri-loader-2-line');
-                    $('#botao_texto').text('Regsitando Furo...');
+                    $('#botao_texto').text('Registar Leitura...');
                 },
 
                 success: function(response) {
                     // Habilita o botão e retorna o ícone original
                     $('#botao_salvar').attr('disabled', false);
                     $('#icon_enviar').removeClass('spinner-border ri-loader-2-line').addClass('ri-arrow-right-line');
-                    $('#botao_texto').text('Registar Furo');
+                    $('#botao_texto').text('Registar Leitura');
 
                     // Redireciona ou exibe uma mensagem de erro com base na resposta
                     if(response.status == 1) {
 
-                          Swal.fire({
-                                    icon: 'success',
-                                    title: 'Sucesso!',
-                                    text: response.message,
-                          });
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Sucesso!',
+                            text: response.message,
+                            confirmButtonText: 'OK'
+                        }).then((result) => {
 
-                          window.location.reload();
+                            if (result.isConfirmed) {
+                                window.location.href = '/leituras';
+                            }
+
+                        });
                           
                     }
 
@@ -159,7 +164,7 @@ $(document).ready(function() {
                     // Habilita o botão e retorna o ícone original em caso de erro
                     $('#botao_salvar').attr('disabled', false);
                     $('#icon_enviar').removeClass('spinner-border ri-loader-2-line').addClass('ri-arrow-right-line');
-                    $('#botao_texto').text('Registar Furo');
+                    $('#botao_texto').text('Registar Leitura');
 
                     // Exibe a mensagem de erro
                     Swal.fire({

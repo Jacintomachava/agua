@@ -528,7 +528,7 @@ class ClienteController extends Controller
                                 if($recibo->save() && $userCliente->save()){
 
                                     DB::commit();
-                                    return response()->json(['status' => 1, 'message' => 'Contrato Registado Com Sucesso']);
+                                    return response()->json(['status' => 1, 'message' => 'Cliente Registado Com Sucesso']);
 
                                 }
 

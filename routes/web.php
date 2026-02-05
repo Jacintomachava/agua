@@ -89,7 +89,9 @@ Route::post('/user/furo', [UserFuroController::class, 'store'])->name('userFuro.
 //Furos
 Route::get('/furos', [FuroController::class, 'index'])->name('furo.index');
 Route::get('/registar/furo', [FuroController::class, 'create'])->name('furo.create');
-Route::post('/registar/furo', [FuroController::class, 'store'])->name('furo.store');
+Route::post('/registar/furo', [FuroController::class, 'store'])->name('furo.store');  
+Route::get('/mudar/furo', [FuroController::class, 'mudarFuro'])->name('mudar.furo');
+Route::post('/mudars/furos', [FuroController::class, 'mudarFuroUpdate'])->name('mudar1.furo');
 
 //Tipos de Contrato
 Route::get('/contratos', [ContratoController::class, 'index'])->name('contrato.index');
@@ -149,6 +151,7 @@ Route::post('/mensagem', [MensagemController::class, 'store'])->name('mensagem.s
 Route::post('/enviar/mensagem', [MensagemController::class, 'storeSMS'])->name('mensagem.storeSMS');
 Route::get('/escrever/mensagem', [MensagemController::class, 'create'])->name('mensagem.create');
 Route::post('/comprar/credito', [MensagemController::class, 'storeCompraSMS'])->name('mensagem.storeCompraSMS');
+Route::post('/comprar/saldo', [MensagemController::class, 'storeCompraSaldo'])->name('mensagem.storeCompraSMS1');
 
 //Mapa Tubagem 
 Route::get('/mapa/tubagem', [MapaController::class, 'index'])->name('mapa.index');

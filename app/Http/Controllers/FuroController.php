@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Role;
 use App\Models\User;
+use App\Models\UserFuro;
 use App\Models\Furo;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -27,6 +28,44 @@ class FuroController extends Controller
         return view('furos.create',  [
 
         ]);
+    }
+
+    public function mudarFuro()
+    {
+        $userActual = Auth::user();
+
+        $furoAtribuidos = UserFuro::where('user_id',$userActual->id)->get();
+
+        return view('mudarFuro.create',  [
+                    'furoAtribuidos' => $furoAtribuidos,
+        ]);
+    }
+
+    public function mudarFuroUpdate(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+
+            // Actualizar User
+            $user = User::where('codigo', $request->input('user'))->first();
+            $user->furo_id = $request->input('escola');
+
+            if ($user->save()) {
+                // Cria a sessão com informações do usuário
+
+                DB::commit();
+
+                return response()->json(['status' => 1, 'message' => 'Furo mudada com Sucesso!']);
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            // $errorMessage = DatabaseErrorHandler::handle($e);
+            return response()->json([
+                'status' => 0,
+                'message' => $e->getMessage(),
+            ]);
+        }
     }
 
     public function store(Request $request)

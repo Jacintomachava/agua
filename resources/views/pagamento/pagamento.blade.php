@@ -242,13 +242,18 @@ $(document).ready(function() {
                     // Redireciona ou exibe uma mensagem de erro com base na resposta
                     if(response.status == 1) {
 
-                          Swal.fire({
-                                    icon: 'success',
-                                    title: 'Sucesso!',
-                                    text: response.message,
-                          });
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Sucesso!',
+                            text: response.message,
+                            confirmButtonText: 'OK'
+                        }).then((result) => {
 
-                          window.location.reload();
+                            if (result.isConfirmed) {
+                                window.location.href = '/pagamento/leitura';
+                            }
+
+                        });
                           
                     }
 

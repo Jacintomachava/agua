@@ -246,12 +246,21 @@ $(document).ready(function() {
                     $('#botao_texto').text('Enviando Mensagem');
 
                     if (response.status == 1) {
+
                         Swal.fire({
                             icon: 'success',
                             title: 'Sucesso!',
                             text: response.message,
+                            confirmButtonText: 'OK'
+                        }).then((result) => {
+
+                            if (result.isConfirmed) {
+                              
+                                window.location.reload();
+                            }
+
                         });
-                        window.location.reload();
+
                     } else if (response.status == 0) {
                         Swal.fire({
                             icon: 'error',

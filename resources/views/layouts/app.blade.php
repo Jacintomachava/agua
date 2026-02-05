@@ -132,15 +132,15 @@
                                 </div><span>Mudar Empresa</span></a>
                               </li>
                             @endif  
-                            @if(Auth::user()->mudar_furo==1)
-                              <li><a href="#">
+
+                              <li><a href="{{route('mudar.furo')}}">
                                 <div class="profile-icon">
                                   <svg>
                                     <use href="{{ URL('/assets/svg/icon-sprite.svg#stroke-home') }}"></use>
                                   </svg>
                                 </div><span>Mudar Furo</span></a>
                               </li>
-                            @endif  
+                          
                               <li><a href="{{route('senha.index')}}">
                                 <div class="profile-icon">
                                   <svg>

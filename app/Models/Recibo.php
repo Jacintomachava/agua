@@ -20,4 +20,9 @@ class Recibo extends Model
     {
         return $this->belongsTo(Pagamento::class, 'pagamento_id');
     }
+
+    public function cliente()
+    {
+        return $this->belongsTo(Cliente::class, 'cliente_id');
+    }
 }

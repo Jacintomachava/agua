@@ -8,14 +8,14 @@
 
 <div class="row alert alert-light-primary" role="alert" >
   <div class="col-sm-6" > 
-    <p style="font-size: 7pt;">SMS cada envio de uma SMS vale 1.85 creditos <i style="font-size: 7pt;">(uma SMS normal)</i></p>
-    <p style="font-size: 7pt;">Cada Mensagem de WhatsApp vala a 0.02 creditos <i style="font-size: 7pt;">(resposta da conversa iniciado pelo utilizador)</i></p>
+    <p style="font-size: 7pt;">SMS cada envio de uma SMS vale 1.85 MT <i style="font-size: 7pt;">(uma SMS normal)</i></p>
+    <p style="font-size: 7pt;">Cada Mensagem de WhatsApp vala a 0.02 MT <i style="font-size: 7pt;">(resposta da conversa iniciado pelo utilizador)</i></p>
   </div>  
   <div class="col-sm-3" >
-    Crédito {{$saldo->saldo}}
+    Crédito {{$saldo->saldo}} MT
   </div>
   <div class="col-sm-3" >
-    SMS Pendentes {{$creditoSMSPendente}}
+    SMS Pendentes {{$creditoSMSPendente}} MT
   </div>
 </div>
 
@@ -238,7 +238,7 @@
                                 {{ Str::limit($mensagem->descricao, 10) }}
                               </td>
                               <td>{{$mensagem->qtd}}</td>
-                              <td>{{$mensagem->credito}}</td>
+                              <td>{{$mensagem->credito}} MT</td>
                               <td>
                                 {{ \Carbon\Carbon::parse($mensagem->created_at)->format('d-M-Y') }}
                               </td>

@@ -5,9 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class UserEmpresa extends Model
+class Categoria extends Model
 {
     use HasFactory;
 
-    protected $table = 'user_empresa';
+    protected $table = 'despesa_categoria';
 }

@@ -15,6 +15,7 @@ use App\Models\Empresa;
 use App\Models\Mensagem;
 use App\Models\Ano;
 use App\Models\Leitura;
+use App\Models\SaldoSMS;
 use App\Models\Mes;
 use App\Models\BancoCarteira;
 use App\Models\Furo;
@@ -27,32 +28,16 @@ class LeituraController extends Controller
 {
     public function index()
     {
-        $userActual = Auth::user();
+        $user = Auth::user();
 
-        $leituras = null;
-        $furos = null;
-        $mesAtual = Carbon::now()->month;
-        $provincias = Provincia::all();
-        
-        if (auth()->user()->hasRole('Admin')) {
-            // usuário é admin
-            $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->where('mes_id',Carbon::now()->subMonth()->month)->get();
-        }
+        // Mês anterior
+        $mesAnterior = Carbon::now()->subMonth()->month;
 
-        if (auth()->user()->hasRole('SuperAdmin')) {
-            // usuário é admin
-            $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->where('mes_id',Carbon::now()->subMonth()->month)->get();
-        }
+        // Query base
+        $leituras = Leitura::where('empresa_id', $user->empresa_id)->where('furo_id', $user->furo_id)->where('mes_id', $mesAnterior)->get();
 
-        if (auth()->user()->hasRole('Leitura')) {
-            // usuário é Leitura
-            $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->where('furo_id',$userActual->furo_id)->where('mes_id',Carbon::now()->subMonth()->month)->get();
-        }
 
-        
-        return view('leitura.index',  [
-             'leituras' => $leituras,
-        ]);
+        return view('leitura.index', compact('leituras'));
     }
 
     public function geolocalizacao($contratoID)
@@ -67,27 +52,12 @@ class LeituraController extends Controller
     }
 
     
-
     public function todasLeituras()
     {
         $userActual = Auth::user();
         $mesAtual = Carbon::now()->month;
-        $leituras = null;
 
-        if (auth()->user()->hasRole('Admin')) {
-            // usuário é admin
-            $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->get();
-        }
-
-        if (auth()->user()->hasRole('SuperAdmin')) {
-            // usuário é admin
-            $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->get();
-        }
-
-        if (auth()->user()->hasRole('Leitura')) {
-            // usuário é Leitura
-            $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->where('furo_id',$userActual->furo_id)->get();
-        }
+        $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->where('furo_id',$userActual->furo_id)->get();
 
         return view('leitura.index',  [
              'leituras' => $leituras,
@@ -99,22 +69,8 @@ class LeituraController extends Controller
     {
         $userActual = Auth::user();
         $mesAtual = Carbon::now()->month;
-        $leituras = null;
 
-        if (auth()->user()->hasRole('Admin')) {
-            // usuário é admin
-            $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->where('estado_leitura',0)->where('mes_id',$mesAtual-1)->get();
-        }
-
-        if (auth()->user()->hasRole('SuperAdmin')) {
-            // usuário é admin
-            $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->where('estado_leitura',0)->where('mes_id',$mesAtual-1)->get();
-        }
-
-        if (auth()->user()->hasRole('Leitura')) {
-            // usuário é Leitura
-            $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->where('estado_leitura',0)->where('furo_id',$userActual->furo_id)->where('mes_id',$mesAtual-1)->get();
-        }
+        $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->where('estado_leitura',0)->where('furo_id',$userActual->furo_id)->where('mes_id',$mesAtual-1)->get();
 
         return view('leitura.index',  [
              'leituras' => $leituras,
@@ -167,24 +123,24 @@ class LeituraController extends Controller
     public function facturasTodos()
     {
         $userActual = Auth::user();
-        $mesAtual = Carbon::now()->month;
+        $mesAtual = Carbon::now()->subMonth()->month;
         $leituras = null;
 
         $empresa = Empresa::where('id',$userActual->empresa_id)->first();
 
         if (auth()->user()->hasRole('Admin')) {
             // usuário é admin
-            $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->where('estado_leitura',1)->where('mes_id',$mesAtual-1)->get();
+            $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->where('estado_leitura',1)->where('mes_id', $mesAtual)->get();
         }
 
         if (auth()->user()->hasRole('SuperAdmin')) {
             // usuário é admin
-            $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->where('estado_leitura',1)->where('mes_id',$mesAtual-1)->get();
+            $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->where('estado_leitura',1)->where('mes_id',$mesAtual)->get();
         }
 
         if (auth()->user()->hasRole('Leitura')) {
             // usuário é Leitura
-            $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->where('estado_leitura',1)->where('furo_id',$userActual->furo_id)->where('mes_id',$mesAtual-1)->get();
+            $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->where('estado_leitura',1)->where('furo_id',$userActual->furo_id)->where('mes_id',$mesAtual)->get();
         }
 
         $pdf = \PDF::loadView('leitura.facturasTodos', [
@@ -216,7 +172,7 @@ class LeituraController extends Controller
 
         $leitura = Leitura::where('empresa_id',$userActual->empresa_id)->where('id',$contratoID)->first();
         $ultimaLeitura = Leitura::where('furo_cliente_contrato_id', $leitura->furo_cliente_contrato_id)
-                ->where('mes_id','<>',$mesAtual)
+                ->where('mes_id','<>',Carbon::now()->subMonth()->month)
                 ->orderByDesc('id')             //Pegar O ultimo valor
                 ->value('valor_leitura') ?? 0;  //Pagar o valor
 
@@ -248,6 +204,28 @@ class LeituraController extends Controller
             $valorAPagar = 0;
 
             $leitura = Leitura::where('id', $request->input('id'))->first();
+            $empresa = Empresa::where('id',$userActual->empresa_id)->first();
+
+            if($leitura->estado_leitura==0){
+
+                $credito = SaldoSMS::where('empresa_id',$userActual->empresa_id)->first();
+
+                if($credito->saldo_sistema - $empresa->valor_por_cliente >= 0){
+
+                    $credito->saldo_sistema = $credito->saldo_sistema - $empresa->valor_por_cliente;
+                    $credito->save();
+
+                    $leitura->credito = $empresa->valor_por_cliente;
+
+                }else{
+
+                    DB::rollBack();
+                    return response()->json(['status' => 0, 'message' => 'Saldo do Sistema Insuficiente, Por favor recarrega o saldo de sistema']);
+                }
+
+
+            }
+
             $leitura->valor_leitura = $request->input('valor_leitura');
             $leitura->data_leitura = Carbon::now();
             $leitura->consumo = $consumo;

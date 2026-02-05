@@ -30,30 +30,26 @@ class PagamentoController extends Controller
 {
     public function index()
     {
-        $userActual = Auth::user();
+        $user = Auth::user();
 
-        $leituras = null;
-        $furos = null;
-        $provincias = Provincia::all();
-        
-        if (auth()->user()->hasRole('Admin')) {
-            // usuário é admin
-            $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->where('estado_leitura',1)->get();
+        // Sempre trabalhar com coleção
+        $leituras = collect();
+
+        // Query base
+        $query = Leitura::where('empresa_id', $user->empresa_id)
+            ->where('estado_leitura', 1);
+
+        // Perfil Leitura → apenas seu furo
+        if ($user->hasRole('Leitura')) {
+            $query->where('furo_id', $user->furo_id);
         }
 
-        if (auth()->user()->hasRole('SuperAdmin')) {
-            // usuário é admin
-            $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->where('estado_leitura',1)->get();
-        }
+        // Admin e SuperAdmin → veem tudo da empresa
+        // (nenhuma restrição adicional)
 
-        if (auth()->user()->hasRole('Leitura')) {
-            // usuário é Leitura
-            $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->where('estado_leitura',1)->where('furo_id',$userActual->furo_id)->get();
-        }
-        
-        return view('pagamento.index',  [
-             'leituras' => $leituras,
-        ]);
+        $leituras = $query->get();
+
+        return view('pagamento.index', compact('leituras'));
     }
 
     public function reciboLeitura($contratoID)
