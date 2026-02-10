@@ -10,12 +10,15 @@ use App\Models\Provincia;
 class AuthUserController extends Controller
 {
     
-    public function preRegisto()
+    public function preRegisto(Request $request)
     {
        $provincias = Provincia::all();
 
+       $coworkCode = $request->query('cowork'); // pode ser null
+
         return view('pre_registo',  [
              'provincias' => $provincias,
+             'coworkCode' => $coworkCode,
         ]);
     }
 

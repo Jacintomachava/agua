@@ -17,7 +17,7 @@ class MapaController extends Controller
 
         $empresa = $userActual->empresa_id;
 
-        $tubagens = Tubagem::where('empresa_id',$userActual->empresa_id)->get();
+        $tubagens = Tubagem::where('empresa_id',$userActual->empresa_id)->where('furo_id',$userActual->furo_id)->get();
 
         return view('tubagem.index',  [
                'tubagens' => $tubagens,
@@ -33,6 +33,7 @@ class MapaController extends Controller
             'latitude' => $request->latitude,
             'longitude' => $request->longitude,
             'empresa_id' => $userActual->empresa_id,
+            'furo_id' => $userActual->furo_id,
             'ordem' => $request->ordem
         ]);
 
@@ -41,7 +42,9 @@ class MapaController extends Controller
 
     public function edit()
     {
-        $tubagem = DB::table('tubagem')->orderBy('ordem')->get();
+        $userActual = Auth::user();
+
+        $tubagem = DB::table('tubagem')->where('empresa_id', $request->empresa)->where('furo_id',$userActual->furo_id)->orderBy('ordem')->get();
         
         return view("tubagem.editar", compact('tubagem'));
     }
@@ -51,7 +54,7 @@ class MapaController extends Controller
         $userActual = Auth::user();
 
         // Apaga a tubagem anterior e grava a nova
-        Tubagem::where('empresa_id', $request->empresa)->delete();
+        Tubagem::where('empresa_id', $request->empresa)->where('furo_id',$userActual->furo_id)->delete();
 
         return response()->json(['status' => 1, 'message' => 'Tubo Geral Apagado com Sucesso']);
     }
@@ -61,6 +64,7 @@ class MapaController extends Controller
     {
         $user = Auth::user();
         $empresa = $user->empresa_id;
+        $furo = $user->furo_id;
 
         $path = $request->path;
 
@@ -69,11 +73,12 @@ class MapaController extends Controller
         }
 
         // Apaga a tubagem anterior e grava a nova
-        Tubagem::where('empresa_id', $empresa)->delete();
+        Tubagem::where('empresa_id', $empresa)->where('furo_id',$user->furo_id)->delete();
 
         foreach ($path as $i => $p) {
             Tubagem::create([
                 'empresa_id' => $empresa,
+                'furo_id' => $furo,
                 'ordem'      => $i + 1,
                 'latitude'   => $p['lat'],
                 'longitude'  => $p['lng'],

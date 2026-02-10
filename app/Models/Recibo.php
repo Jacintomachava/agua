@@ -23,6 +23,7 @@ class Recibo extends Model
 
     public function cliente()
     {
-        return $this->belongsTo(Cliente::class, 'cliente_id');
+        return $this->belongsTo(FuroClienteContrato::class, 'cliente_id');
+
     }
 }

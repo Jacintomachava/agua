@@ -15,8 +15,8 @@ class ContratoController extends Controller
     {
         $userActual = Auth::user();
 
-        $contratos = Contrato::where('empresa_id',$userActual->empresa_id)->get();
-        $contrato = ContractoTemplete::where('empresa_id',$userActual->empresa_id)->first();
+        $contratos = Contrato::where('empresa_id',$userActual->empresa_id)->where('furo_id',$userActual->furo_id)->get();
+        $contrato = ContractoTemplete::where('empresa_id',$userActual->empresa_id)->where('furo_id',$userActual->furo_id)->first();
 
         return view('contratos.index',  [
              'contratos' => $contratos,
@@ -28,7 +28,7 @@ class ContratoController extends Controller
     {
         $userActual = Auth::user();
 
-        $contrato = ContractoTemplete::where('empresa_id',$userActual->empresa_id)->first();
+        $contrato = ContractoTemplete::where('empresa_id',$userActual->empresa_id)->where('furo_id',$userActual->furo_id)->first();
 
         return view('contratos.templete',  [
             'contrato' => $contrato,
@@ -39,7 +39,7 @@ class ContratoController extends Controller
     {
         $userActual = Auth::user();
 
-        $contrato = ContractoTemplete::where('empresa_id',$userActual->empresa_id)->first();
+        $contrato = ContractoTemplete::where('empresa_id',$userActual->empresa_id)->where('furo_id',$userActual->furo_id)->first();
 
         return view('contratos.editTemplete',  [
             'contrato' => $contrato,
@@ -53,12 +53,23 @@ class ContratoController extends Controller
         ]);
     }
 
+    public function edit($id)
+    {
+        $userActual = Auth::user();
+
+        $contrato = Contrato::where('id',$id)->where('empresa_id',$userActual->empresa_id)->first();
+
+        return view('contratos.edit',  [
+                'contacto' => $contrato,
+        ]);
+    }
+
     public function contratoCliente($codigo)
     {
         $userActual = Auth::user();
 
         $cliente = FuroClienteContrato::where('empresa_id',$userActual->empresa_id)->where('codigo', $codigo)->first();
-        $contrato = ContractoTemplete::where('empresa_id',$userActual->empresa_id)->first();
+        $contrato = ContractoTemplete::where('empresa_id',$userActual->empresa_id)->where('furo_id',$userActual->furo_id)->first();
 
         // Conteúdo do template
         $texto = $contrato->conteudo;
@@ -98,8 +109,9 @@ class ContratoController extends Controller
 
             $userActual = Auth::user();
             // Cria Empresa e colocar Saldo de SMSCredito
-            $contrato = ContractoTemplete::where('empresa_id',$userActual->empresa_id)->first();
+            $contrato = ContractoTemplete::where('empresa_id',$userActual->empresa_id)->where('furo_id',$userActual->furo_id)->first();
             $contrato->empresa_id = $userActual->empresa_id;
+            $contrato->furo_id = $userActual->furo_id;
             $contrato->conteudo = $request->conteudo;
 
             if ($contrato->save()) {
@@ -132,6 +144,7 @@ class ContratoController extends Controller
             // Cria Empresa e colocar Saldo de SMSCredito
             $contrato = new ContractoTemplete();
             $contrato->empresa_id = $userActual->empresa_id;
+            $contrato->furo_id = $userActual->furo_id;
             $contrato->conteudo = $request->conteudo;
 
             if ($contrato->save()) {
@@ -152,6 +165,41 @@ class ContratoController extends Controller
 
     }
 
+    public function destroy($id)
+    {
+        try {
+
+            $userActual = Auth::user();
+            $contrato = Contrato::findOrFail($id);
+            $cliente = FuroClienteContrato::where('contrato_id',$id)->where('empresa_id',$userActual->empresa_id)->first();
+
+            if($cliente==null){
+
+                 $contrato->delete();
+
+                return response()->json([
+                    'status' => 1,
+                    'message' => 'Contrato apagado com sucesso'
+                ]);
+
+            }else{
+
+                return response()->json([
+                    'status' => 0,
+                    'message' => 'Contrato com historico nao pode ser apagado'
+                ]);
+            }
+
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'status' => 0,
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+
+
     public function store(Request $request)
     {
 
@@ -171,11 +219,51 @@ class ContratoController extends Controller
             $contrato->metro_cubico = $request->input('consumo');
             $contrato->multa = $request->input('multa');
             $contrato->empresa_id = $userActual->empresa_id;
+            $contrato->furo_id = $userActual->furo_id;
 
             if ($contrato->save()) {
 
                 DB::commit();
                 return response()->json(['status' => 1, 'message' => 'Contrato Registado Com Sucesso']);
+
+            }
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            //$errorMessage = DatabaseErrorHandler::handle($e);
+            return response()->json([
+                'status' => 0,
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
+
+
+    public function update(Request $request)
+    {
+
+        DB::beginTransaction();
+
+        try {
+
+            $userActual = Auth::user();
+
+            // Cria Empresa e colocar Saldo de SMSCredito
+            $contrato = Contrato::where('id',$request->input('id'))->where('empresa_id',$userActual->empresa_id)->first();
+            $contrato->consumo_minimo = $request->input('consumo_minimo');
+            $contrato->valor_contrato = $request->input('valor_contrato');
+            $contrato->valor = $request->input('valor_consumo');
+            $contrato->nome = $request->input('nome');
+            $contrato->prazo_pagamento = $request->input('prazo_pagamento');
+            $contrato->metro_cubico = $request->input('consumo');
+            $contrato->multa = $request->input('multa');
+            $contrato->empresa_id = $userActual->empresa_id;
+            $contrato->furo_id = $userActual->furo_id;
+
+            if ($contrato->save()) {
+
+                DB::commit();
+                return response()->json(['status' => 1, 'message' => 'Contrato Actualizado Com Sucesso']);
 
             }
 

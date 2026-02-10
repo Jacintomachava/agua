@@ -11,6 +11,13 @@ class UserFuro extends Model
 
     protected $table = 'user_furo';
 
+    protected $fillable = [
+        'user_id',
+        'furo_id',
+        'updated_at',
+        'created_at',
+    ];
+
     public function furo()
     {
         return $this->belongsTo(Furo::class, 'furo_id');

@@ -237,8 +237,8 @@
                                         @endif
                                     </td>
                                     <td>{{$leitura->credito}} </td>
-                                    <td>{{ \Carbon\Carbon::parse($pacote->updated_at)->format('d-M-Y') }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($pacote->updated_at)->format('H:s') }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($leitura->updated_at)->format('d-M-Y') }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($leitura->updated_at)->format('H:s') }}</td>
 
                                 </tr>
                             @endforeach

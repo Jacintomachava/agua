@@ -32,6 +32,9 @@ class EmpresaController extends Controller
 
             $todasEmpresas = Empresa::all();
 
+
+            $codigoCowork = $request->input('cowork_codigo');
+
             // Cria Empresa e colocar Saldo de SMSCredito
             $empresa = new Empresa();
             $empresa->nome = $request->input('nome_empresa');
@@ -39,7 +42,7 @@ class EmpresaController extends Controller
             $empresa->telefone = $request->input('telefone_user');
             $empresa->distrito_id = $request->input('distrito');
             $empresa->endereco = $request->input('bairro');
-            $empresa->valor_por_cliente = 35;
+            $empresa->valor_por_cliente = 15;
             $empresa->codigo = str_pad(count($todasEmpresas) + 1, 2, '0', STR_PAD_LEFT);
 
             $anoActual = Carbon::now()->year;
@@ -68,6 +71,7 @@ class EmpresaController extends Controller
 
                 $smsCredito = new SaldoSMS();
                 $smsCredito->empresa_id = $empresa->id;
+                $smsCredito->saldo_sistema = 3000;
 
                 // Cria Empresa e colocar Saldo de SMSCredito
                 $furo = new Furo();
@@ -75,11 +79,26 @@ class EmpresaController extends Controller
                 $furo->empresa_id = $empresa->id;
                 $furo->endereco = $request->input('bairro');
 
-                if($furo->save() && $smsCredito->save()){
+                if($codigoCowork!=null){
+
+                    $userCowork = User::where('codigo',$codigoCowork)->first();
+
+                    if($userCowork){
+                        $coWork = new CoWork();
+                        $coWork->empresa_id = 1;
+                        $coWork->user_id = $userCowork->id;
+                        $coWork->percentagem = 10;
+                    }
+
+                }
+
+                if($furo->save()){
 
                     $data = Carbon::now();
                     $codigo = rand(100000, 999999);
                     $smsDescricao = "Caro(a) ".$request->input('nome_user').", a sua empresa ".$request->input('nome_empresa')." foi criada, dados de acesso: user: ".$request->input('telefone_user')." senha: ".$codigo;
+
+                    $smsCredito->furo_id = $furo->id;
 
                     $user = new User();
                     $user->nome = $request->input('nome_user');
@@ -95,13 +114,13 @@ class EmpresaController extends Controller
                     $sms->telefone = $request->input('telefone_user');
                     $sms->nome = $request->input('nome_user');
                     $sms->qtd = SMSService::quantidadeSMS($smsDescricao);
-                    $sms->credito = SMSService::quantidadeSMS($smsDescricao)*1.8;
-                    $sms->custo_real = SMSService::quantidadeSMS($smsDescricao)*1.2;
+                    $sms->credito = SMSService::quantidadeSMS($smsDescricao)*1.85;
+                    $sms->custo_real = SMSService::quantidadeSMS($smsDescricao)*1.35;
                     $sms->empresa_id = 1;
                     $sms->furo_id = 1;
                     $sms->data_envio = $data;
 
-                    if($user->save() && $sms->save()){
+                    if($user->save() && $sms->save() && $smsCredito->save()){
 
                         $roleUser = new RoleUser();
                         $roleUser->role_id = 1;

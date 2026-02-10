@@ -33,30 +33,12 @@ class ClienteController extends Controller
     {
         $user = Auth::user();
 
-        // Coleções vazias (evita null)
-        $clientes = collect();
-        $furos = collect();
-
         $provincias = Provincia::all();
         $nacionalidades = Nacionalidade::all();
 
-        // Query base
-        $clientesQuery = FuroClienteContrato::where('empresa_id', $user->empresa_id);
-        $furosQuery = Furo::where('empresa_id', $user->empresa_id);
-
-        // Leitura vê apenas seu furo
-        if ($user->hasRole('Leitura')) {
-            $clientesQuery->where('furo_id', $user->furo_id);
-            $furosQuery->where('id', $user->furo_id);
-        }
-
-        // Admin e SuperAdmin veem tudo da empresa
-        if ($user->hasAnyRole(['Admin', 'SuperAdmin'])) {
-            // nenhuma restrição adicional
-        }
-
-        $clientes = $clientesQuery->get();
-        $furos = $furosQuery->get();
+        // Dados
+        $clientes = FuroClienteContrato::where('empresa_id', $user->empresa_id)->where('furo_id', $user->furo_id)->get();
+        $furos = Furo::where('empresa_id', $user->empresa_id)->get();
 
         return view('clientes.index', compact(
             'clientes',
@@ -70,28 +52,11 @@ class ClienteController extends Controller
     {
         $userActual = Auth::user();
 
-        $clientes = null;
-        $furos = null;
         $provincias = Provincia::all();
-        
-        if (auth()->user()->hasRole('Admin')) {
-            // usuário é admin
-            $clientes = FuroClienteContrato::where('empresa_id',$userActual->empresa_id)->get();
-            $furos = Furo::where('empresa_id',$userActual->empresa_id)->get();
-        }
 
-        if (auth()->user()->hasRole('SuperAdmin')) {
-            // usuário é admin
-            $clientes = FuroClienteContrato::where('empresa_id',$userActual->empresa_id)->get();
-            $furos = Furo::where('empresa_id',$userActual->empresa_id)->get();
-        }
-
-        if (auth()->user()->hasRole('Leitura')) {
-            // usuário é Leitura
-            $clientes = FuroClienteContrato::where('empresa_id',$userActual->empresa_id)->where('furo_id',$userActual->furo_id)->get();
-            $furos = Furo::where('empresa_id',$userActual->empresa_id)->where('furo_id',$userActual->furo_id)->get();
-        }
-
+        // usuário é Leitura
+        $clientes = FuroClienteContrato::where('empresa_id',$userActual->empresa_id)->where('furo_id',$userActual->furo_id)->get();
+        $furos = Furo::where('empresa_id',$userActual->empresa_id)->get();
         
         return view('leitura.clientes',  [
              'clientes' => $clientes,
@@ -105,9 +70,9 @@ class ClienteController extends Controller
         $userActual = Auth::user();
 
         $cliente = FuroClienteContrato::where('empresa_id',$userActual->empresa_id)->where('codigo', $codigo)->first();
-        $leituras = Leitura::where('furo_cliente_contrato_id', $cliente->id)->where('estado_leitura',1)->get();
-        $recibos = Recibo::where('cliente_id',$cliente->id)->get();
-        $mensagens = Mensagem::where('telefone',$cliente->telefone_notificar)->get();
+        $leituras = Leitura::where('furo_cliente_contrato_id', $cliente->id)->where('estado_leitura',1)->where('furo_id',$userActual->furo_id)->get();
+        $recibos = Recibo::where('cliente_id',$cliente->id)->where('furo_id',$userActual->furo_id)->get();
+        $mensagens = Mensagem::where('telefone',$cliente->telefone_notificar)->where('furo_id',$userActual->furo_id)->get();
 
         return view('clientes.show',  [
              'cliente' => $cliente,
@@ -137,8 +102,8 @@ class ClienteController extends Controller
     {
         $userActual = Auth::user();
 
-        $tubagens = Tubagem::where('empresa_id',$userActual->empresa_id)->get();
-        $clientes = FuroClienteContrato::where('empresa_id',$userActual->empresa_id)->get();
+        $tubagens = Tubagem::where('empresa_id',$userActual->empresa_id)->where('furo_id',$userActual->furo_id)->get();
+        $clientes = FuroClienteContrato::where('empresa_id',$userActual->empresa_id)->where('furo_id',$userActual->furo_id)->get();
 
         return view('clientes.mapa',  [
              'clientes' => $clientes,
@@ -495,6 +460,8 @@ class ClienteController extends Controller
                             $pagamento->valor = $valorAPagar;
                             $pagamento->furo_id = $request->input('furo');
                             $pagamento->empresa_id = $userActual->empresa_id;
+                            $pagamento->furo_id = $userActual->furo_id;
+                            $pagamento->user_id = $userActual->id;
                             $pagamento->factura_id = $factura->id;
                             $pagamento->estado = $estado;
                             $pagamento->forma_pagamento_id = $request->input('forma_pagamento');
@@ -507,6 +474,7 @@ class ClienteController extends Controller
                                 $recibo = new Recibo();
                                 $recibo->cliente_id = $furoClienteContrato->id;
                                 $recibo->empresa_id = $userActual->empresa_id;
+                                $recibo->furo_id = $userActual->furo_id;
                                 $recibo->numero_factura = $numeroFatura;
                                 $recibo->status = $estado;
                                 $recibo->tipo_pagamento_id = 1;
@@ -514,6 +482,7 @@ class ClienteController extends Controller
                                 $recibo->tipo_pagamento_id = 1;
                                 $recibo->valor = $valorAPagar;
                                 $recibo->pagamento_id = $pagamento->id;
+                                $recibo->numero_recibo = $numeroRecibo;
 
                                 $userCliente =new User();
                                 $userCliente->nome = $request->input('cliente');

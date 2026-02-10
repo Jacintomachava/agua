@@ -23,6 +23,7 @@ use App\Http\Controllers\CredencialController;
 use App\Http\Controllers\TempleteSMSController;
 use App\Http\Controllers\ClienteFuroController;
 use App\Http\Controllers\DashbordDonoController;
+use App\Http\Controllers\DespesaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -85,18 +86,31 @@ Route::get('/nivel', [RoleController::class, 'index'])->name('nivel.index');
 Route::get('/user/furos', [UserFuroController::class, 'index'])->name('userFuro.index');
 Route::get('/user/furo', [UserFuroController::class, 'create'])->name('userFuro.create');
 Route::post('/user/furo', [UserFuroController::class, 'store'])->name('userFuro.store');
+Route::get('/user/furo/{id}', [UserFuroController::class, 'edit'])->name('userFuro.edit');
+Route::post('/user/furo/update', [UserFuroController::class, 'update'])->name('userFuro.update');
+Route::post('/user/toggle-estado/{id}', [UserFuroController::class, 'toggleEstado']);
+Route::delete('/user/delete/{id}', [UserFuroController::class, 'destroy']);
+
 
 //Furos
 Route::get('/furos', [FuroController::class, 'index'])->name('furo.index');
 Route::get('/registar/furo', [FuroController::class, 'create'])->name('furo.create');
-Route::post('/registar/furo', [FuroController::class, 'store'])->name('furo.store');  
+Route::post('/registar/furo', [FuroController::class, 'store'])->name('furo.store'); 
+Route::post('/update/furo', [FuroController::class, 'update'])->name('furo.update');  
 Route::get('/mudar/furo', [FuroController::class, 'mudarFuro'])->name('mudar.furo');
 Route::post('/mudars/furos', [FuroController::class, 'mudarFuroUpdate'])->name('mudar1.furo');
+Route::get('/furo/edit/{id}', [FuroController::class, 'edit'])->name('furo.edit');
+Route::delete('/furo/delete/{id}', [FuroController::class, 'destroy'])->name('furo.destroy');
+
 
 //Tipos de Contrato
 Route::get('/contratos', [ContratoController::class, 'index'])->name('contrato.index');
 Route::get('/contrato', [ContratoController::class, 'create'])->name('contrato.create');
 Route::post('/contrato', [ContratoController::class, 'store'])->name('contrato.store');
+Route::post('/update/contrato', [ContratoController::class, 'update'])->name('contrato.update');
+Route::get('/contrato/{id}', [ContratoController::class, 'edit'])->name('contrato.edit');
+Route::delete('/contrato/delete/{id}', [ContratoController::class, 'destroy'])->name('contrato.destroy');
+
 //templete Contracto
 Route::get('/templete/contrato', [ContratoController::class, 'templete'])->name('contrato.templete');
 Route::post('/contrato/templete', [ContratoController::class, 'registarTemplete'])->name('templete.contrato');
@@ -158,6 +172,14 @@ Route::get('/mapa/tubagem', [MapaController::class, 'index'])->name('mapa.index'
 Route::post('/rota/tubagem', [MapaController::class, 'store'])->name('mapa.store');
 Route::post('/delete/tubagem', [MapaController::class, 'delete'])->name('mapa.delete');
 Route::post('/rota/tubagem/update', [MapaController::class, 'update'])->name('mapa.update');
+
+//Despesas
+Route::get('/despesas', [DespesaController::class, 'index'])->name('despesas.index');
+Route::get('/registar/despesas', [DespesaController::class, 'create'])->name('despesas.create');
+Route::post('/despesas', [DespesaController::class, 'store'])->name('despesas.store');
+Route::get('/despesa/{id}', [DespesaController::class, 'edit'])->name('despesas.edit');
+Route::post('/despesa/update', [DespesaController::class, 'update'])->name('despesas.update');
+Route::get('/despesa/apagar/{id}', [DespesaController::class, 'delete'])->name('despesas.delete');
 
 //Financas
 Route::get('/financas', [FinancaController::class, 'index'])->name('financas.index');

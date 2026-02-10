@@ -66,6 +66,11 @@
                 </li>
 
                 <li class="sidebar-list"><i class="fa fa-thumb-tack"></i>
+                    <label class="badge badge-light-primary">1</label><a class="sidebar-link sidebar-title" href="{{route('despesas.index')}}">
+                        <span class="lan-3"><i style="font-size: 15pt; padding-right: 5pt;" class="icofont icofont-chart-flow-alt-1"></i>Despesas</span></a>
+                </li>
+
+                <li class="sidebar-list"><i class="fa fa-thumb-tack"></i>
                     <label class="badge badge-light-primary">1</label><a class="sidebar-link sidebar-title" href="{{route('financas.index')}}">
                         <span class="lan-3"><i style="font-size: 15pt; padding-right: 5pt;" class="icofont icofont-chart-histogram"></i>Finanças</span></a>
                 </li>
@@ -85,9 +90,9 @@
                         <use href="{{ URL('/assets/svg/icon-sprite.svg#settings') }}"></use>
                         </svg><span class="lan-3">Parametrização</span></a>
                     <ul class="sidebar-submenu">
-                        <li><a class="lan-1" href="{{route('furo.index')}}">Furos</a></li>
                         <li><a class="lan-2" href="{{route('contrato.index')}}">T. Contractos</a></li>
                         <li><a class="lan-2" href="{{route('mapa.index')}}">Tubo Geral</a></li>
+                        <li><a class="lan-1" href="{{route('furo.index')}}">Furos</a></li>
                         <li><a class="lan-2" href="{{route('credencial.index')}}">Credenciais</a></li>
                     </ul>
                 </li>

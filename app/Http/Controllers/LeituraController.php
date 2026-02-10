@@ -70,7 +70,7 @@ class LeituraController extends Controller
         $userActual = Auth::user();
         $mesAtual = Carbon::now()->month;
 
-        $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->where('estado_leitura',0)->where('furo_id',$userActual->furo_id)->where('mes_id',$mesAtual-1)->get();
+        $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->where('estado_leitura',0)->where('furo_id',$userActual->furo_id)->where('mes_id', Carbon::now()->subMonth()->month)->get();
 
         return view('leitura.index',  [
              'leituras' => $leituras,
@@ -124,24 +124,11 @@ class LeituraController extends Controller
     {
         $userActual = Auth::user();
         $mesAtual = Carbon::now()->subMonth()->month;
-        $leituras = null;
 
         $empresa = Empresa::where('id',$userActual->empresa_id)->first();
 
-        if (auth()->user()->hasRole('Admin')) {
-            // usuário é admin
-            $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->where('estado_leitura',1)->where('mes_id', $mesAtual)->get();
-        }
-
-        if (auth()->user()->hasRole('SuperAdmin')) {
-            // usuário é admin
-            $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->where('estado_leitura',1)->where('mes_id',$mesAtual)->get();
-        }
-
-        if (auth()->user()->hasRole('Leitura')) {
-            // usuário é Leitura
-            $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->where('estado_leitura',1)->where('furo_id',$userActual->furo_id)->where('mes_id',$mesAtual)->get();
-        }
+        // usuário é Leitura
+        $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->where('estado_leitura',1)->where('furo_id',$userActual->furo_id)->where('mes_id',$mesAtual)->get();
 
         $pdf = \PDF::loadView('leitura.facturasTodos', [
              'leituras' => $leituras,
@@ -208,7 +195,7 @@ class LeituraController extends Controller
 
             if($leitura->estado_leitura==0){
 
-                $credito = SaldoSMS::where('empresa_id',$userActual->empresa_id)->first();
+                $credito = SaldoSMS::where('empresa_id',$userActual->empresa_id)->where('furo_id',$userActual->furo_id)->first();
 
                 if($credito->saldo_sistema - $empresa->valor_por_cliente >= 0){
 
@@ -342,7 +329,7 @@ class LeituraController extends Controller
         $userActual = Auth::user();
 
         $cliente = FuroClienteContrato::where('empresa_id',$userActual->empresa_id)->where('codigo',$codigo)->first();
-        $leituras = Leitura::where('furo_cliente_contrato_id', $cliente->id)->where('estado_leitura',1)->get();
+        $leituras = Leitura::where('furo_cliente_contrato_id', $cliente->id)->where('estado_leitura',1)->where('furo_id',$userActual->furo_id)->get();
         $empresa = Empresa::where('id',$userActual->empresa_id)->first();
 
         $pdf = \PDF::loadView('pagamento.pdfExtracto', [

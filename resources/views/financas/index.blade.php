@@ -217,8 +217,8 @@
 
                                 @foreach($recibos as $recibo)
                                     <tr>
-                                        <td>{{$recibo->pagamento->numero_recibo}}</td>
-                                        <td>{{$recibo->cliente->nome}}</td>
+                                        <td>{{$recibo->numero_recibo}}</td>
+                                        <td>{{$recibo->cliente->cliente->nome}}</td>
                                         <td>{{$recibo->valor}}</td>
                                         <td>{{$recibo->pagamento->estado}}</td>
                                         <td>{{$recibo->pagamento->tipo->nome}}</td>

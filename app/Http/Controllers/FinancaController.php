@@ -19,21 +19,22 @@ class FinancaController extends Controller
     public function index()
     {
         $userActual = Auth::user();
+        $user = Auth::user();
         // Primeiro, obter o mês anterior
         $mesAnterior = Carbon::now()->subMonth()->month;
         $mesActual = Carbon::now()->month;
         $meses = Mes::orderBy('id')->get();
 
         //Cardes
-        $pagamentoMes = Pagamento::where('empresa_id', $userActual->empresa_id)->whereMonth('created_at', now()->month)->whereYear('created_at', now()->year)->sum('valor');
-        $clientesDivida = FuroClienteContrato::where('empresa_id', $userActual->empresa_id)->sum('divida');
-        $valorContractos = FuroClienteContrato::where('empresa_id', $userActual->empresa_id)->sum('saldo');
-        $valorDespesa = Despesa::where('empresa_id', $userActual->empresa_id)->sum('valor_pago');
-        $valorDespesaSistemaSMS = CompraCredito::where('empresa_id', $userActual->empresa_id)->sum('valor');
+        $pagamentoMes = Pagamento::where('empresa_id', $userActual->empresa_id)->where('furo_id', $user->furo_id)->whereMonth('created_at', now()->month)->whereYear('created_at', now()->year)->sum('valor');
+        $clientesDivida = FuroClienteContrato::where('empresa_id', $userActual->empresa_id)->where('furo_id', $user->furo_id)->sum('divida');
+        $valorContractos = FuroClienteContrato::where('empresa_id', $userActual->empresa_id)->where('furo_id', $user->furo_id)->sum('saldo');
+        $valorDespesa = Despesa::where('empresa_id', $userActual->empresa_id)->where('furo_id', $user->furo_id)->sum('valor_pago');
+        $valorDespesaSistemaSMS = CompraCredito::where('empresa_id', $userActual->empresa_id)->where('furo_id', $user->furo_id)->sum('valor');
 
         //Tabela
-        $recibos = Recibo::where('empresa_id', $userActual->empresa_id)->get();
-        $despesas = Despesa::where('empresa_id', $userActual->empresa_id)->get();
+        $recibos = Recibo::where('empresa_id', $userActual->empresa_id)->where('furo_id', $user->furo_id)->get();
+        $despesas = Despesa::where('empresa_id', $userActual->empresa_id)->where('furo_id', $user->furo_id)->get();
 
         //Graficos Pia de Despesas
         $dados = Despesa::select(
@@ -41,6 +42,8 @@ class FinancaController extends Controller
                 DB::raw('SUM(despesas.valor_pago) as total')
             )
             ->join('despesa_categoria', 'despesas.categoria_id', '=', 'despesa_categoria.id')
+            ->where('empresa_id', $userActual->empresa_id)
+            ->where('furo_id', $user->furo_id)
             ->groupBy('despesa_categoria.nome')
             ->get();
 
@@ -56,6 +59,8 @@ class FinancaController extends Controller
             'mes_id',
             DB::raw('SUM(valor_pago) as total')
         )
+        ->where('empresa_id', $userActual->empresa_id)
+        ->where('furo_id', $user->furo_id)
         ->groupBy('mes_id')
         ->get();
 
@@ -64,6 +69,8 @@ class FinancaController extends Controller
                 DB::raw('MONTH(data_pagamento) as mes_id'),
                 DB::raw('SUM(valor_pago) as total')
             )
+            ->where('empresa_id', $userActual->empresa_id)
+            ->where('furo_id', $user->furo_id)
             ->groupBy(DB::raw('MONTH(data_pagamento)'))
             ->get();
 
@@ -89,6 +96,8 @@ class FinancaController extends Controller
             'banco_carteira.nome as banco',
                 DB::raw('SUM(pagamentos.valor) as total')
             )
+            ->where('empresa_id', $userActual->empresa_id)
+            ->where('furo_id', $user->furo_id)
             ->join('banco_carteira', 'pagamentos.tipo_banco', '=', 'banco_carteira.id')
             ->groupBy('banco_carteira.nome')
             ->get();
@@ -105,6 +114,8 @@ class FinancaController extends Controller
             'mes_id',
             DB::raw('SUM(valor_pago) as total')
         )
+        ->where('empresa_id', $userActual->empresa_id)
+        ->where('furo_id', $user->furo_id)
         ->groupBy('mes_id')
         ->get();
 

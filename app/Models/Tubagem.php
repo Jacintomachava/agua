@@ -15,6 +15,7 @@ class Tubagem extends Model
         'latitude',
         'longitude',
         'empresa_id',
+        'furo_id',
         'ordem',
         'updated_at',
         'created_at',

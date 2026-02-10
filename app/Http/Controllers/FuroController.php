@@ -7,6 +7,7 @@ use App\Models\Role;
 use App\Models\User;
 use App\Models\UserFuro;
 use App\Models\Furo;
+use App\Models\FuroClienteContrato;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
@@ -82,6 +83,7 @@ class FuroController extends Controller
             $furo->nome = $request->input('nome');
             $furo->empresa_id = $userActual->empresa_id;
             $furo->endereco = $request->input('endereco');
+            $furo->default = 0;
 
             if ($furo->save()) {
 
@@ -99,4 +101,75 @@ class FuroController extends Controller
             ]);
         }
     }
+
+    public function edit($id)
+    {
+        $userActual = Auth::user();
+
+        $furo = Furo::where('id',$id)->where('empresa_id',$userActual->empresa_id)->first();
+
+        return view('furos.edit', compact('furo'));
+    }
+
+    public function update(Request $request)
+    {
+
+        DB::beginTransaction();
+
+        try {
+
+            $userActual = Auth::user();
+
+            $furoID = $request->input('id');
+
+            // Cria Empresa e colocar Saldo de SMSCredito
+            $furo = Furo::where('id',$furoID)->where('empresa_id',$userActual->empresa_id)->first();
+            $furo->nome = $request->input('nome');
+            $furo->empresa_id = $userActual->empresa_id;
+            $furo->endereco = $request->input('endereco');
+
+            if ($furo->save()) {
+
+                DB::commit();
+                return response()->json(['status' => 1, 'message' => 'Furo Actualizado Com Sucesso']);
+
+            }
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            //$errorMessage = DatabaseErrorHandler::handle($e);
+            return response()->json([
+                'status' => 0,
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function destroy($id)
+    {
+        $furo = Furo::findOrFail($id);
+
+        $cliente = FuroClienteContrato::where('furo_id',$id)->get();
+
+        if($cliente==null)
+        {
+            $furo->delete();
+
+            return response()->json([
+                'status' => 1,
+                'message' => 'Furo apagado com sucesso'
+            ]);
+
+        }else{
+
+            return response()->json([
+                'status' => 0,
+                'message' => 'Furo Com Historico Nao pode ser Apagado'
+            ]);
+        }
+
+        
+    }
+
+
 }

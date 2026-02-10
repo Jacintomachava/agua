@@ -73,11 +73,18 @@
                                 </td>
 
                                 <td>
-                                    <a class="btn btn-warning btn-xs activate-btn" href="" >
+                                    <a class="btn btn-warning btn-xs" href="{{route('userFuro.edit',['id'=>$user->id])}}" >
                                         Editar
                                     </a>
-                                     <a class="btn btn-danger btn-xs activate-btn"  >
-                                        Desativar
+                                    <a class="btn btn-info btn-xs btn-toggle-estado"
+                                        data-id="{{ $user->id }}"
+                                        data-estado="{{ $user->estado }}">
+                                        Activar/Desactivar
+                                    </a>
+
+                                    <a class="btn btn-danger btn-xs btn-delete-user"
+                                        >
+                                        Apagar
                                     </a>
                                 </td>
                             </tr>
@@ -152,6 +159,106 @@
             });
         });
     });
+</script>
+
+<script>
+
+/////////////////////////////
+// ACTIVAR / DESACTIVAR
+/////////////////////////////
+
+document.querySelectorAll('.btn-toggle-estado').forEach(btn => {
+
+    btn.addEventListener('click', function () {
+
+        let userId = this.dataset.id;
+        let estado = this.dataset.estado;
+
+        let texto = estado == 1
+            ? 'Deseja desactivar este utilizador?'
+            : 'Deseja activar este utilizador?';
+
+        Swal.fire({
+            title: 'Confirmação',
+            text: texto,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sim',
+            cancelButtonText: 'Cancelar'
+        }).then(result => {
+
+            if (!result.isConfirmed) return;
+
+            fetch(`/user/toggle-estado/${userId}`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(res => res.json())
+            .then(response => {
+
+                Swal.fire({
+                    icon: response.status ? 'success' : 'error',
+                    title: response.status ? 'Sucesso' : 'Erro',
+                    text: response.message
+                }).then(() => location.reload());
+
+            });
+
+        });
+
+    });
+
+});
+
+
+/////////////////////////////
+// APAGAR UTILIZADOR
+/////////////////////////////
+
+document.querySelectorAll('.btn-delete-user').forEach(btn => {
+
+    btn.addEventListener('click', function () {
+
+        let userId = this.dataset.id;
+
+        Swal.fire({
+            title: 'Tem certeza?',
+            text: 'Esta ação não poderá ser revertida!',
+            icon: 'error',
+            showCancelButton: true,
+            confirmButtonText: 'Sim, apagar',
+            cancelButtonText: 'Cancelar'
+        }).then(result => {
+
+            if (!result.isConfirmed) return;
+
+            fetch(`/user/delete/${userId}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(res => res.json())
+            .then(response => {
+
+                Swal.fire({
+                    icon: response.status ? 'success' : 'error',
+                    title: response.status ? 'Sucesso' : 'Erro',
+                    text: response.message
+                }).then(() => location.reload());
+
+            });
+
+        });
+
+    });
+
+});
+
 </script>
 
 @endpush

@@ -53,10 +53,15 @@
                                 <td>{{$furo->empresa->nome}}</td>
 
                                 <td>
-                                    <a class="btn btn-warning btn-xs activate-btn" href="" >
+                                     <!-- EDITAR -->
+                                    <a class="btn btn-warning btn-xs btn-edit-furo"
+                                        href="{{route('furo.edit',['id'=>$furo->id])}}">
                                         Editar
                                     </a>
-                                     <a class="btn btn-danger btn-xs activate-btn"  >
+
+                                    <!-- APAGAR -->
+                                    <a class="btn btn-danger btn-xs btn-delete-furo"
+                                        data-id="{{$furo->id}}">
                                         Apagar
                                     </a>
                                 </td>
@@ -74,6 +79,56 @@
 @endsection
 
 @push('js')
+
+
+<script>
+
+/////////////////////////////
+// APAGAR
+/////////////////////////////
+
+document.querySelectorAll('.btn-delete-furo').forEach(btn => {
+
+    btn.addEventListener('click', function () {
+
+        let id = this.dataset.id;
+
+        Swal.fire({
+            title: 'Tem certeza?',
+            text: 'Esta ação não poderá ser revertida!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sim, apagar',
+            cancelButtonText: 'Cancelar'
+        }).then(result => {
+
+            if (!result.isConfirmed) return;
+
+            fetch(`/furo/delete/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(res => res.json())
+            .then(response => {
+
+                Swal.fire({
+                    icon: response.status ? 'success' : 'error',
+                    title: response.status ? 'Sucesso' : 'Erro',
+                    text: response.message
+                }).then(() => location.reload());
+
+            });
+
+        });
+
+    });
+
+});
+
+</script>
 
 
 @endpush

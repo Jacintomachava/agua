@@ -14,23 +14,12 @@
             <div class="header-top">
                 <h2>
                     <img class="img-40 img-fluid m-r-20" src="{{ URL('/assets/images/job-search/2.jpg')}}" alt="">
-                    Lista de Tipo Contratos
+                    Lista de Despesas
                 </h2>
                 <div class="card-header-right-icon">
-                    <a href="{{route('contrato.create')}}">
-                        <button class="btn btn-pill btn-primary btn-sm">Cadastrar Contrato</button>
+                    <a href="{{route('despesas.create')}}">
+                        <button class="btn btn-pill btn-primary btn-sm">Cadastrar Despesa</button>
                     </a>
-                    @if($contrato!=null)
-                        <a href="{{route('contrato.editarTemplete')}}">
-                            <button class="btn btn-pill btn-warning btn-sm">Editar Templete</button>
-                        </a>
-                    @else
-                        <a href="{{route('contrato.templete')}}">
-                            <button class="btn btn-pill btn-warning btn-sm">Cadastrar Templete</button>
-                        </a>
-                    @endif
-                    
-                    
                 </div>
             </div>
         </div>
@@ -47,35 +36,36 @@
                 <table class="display" id="basic-1">
                     <thead>
                         <tr>
-                            <th></th>
-                            <th>Nome</th>
-                            <th>V. Contrato</th>
-                            <th>Custo/m&sup3;</th>
-                            <th>Cunsumo M. (m&sup3;)</th>
-                            <th>Prazo Pagamento</th>
-                            <th>Multa</th>
-                            <th>Acção</th>
+                            <th scope="col">Descrição</th>
+                            <th scope="col">Categoria</th>
+                            <th scope="col">Valor Despesa</th>
+                            <th scope="col">Valor Pago</th>
+                            <th scope="col">Saldo</th>
+                            <th scope="col">Data</th>
+                            <th scope="col">Hora</th>
+                            <th scope="col">Acção</th>
                         </tr>
                     </thead>
                     <tbody>
 
-                        @foreach($contratos as $contrato)
+                        @foreach($despesas as $despesa)
                             <tr>
-                                <td></td>
-                                <td>{{$contrato->nome }}</td>
-                                <td>{{$contrato->valor_contrato}}MT</td>
-                                <td>{{$contrato->valor}}MT/{{$contrato->metro_cubico}}m&sup3;</td>
-                                <td>{{$contrato->consumo_minimo}}m&sup3; ({{$contrato->consumo_minimo*$contrato->valor}}MT)</td>
-                                <td>Dia {{$contrato->prazo_pagamento}} Cada Mes</td>
-                                <td>{{$contrato->multa}}%</td>
-
+                                <td data-container="body" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="{{$despesa->descricao}}">
+                                    {{ Str::limit($despesa->descricao, 10) }}
+                                </td>
+                                <td>{{$despesa->categoria->nome}}</td>
+                                <td>{{$despesa->valor_despesa}}</td>
+                                <td>{{$despesa->valor_pago}}</td>
+                                <td>{{$despesa->valor_despesa-$despesa->valor_pago}}</td>
+                                <td>{{ \Carbon\Carbon::parse($despesa->updated_at)->format('d-M-Y') }}</td>
+                                <td>{{ \Carbon\Carbon::parse($despesa->updated_at)->format('H:s') }}</td>
                                 <td>
-                                    <a class="btn btn-warning btn-xs" href="{{route('contrato.edit',['id'=>$contrato->id])}}" >
+                                    <a class="btn btn-warning btn-xs" href="{{route('despesas.edit',['id'=>$despesa->id])}}" >
                                         Editar
                                     </a>
-                                     <a class="btn btn-danger btn-xs btn-delete-contrato" data-id="{{$contrato->id}}" >
+                                     <a class="btn btn-danger btn-xs btn-delete-despesa" data-id="{{$despesa->id}}" >
                                         Apagar
-                                    </a>
+                                    </a> 
                                 </td>
                             </tr>
                         @endforeach
@@ -95,15 +85,15 @@
 
 <script>
 
-document.querySelectorAll('.btn-delete-contrato').forEach(btn => {
+document.querySelectorAll('.btn-delete-despesa').forEach(btn => {
 
     btn.addEventListener('click', function () {
 
-        let contratoId = this.dataset.id;
+        let despesaId = this.dataset.id;
 
         Swal.fire({
             title: 'Tem certeza?',
-            text: 'Deseja realmente apagar este contrato?',
+            text: 'Deseja realmente apagar esta Despesa?',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonText: 'Sim, apagar',
@@ -112,7 +102,7 @@ document.querySelectorAll('.btn-delete-contrato').forEach(btn => {
 
             if (!result.isConfirmed) return;
 
-            fetch(`/contrato/delete/${contratoId}`, {
+            fetch(`/despesa/apagar/${despesaId}`, {
                 method: 'DELETE',
                 headers: {
                     'X-CSRF-TOKEN': '{{ csrf_token() }}',

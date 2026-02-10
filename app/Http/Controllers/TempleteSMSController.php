@@ -66,6 +66,7 @@ class TempleteSMSController extends Controller
             $mensagemPeriodica->descricao = $request->input('mensagem');
             $mensagemPeriodica->dia_do_mes = $request->input('dia');
             $mensagemPeriodica->empresa_id = $userActual->empresa_id;
+            $mensagemPeriodica->furo_id = $userActual->furo_id;
 
             if ($mensagemPeriodica->save()) {
 

@@ -32,22 +32,8 @@ class PagamentoController extends Controller
     {
         $user = Auth::user();
 
-        // Sempre trabalhar com coleção
-        $leituras = collect();
-
         // Query base
-        $query = Leitura::where('empresa_id', $user->empresa_id)
-            ->where('estado_leitura', 1);
-
-        // Perfil Leitura → apenas seu furo
-        if ($user->hasRole('Leitura')) {
-            $query->where('furo_id', $user->furo_id);
-        }
-
-        // Admin e SuperAdmin → veem tudo da empresa
-        // (nenhuma restrição adicional)
-
-        $leituras = $query->get();
+        $leituras = Leitura::where('empresa_id', $user->empresa_id)->where('furo_id', $user->furo_id)->where('estado_leitura', 1)->get();
 
         return view('pagamento.index', compact('leituras'));
     }
@@ -59,7 +45,7 @@ class PagamentoController extends Controller
         $leitura = Leitura::where('empresa_id',$userActual->empresa_id)->where('id',$contratoID)->first();
         $empresa = Empresa::where('id',$userActual->empresa_id)->first();
         $cliente = FuroClienteContrato::where('empresa_id',$userActual->empresa_id)->where('id',$leitura->furoClienteContrato->id)->first();
-        $pagamentos = Pagamento::where('leitura_id',$leitura->id)->get();
+        $pagamentos = Pagamento::where('leitura_id',$leitura->id)->where('furo_id',$userActual->furo_id)->get();
 
         $pdf = \PDF::loadView('pagamento.pdfRecibo', [
              'leitura' => $leitura,

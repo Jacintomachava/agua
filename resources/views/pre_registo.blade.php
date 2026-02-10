@@ -64,24 +64,57 @@
                   @csrf
 
                   <div class="row">
+                      <div class="col-12">
+                          <div class="offer-banner">
+                              <div class="offer-content">
+
+                                  @if($coworkCode)
+                                      <h4 style="color:white">
+                                          Preço Especial: <strong>15,00 MT</strong> por cliente (cobrado apenas no acto da leitura) <br>
+                                          Válido por <strong>1 ano</strong> (</i>preço normal 30,00Mt por cliente</i>).
+                                      </h4>
+                                  @else
+                                      <h4 style="color:white">
+                                          Preço do Sistema: <strong>30,00 MT</strong> por cliente  <br>
+                                          Valor cobrado apenas no acto da leitura.
+                                      </h4>
+
+                                  @endif
+
+                                  <h4 style="margin-top:10px; color:white">
+                                      🎁 Bónus de Registo <strong>{{ number_format(3000,2,',','.') }} MT</strong> para usar nas leituras.
+                                  </h4>
+
+                              </div>
+
+                              <img class="img-fluid"
+                                  src="{{ URL('/assets/images/dashboard/1.png') }}"
+                                  alt="promoção" />
+                          </div>
+                      </div>
+                  </div>
+                  <br>
+
+
+                  <div class="row">
 
                     <h2>Dados da Empresa</h2>
 
                     <div class="col-6">
-                      <label class="form-label">Nome Empresa</label>
+                      <label class="form-label">Nome Empresa <span style="color: red">*</span></label>
                       <input class="form-control" name="nome_empresa" type="text" placeholder="Nome Empresa">
                     </div>
                     <div class="col-6">
-                      <label class="form-label">Logotipo da Empresa</label>
+                      <label class="form-label">Logotipo da Empresa <span style="color: red">*</span></label>
                       <input class="form-control" name="logotipo" type="file" placeholder="logotipo Empresa">
                     </div>
 
                     <div class="col-6">
-                      <label class="form-label">NUIT</label>
+                      <label class="form-label">NUIT <span style="color: red">*</span></label>
                       <input class="form-control" name="nuit" type="text" placeholder="NUIT">
                     </div>
                     <div class="col-6">
-                      <label class="form-label">Provincia</label>
+                      <label class="form-label">Provincia <span style="color: red">*</span></label>
                       <select class="form-select"  name="provincia" id="provincia" onchange="getDistritos()" >
                               <option value="">Selecione a Provincia</option>
                               @foreach($provincias as $provincia)
@@ -91,14 +124,14 @@
                     </div>
 
                     <div class="col-6">
-                      <label class="form-label">Distrito</label>
+                      <label class="form-label">Distrito <span style="color: red">*</span></label>
                       <select class="form-select" name="distrito" id="distrito">
                           <option value="">Selecione o Distrito</option>
                       </select>
                     </div>
 
                     <div class="col-6">
-                      <label class="form-label">Bairro</label>
+                      <label class="form-label">Bairro <span style="color: red">*</span></label>
                       <div class="form-label">
                         <input class="form-control" type="text" name="bairro" placeholder="Bairro">
                       </div>
@@ -106,16 +139,28 @@
                     
 
                   </div>
+
+                  @if($coworkCode)
+                      <!-- VEIO DO LINK DO COWORK → CAMPO INVISÍVEL -->
+                      <input type="hidden" name="cowork_codigo" value="{{ $coworkCode }}">
+                  @else
+                      <!-- REGISTO NORMAL → CAMPO VISÍVEL -->
+                      <div class="col-12">
+                          <label class="form-label">Código Promocional (opcional)</label>
+                          <input class="form-control" name="cowork_codigo"  type="text" placeholder="Código Promocional">
+                      </div>
+                  @endif
+
                     <br>
                   <div class="row">
 
                     <h2>Dados de Utilizador</h2>
                     <div class="col-6">
-                      <label class="form-label">Nome </label>
+                      <label class="form-label">Nome <span style="color: red">*</span></label>
                       <input class="form-control" name="nome_user" type="text" placeholder="Nome">
                     </div>
                     <div class="col-6">
-                      <label class="form-label">Telefone</label>
+                      <label class="form-label">Telefone <span style="color: red">*</span></label>
                       <div class="form-label">
                         <input class="form-control" type="text" name="telefone_user" placeholder="Telefone">
                       </div>
@@ -130,7 +175,7 @@
 
                   <div class="form-group mb-0">
                     <div class="checkbox p-0">
-                      <input id="checkbox1" type="checkbox" name="termos">
+                      <input id="checkbox1" type="checkbox" name="termos" checked>
                       <label class="text-muted" for="checkbox1">Aceitar Termos</label>
                     </div><a class="link" href="{{route('login')}}">Voltar</a>
                     <div class="text-end mt-3">

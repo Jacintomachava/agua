@@ -29,18 +29,19 @@ class MensagemController extends Controller
     {
 
         $userActual = Auth::user();
-        $mensagens = Mensagem::where('empresa_id',$userActual->empresa_id)->orderBy('updated_at', 'desc')->get();
+        $mensagens = Mensagem::where('empresa_id',$userActual->empresa_id)->where('furo_id',$userActual->furo_id)->orderBy('updated_at', 'desc')->get();
         $contatos = MensagemSessao::orderBy('updated_at', 'desc')->get();
-        $pacotes = CompraCredito::where('empresa_id',$userActual->empresa_id)->orderBy('updated_at', 'desc')->get();
-        $saldo = SaldoSMS::where('empresa_id',$userActual->empresa_id)->first();
-        $creditoSMSPendente = Mensagem::where('empresa_id',$userActual->empresa_id)->sum('credito');
-        $mensagensPeriodicas = MensagemPeriodica::where('empresa_id',$userActual->empresa_id)->get();
+        $pacotes = CompraCredito::where('empresa_id',$userActual->empresa_id)->where('furo_id',$userActual->furo_id)->orderBy('updated_at', 'desc')->get();
+        $saldo = SaldoSMS::where('empresa_id',$userActual->empresa_id)->where('furo_id',$userActual->furo_id)->first();
+        $creditoSMSPendente = Mensagem::where('empresa_id',$userActual->empresa_id)->where('furo_id',$userActual->furo_id)->sum('credito');
+        $mensagensPeriodicas = MensagemPeriodica::where('empresa_id',$userActual->empresa_id)->where('furo_id',$userActual->furo_id)->get();
 
 
         // 🟢 Gráfico 1: Consumo de créditos por mês e canal (WhatsApp e SMS)
         $consumoPorCanal = DB::table('mensagem')
                     ->selectRaw("DATE_FORMAT(created_at, '%M') as mes, canal, SUM(credito) as total_credito")
                     ->where('empresa_id',$userActual->empresa_id)
+                    ->where('furo_id',$userActual->furo_id)
                     ->where('tipo', 'Enviada')
                     ->groupBy('mes', 'canal')
                     ->orderBy('mes')
@@ -52,6 +53,7 @@ class MensagemController extends Controller
         // 🟢 Gráfico 2: Consumo de crédito e lucro por mês
         $consumoLucroPorMes = Mensagem::selectRaw("DATE_FORMAT(created_at, '%M') as mes, SUM(credito) as total_credito, SUM(credito - custo_real) as lucro")
             ->where('empresa_id',$userActual->empresa_id)
+            ->where('furo_id',$userActual->furo_id)
             ->groupBy('mes')
             ->orderBy('mes')
             ->get();
@@ -136,6 +138,7 @@ class MensagemController extends Controller
                 $anoActual = Carbon::now()->year;
                 $totalFatura = Fatura::where('empresa_id',$userActual->empresa_id)->get();
                 $numeroFatura = str_pad(count($totalFatura) + 2, 7, '0', STR_PAD_LEFT).''.$anoActual;
+                $numeroRecibo = str_pad(count($totalRecibo) + 2, 7, '0', STR_PAD_LEFT).''.$anoActual;
                 $codigo1 = Str::random(8);
                 $referencia = $numeroFatura;
 
@@ -175,6 +178,7 @@ class MensagemController extends Controller
                     $pagamento->valor = $valor;
                     $pagamento->furo_id = $userActual->furo_id;
                     $pagamento->empresa_id = $userActual->empresa_id;
+                    $pagamento->user_id = $userActual->user_id;
                     $pagamento->factura_id = $factura->id;
                     $pagamento->estado = "Pago";
                     $pagamento->forma_pagamento_id = 2;
@@ -186,28 +190,32 @@ class MensagemController extends Controller
 
                         $recibo = new Recibo();
                         $recibo->cliente_id = $userActual->empresa_id;
-                        $recibo->empresa_id = $empresaMozSoft->id;;
+                        $recibo->empresa_id = $empresaMozSoft->id;
+                        $recibo->furo_id = $userActual->furo_id;
                         $recibo->numero_factura = $numeroFatura;
                         $recibo->status = 'Pago';
                         $recibo->tipo_pagamento_id = 1;
                         $recibo->factura_id = $factura->id;
                         $recibo->valor = $valor;
                         $recibo->pagamento_id = $pagamento->id;
+                        $recibo->numero_recibo = $numeroRecibo;
 
                         if($recibo->save()){
 
-                            $credito = SaldoSMS::where('empresa_id',$userActual->empresa_id)->first();
+                            $credito = SaldoSMS::where('empresa_id',$userActual->empresa_id)->where('furo_id',$userActual->furo_id)->first();
 
                             //Faturacao da Encomenda
                             $pacote = new CompraCredito();
                             $pacote->numero_credito = $valor;
-                            $pacote->codigo = $referencia;
+                            $pacote->codigo = $referencia.''.$codigo1;
                             $pacote->tipo = $tipo;
                             $pacote->preco_por_credito = 1;
                             $pacote->valor = $valor;
                             $pacote->tipo_pacote = $pacoteNome;
                             $pacote->user_id = $userActual->id;
                             $pacote->empresa_id = $userActual->empresa_id;
+                            $pacote->furo_id = $userActual->furo_id;
+
                             if($tipo=='SMS'){
                                 $pacote->saldo = $credito->saldo;
                             }else{
