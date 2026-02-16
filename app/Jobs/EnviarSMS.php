@@ -74,12 +74,13 @@ class EnviarSMS implements ShouldQueue
                 if($resultado==200){
 
                     // Actaulizar Saldo
-                    $saldo->saldo = $saldo->saldo - $mensagem->qtd * 1.8;
+                    $saldo->saldo = $saldo->saldo - $mensagem->qtd * 1.85;
                     // Actualizar SMS
                     $actualizarMensagem->tipo = 'Enviada';
-                    $actualizarMensagem->credito = $mensagem->qtd * 1.8;
-                    $actualizarMensagem->custo_real = $mensagem->qtd * 1.2;
-                    $actualizarMensagem->lucro = $mensagem->qtd * 1.8 - $mensagem->qtd * 1.2;
+                    $actualizarMensagem->credito = $mensagem->qtd * 1.85;
+                    $actualizarMensagem->custo_real = $mensagem->qtd * 1.35;
+                    $actualizarMensagem->lucro = $mensagem->qtd * 1.85 - $mensagem->qtd * 1.35;
+                    $actualizarMensagem->saldo_sms = $saldo->saldo;
                     $actualizarMensagem->save();
                     //Diminuir
                     $saldo->save();
@@ -118,10 +119,8 @@ class EnviarSMS implements ShouldQueue
     private function notificarSaldoInsuficiente()
     {
         $telefone = '874870386';
-        $telefone1 = '847880867';
         $mensagem = 'O furo está sem crédito para enviar SMS e interagir via WhatsApp. Por favor, recarregue a sua conta.';
         SMSService::sendSMS($telefone, $mensagem, 'LHAYSSO');
-        SMSService::sendSMS($telefone1, $mensagem, 'LHAYSSO');
         \Log::info('📩 Cliente notificado com sucesso.');
     }
 }

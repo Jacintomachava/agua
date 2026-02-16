@@ -237,6 +237,7 @@ class LeituraController extends Controller
                     $credito->save();
 
                     $leitura->credito = $empresa->valor_por_cliente;
+                    $leitura->credito_saldo = $credito->saldo_sistema;
 
                 }else{
 
@@ -421,6 +422,7 @@ class LeituraController extends Controller
                 $leitura->numero_factura  = $numeroFatura;
                 $leitura->prazo_pagamento = now()->setDay($furoClienteContrato->data_multa);
                 $leitura->credito         = $empresa->valor_por_cliente;
+                $leitura->credito_saldo   = $saldo->saldo_sistema;
 
                 $leitura->save();
 

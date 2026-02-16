@@ -81,7 +81,7 @@ class EmpresaController extends Controller
 
                 if($codigoCowork!=null){
 
-                    $userCowork = User::where('codigo',$codigoCowork)->first();
+                    $userCowork = User::where('codigo',$codigoCowork)->where('tipo','CoWork')->first();
 
                     if($userCowork){
                         $coWork = new CoWork();

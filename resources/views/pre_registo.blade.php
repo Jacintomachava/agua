@@ -75,8 +75,8 @@
                                       </h4>
                                   @else
                                       <h4 style="color:white">
-                                          Preço do Sistema: <strong>30,00 MT</strong> por cliente  <br>
-                                          Valor cobrado apenas no acto da leitura.
+                                          Preço Especial: <strong>15,00 MT</strong> por cliente (cobrado apenas no acto da leitura) <br>
+                                          Válido por <strong>1 ano</strong> (</i>preço normal 30,00Mt por cliente</i>).
                                       </h4>
 
                                   @endif
@@ -145,7 +145,7 @@
                       <input type="hidden" name="cowork_codigo" value="{{ $coworkCode }}">
                   @else
                       <!-- REGISTO NORMAL → CAMPO VISÍVEL -->
-                      <div class="col-12">
+                      <div class="col-12" hidden>
                           <label class="form-label">Código Promocional (opcional)</label>
                           <input class="form-control" name="cowork_codigo"  type="text" placeholder="Código Promocional">
                       </div>
