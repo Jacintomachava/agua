@@ -391,7 +391,7 @@ class MensagemController extends Controller
 
                         if($recibo->save()){
 
-                            $credito = SaldoSMS::where('empresa_id',$userActual->empresa_id)->first();
+                            $credito = SaldoSMS::where('empresa_id',$userActual->empresa_id)->where('furo_id',$userActual->furo_id)->first();
                             
                             //Faturacao da Encomenda
                             $pacote = new CompraCredito();
@@ -402,7 +402,8 @@ class MensagemController extends Controller
                             $pacote->tipo_pacote = $pacoteNome;
                             $pacote->user_id = $userActual->id;
                             $pacote->empresa_id = $userActual->empresa_id;
-                
+
+
                             if($pacote->save()){
 
                                 $credito->saldo = $credito->saldo + $valor;
