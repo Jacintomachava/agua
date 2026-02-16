@@ -102,6 +102,8 @@
                       </div>
                     </div>
 
+                    <p class="mt-4 mb-0 text-center">Quere saber mais sobre sistema?<a class="ms-2" target="_blank" href="https://www.youtube.com/playlist?list=PL70aKYEuu4H4S3TvqkUx9KXOo6MWZTXFq">Clica Aqui!</a></p>
+
                   </center>
 
 

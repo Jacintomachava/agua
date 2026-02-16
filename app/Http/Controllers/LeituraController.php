@@ -78,6 +78,40 @@ class LeituraController extends Controller
 
     }
 
+    public function registarLeitura()
+    {
+        $userActual = Auth::user();
+
+        $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->where('mes_id',Carbon::now()->subMonth()->month)->where('furo_id',$userActual->furo_id)->get();
+        $empresa = Empresa::where('id',$userActual->empresa_id)->first();
+        $mesLeitura = Mes::where('numero',Carbon::now()->subMonth()->month)->first(); 
+
+        return view('leitura.registarLeitura',  [
+             'leituras' => $leituras,
+             'mesLeitura' => $mesLeitura,
+        ]);
+    }
+
+    public function leituraFazer()
+    {
+        $userActual = Auth::user();
+
+        $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->where('mes_id',Carbon::now()->subMonth()->month)->where('furo_id',$userActual->furo_id)->get();
+        $empresa = Empresa::where('id',$userActual->empresa_id)->first();
+        $mesLeitura = Mes::where('numero',Carbon::now()->subMonth()->month)->first();
+
+
+        $pdf = \PDF::loadView('leitura.fazerLeitura', [
+             'leituras' => $leituras,
+             'empresa' => $empresa,
+             'mesLeitura' => $mesLeitura,
+        ])->setPaper('a4', 'Portrait'); 
+
+        $fikeName = 'factura-'.$mesLeitura->nome;
+
+        return $pdf->stream($fikeName.'.pdf');
+    }
+
     public function fatura($leituraID)
     {
         $userActual = Auth::user();
@@ -288,6 +322,165 @@ class LeituraController extends Controller
             ]);
         }
 
+    }
+
+    public function updateTodos(Request $request)
+    {
+        DB::beginTransaction();
+
+        try {
+
+            $userActual = Auth::user();
+            $empresa = Empresa::where('id', $userActual->empresa_id)->first();
+
+            if (!$request->has('leituras')) {
+                return response()->json([
+                    'status' => 0,
+                    'message' => 'Nenhuma leitura foi preenchida.'
+                ]);
+            }
+
+            foreach ($request->leituras as $item) {
+
+                $leitura = Leitura::where('id', $item['id'])->first();
+
+                if (!$leitura || $leitura->estado_leitura == 1) {
+                    continue; // ignora já feitas
+                }
+
+
+                $furoClienteContrato = FuroClienteContrato::where('id', $leitura->furo_cliente_contrato_id)
+                    ->where('empresa_id', $userActual->empresa_id)
+                    ->first();
+
+                if (!$furoClienteContrato) {
+                    continue;
+                }
+
+                $ultimaLeitura = $furoClienteContrato->ultima_leitura;
+                $novaLeitura   = $item['valor'];
+
+                if ($novaLeitura < $ultimaLeitura) {
+                    DB::rollBack();
+                    return response()->json([
+                        'status' => 0,
+                        'message' => 'Leitura actual não pode ser menor que a anterior.'
+                    ]);
+                }
+
+                // =========================
+                // CALCULAR CONSUMO
+                // =========================
+                $consumo = $novaLeitura - $ultimaLeitura;
+                $consumoMinimo = $furoClienteContrato->contrato->consumo_minimo;
+
+                // =========================
+                // VALIDAR SALDO SISTEMA
+                // =========================
+                $saldo = SaldoSMS::where('empresa_id', $userActual->empresa_id)
+                    ->where('furo_id', $userActual->furo_id)
+                    ->first();
+
+                if ($saldo->saldo_sistema < $empresa->valor_por_cliente) {
+
+                    DB::rollBack();
+                    return response()->json([
+                        'status' => 0,
+                        'message' => 'Saldo do sistema insuficiente. Recarregue para continuar.'
+                    ]);
+                }
+
+                // Debitar saldo
+                $saldo->saldo_sistema -= $empresa->valor_por_cliente;
+                $saldo->save();
+
+                // =========================
+                // CALCULAR VALOR A PAGAR
+                // =========================
+                if ($consumo < $consumoMinimo) {
+                    $valorAPagar = $consumoMinimo * $furoClienteContrato->contrato->valor;
+                } else {
+                    $valorAPagar = $consumo * $furoClienteContrato->contrato->valor;
+                }
+
+                // =========================
+                // GERAR NÚMERO FACTURA
+                // =========================
+                $anoActual = now()->year;
+                $numeroFatura = str_pad(Fatura::max('id') + 1, 7, '0', STR_PAD_LEFT) . $anoActual;
+
+                // =========================
+                // ATUALIZAR LEITURA
+                // =========================
+                $leitura->valor_leitura   = $novaLeitura;
+                $leitura->data_leitura    = $item['data'];
+                $leitura->consumo         = $consumo;
+                $leitura->estado_leitura  = 1;
+                $leitura->leitura_feita_por = $userActual->id;
+                $leitura->valor_a_pagar   = $valorAPagar;
+                $leitura->numero_factura  = $numeroFatura;
+                $leitura->prazo_pagamento = now()->setDay($furoClienteContrato->data_multa);
+                $leitura->credito         = $empresa->valor_por_cliente;
+
+                $leitura->save();
+
+                // =========================
+                // CRIAR FACTURA
+                // =========================
+                $factura = new Fatura();
+                $factura->cliente_id      = $furoClienteContrato->id;
+                $factura->empresa_id      = $userActual->empresa_id;
+                $factura->numero_factura  = $numeroFatura;
+                $factura->data_emissao    = now();
+                $factura->status          = 'Pendente';
+                $factura->tipo_pagamento_id = 2;
+                $factura->contrato_id     = $furoClienteContrato->contrato_id;
+                $factura->valor           = $valorAPagar;
+                $factura->furo_id         = $leitura->furo_id;
+                $factura->leitura_id      = $leitura->id;
+
+                $factura->save();
+
+                // =========================
+                // GERAR SMS
+                // =========================
+                $valorFormatado = number_format($valorAPagar, 2, ',', '.');
+
+                $smsDescricao = "Caro(a) {$furoClienteContrato->cliente->nome}, "
+                    . "Factura {$numeroFatura} do mês {$leitura->mes->nome}-{$leitura->ano->ano}. "
+                    . "Consumo: {$consumo}m3. "
+                    . "Valor: {$valorFormatado} MT.";
+
+                $sms = new Mensagem();
+                $sms->descricao  = $smsDescricao;
+                $sms->telefone   = $furoClienteContrato->telefone_notificar;
+                $sms->nome       = $furoClienteContrato->cliente->nome;
+                $sms->qtd        = SMSService::quantidadeSMS($smsDescricao);
+                $sms->credito    = $sms->qtd * 1.85;
+                $sms->custo_real = $sms->qtd * 1.35;
+                $sms->empresa_id = $userActual->empresa_id;
+                $sms->furo_id    = $leitura->furo_id;
+                $sms->data_envio = now();
+
+                $sms->save();
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'status' => 1,
+                'message' => 'Leituras registadas com sucesso.'
+            ]);
+
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'status' => 0,
+                'message' => $e->getMessage()
+            ]);
+        }
     }
 
     public function geolocalizacaoStore(Request $request)

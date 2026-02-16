@@ -25,7 +25,7 @@ class SMSService
         $bearerToken = 'M2NiNDEzMjIxNjU4NjM2ZmUxNTc5YzNiM2M0NGQyOWZiY2VlYmY5NDE3OGE4NjA2YTUzYTIyNjdlYmY4MGVmMi0wMjkzY2E2NjNlZGY2MmMzOWQ1OTI1OWJiNzkyYmUyODI5Y2FmMThkOGY3M2FhNDdkMTBkOGMyZTkzMDg1MzYyYTJkNjg0NzQ3NGJhZGE4ZGJm';
 
         $data = [
-            "sender" => "LHAYSSO",
+            "sender" => "INFOMSG",
             "recipient" => '+258'.$telefone,
             "message" => $mensagem
         ];
@@ -71,7 +71,7 @@ class SMSService
         $data = json_encode([
             'phone' => '+258'.$telefone,
             'message' => $mensagem,
-            'sender_id' => 'LHAYSSO'
+            'sender_id' => 'MOZOTP'
         ]);
 
         curl_setopt_array($curl, [

@@ -90,4 +90,10 @@ class DashbordController extends Controller
              'clientesInativos' => $clientesInativos,
         ]);
     }
+
+    public function indexAjuda()
+    {
+        return view('ajuda',  [
+            ]);
+    }
 }

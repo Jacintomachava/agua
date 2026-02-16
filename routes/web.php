@@ -69,7 +69,10 @@ Route::put('/mensagens-periodicas/{id}/toggle', [TempleteSMSController::class, '
 
 Route::get('/leituras/pendentes', [LeituraController::class, 'pendentes'])->name('leituras.pendentes');
 Route::get('/todas/leituras', [LeituraController::class, 'todasLeituras'])->name('todas.leituras');
-Route::get('/facturas/todos', [LeituraController::class, 'facturasTodos'])->name('facturas.todos');
+Route::get('/facturas/todos', [LeituraController::class, 'facturasTodos'])->name('facturas.todos');  
+Route::get('/leituras/fazer', [LeituraController::class, 'leituraFazer'])->name('leitura.fazer');
+Route::post('/todas/leituras', [LeituraController::class, 'updateTodos'])->name('update.todos');
+Route::get('/registar/leituras', [LeituraController::class, 'registarLeitura'])->name('registar.leitura');
 Route::get('/facturas/leitura/{id}', [LeituraController::class, 'facturaLeitura'])->name('facturas.leitura');
 
 //Empresa Gravar
@@ -80,6 +83,7 @@ Route::post('/empresa/cowork', [EmpresaController::class, 'storeCoWork'])->name(
 
 //Home
 Route::get('/home', [DashbordController::class, 'indexHome'])->name('dashbord.indexHome');
+Route::get('/ajuda', [DashbordController::class, 'indexAjuda'])->name('index.ajuda');
 
 //Utilizadores
 Route::get('/nivel', [RoleController::class, 'index'])->name('nivel.index');

@@ -8,6 +8,7 @@
 
 @section('conteudo')
 
+
 <div class="col-xl-12 order-md-iii">
     <div class="card title-line overflow-hidden member-wrapper">
         <div class="card-header card-no-border">
@@ -20,12 +21,19 @@
                     <a href="{{route('leituras.pendentes')}}">
                         <button class="btn btn-pill btn-warning btn-sm">Leituras Pendentes</button>
                     </a>
-                    <a href="{{route('facturas.todos')}}" target="_blank">
-                        <button class="btn btn-pill btn-success btn-sm">Facturas de Todos</button>
-                    </a>
                     <a href="{{route('todas.leituras')}}" >
                         <button class="btn btn-pill btn-secondary btn-sm">Meses Anteriores</button>
                     </a>
+                    <a href="{{route('registar.leitura')}}" >
+                        <button class="btn btn-pill btn-success btn-sm">Preenchar Leitura</button>
+                    </a>
+                    <a href="{{route('leitura.fazer')}}" target="_blank">
+                        <button class="btn btn-pill btn-danger btn-sm">Leituras a Fazer PDF</button>
+                    </a>
+                    <a href="{{route('facturas.todos')}}" target="_blank">
+                        <button class="btn btn-pill btn-info btn-sm">Facturas PDF</button>
+                    </a>
+
                 </div>
             </div>
         </div>

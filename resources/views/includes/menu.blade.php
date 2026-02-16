@@ -111,6 +111,11 @@
                         <span class="lan-3"><i style="font-size: 19pt; padding-right: 5pt;" class="icofont icofont-cart-alt"></i> Recarregar </span></a>
                 </li>
 
+                <li class="sidebar-list"><i class="fa fa-thumb-tack"></i>     
+                    <label class="badge badge-light-primary">1</label><a class="sidebar-link sidebar-title" href="{{route('index.ajuda')}}">
+                        <span class="lan-3"><i style="font-size: 19pt; padding-right: 5pt;" class="icofont icofont-support"></i> Ajuda </span></a>
+                </li>
+
             @endif
 
             @if(Auth::user()->tipo=='CoWork')
