@@ -250,7 +250,7 @@ $(document).ready(function() {
                         }).then((result) => {
 
                             if (result.isConfirmed) {
-                                window.location.href = '/pagamento/leitura';
+                                window.location.href = "{{ url('/pagamento/leitura') }}"; 
                             }
 
                         });

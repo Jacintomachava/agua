@@ -294,7 +294,7 @@
                                 }).then((result) => {
 
                                     if (result.isConfirmed) {
-                                        window.location.href = '/furo';
+                                        window.location.href =  "{{ url('/') }}";
                                     }
 
                                 });
@@ -317,9 +317,9 @@
 
 
                              Swal.fire({
-                                          icon: 'error',
-                                          title: 'Erro!',
-                                          text: errors.responseJSON.message,
+                                  icon: 'error',
+                                  title: 'Erro!',
+                                  text: errors.responseJSON.message,
                              });
 
                         }
@@ -340,7 +340,7 @@
             distritoSelect.innerHTML = '<option value="">Carregando...</option>';
 
             if (provinciaID) {
-                fetch(`/furo/api/distritos/${provinciaID}`)
+                fetch(`{{ url('/api/distritos') }}/${provinciaID}`)
                     .then(response => response.json())
                     .then(data => {
                         distritoSelect.innerHTML = '<option value="">Selecione o Distrito</option>';

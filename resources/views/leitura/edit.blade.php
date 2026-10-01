@@ -142,7 +142,7 @@ $(document).ready(function() {
                         }).then((result) => {
 
                             if (result.isConfirmed) {
-                                window.location.href = '/leituras';
+                                window.location.href = "{{ url('/leituras') }}"; 
                             }
 
                         });

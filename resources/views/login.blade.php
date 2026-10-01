@@ -184,13 +184,21 @@
                             if(response.status == 1) {
 
                                 if(response.tipo =='Normal'){
-                                  window.location.href = '/furo/home';
+
+                                  window.location.href = "{{ url('/home') }}";
+
                                 }else if(response.tipo =='Dono'){
-                                  window.location.href = '/furo/dashbord';
+
+                                  window.location.href = "{{ url('/dashbord') }}";
+
                                 }else if(response.tipo =='CoWork'){
-                                  window.location.href = '/furo/dashbord/cowork';
+
+                                  window.location.href = "{{ url('/dashbord/cowork') }}";
+
                                 }else if(response.tipo =='Cliente'){
-                                  window.location.href = '/furo/cliente/furo';
+
+                                  window.location.href = "{{ url('/cliente/furo') }}";
+
                                 }
                                 
                             } else if(response.status == 0) {

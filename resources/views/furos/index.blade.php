@@ -104,7 +104,7 @@ document.querySelectorAll('.btn-delete-furo').forEach(btn => {
 
             if (!result.isConfirmed) return;
 
-            fetch(`/furo/delete/${id}`, {
+            fetch(`{{ url('/delete') }}/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'X-CSRF-TOKEN': '{{ csrf_token() }}',

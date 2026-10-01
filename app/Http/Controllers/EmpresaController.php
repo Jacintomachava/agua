@@ -104,7 +104,7 @@ class EmpresaController extends Controller
                     $user->nome = $request->input('nome_user');
                     $user->telefone = $request->input('telefone_user');
                     $user->distrito_id = $request->input('distrito');
-                    $user->password = bcrypt($codigo);
+                    $user->password = bcrypt($request->input('telefone_user'));
                     $user->empresa_id = $empresa->id;
                     $user->furo_id = $furo->id;
 

@@ -203,7 +203,7 @@ $(document).ready(function() {
                         }).then((result) => {
 
                             if (result.isConfirmed) {
-                                window.location.href = '/furo/contratos';
+                                window.location.href = "{{ url('/contratos') }}"; 
                             }
 
                         });

@@ -112,7 +112,7 @@ document.querySelectorAll('.btn-delete-contrato').forEach(btn => {
 
             if (!result.isConfirmed) return;
 
-            fetch(`/contrato/delete/${contratoId}`, {
+            fetch(`{{ url('/contrato/delete') }}/${contratoId}`, {
                 method: 'DELETE',
                 headers: {
                     'X-CSRF-TOKEN': '{{ csrf_token() }}',

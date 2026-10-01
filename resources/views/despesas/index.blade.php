@@ -102,7 +102,7 @@ document.querySelectorAll('.btn-delete-despesa').forEach(btn => {
 
             if (!result.isConfirmed) return;
 
-            fetch(`/despesa/apagar/${despesaId}`, {
+            fetch(`{{ url('/despesa/apagar/') }}/${despesaId}`, {
                 method: 'DELETE',
                 headers: {
                     'X-CSRF-TOKEN': '{{ csrf_token() }}',

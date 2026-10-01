@@ -162,7 +162,7 @@ $(document).ready(function() {
                         }).then((result) => {
 
                             if (result.isConfirmed) {
-                                window.location.href = '/despesas';
+                                window.location.href = "{{ url('/despesas') }}"; 
                             }
 
                         });
