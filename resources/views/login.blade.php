@@ -184,13 +184,13 @@
                             if(response.status == 1) {
 
                                 if(response.tipo =='Normal'){
-                                  window.location.href = '/home';
+                                  window.location.href = '/furo/home';
                                 }else if(response.tipo =='Dono'){
-                                  window.location.href = '/dashbord';
+                                  window.location.href = '/furo/dashbord';
                                 }else if(response.tipo =='CoWork'){
-                                  window.location.href = '/dashbord/cowork';
+                                  window.location.href = '/furo/dashbord/cowork';
                                 }else if(response.tipo =='Cliente'){
-                                  window.location.href = '/cliente/furo';
+                                  window.location.href = '/furo/cliente/furo';
                                 }
                                 
                             } else if(response.status == 0) {
