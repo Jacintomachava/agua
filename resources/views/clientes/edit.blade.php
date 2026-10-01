@@ -563,7 +563,7 @@ $(document).ready(function() {
         distritoSelect.innerHTML = '<option value="">Carregando...</option>';
 
         if (provinciaID) {
-            fetch(`/api/distritos/${provinciaID}`)
+            fetch(`/furo/api/distritos/${provinciaID}`)
                 .then(response => response.json())
                 .then(data => {
                     distritoSelect.innerHTML = '<option value="">Selecione o Distrito</option>';
