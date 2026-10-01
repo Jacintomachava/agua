@@ -691,4 +691,18 @@ class ClienteController extends Controller
             ]);
         }
     }
+
+    public function clientesFuro(Request $request)
+    {
+        $user = $request->user();
+
+        $clientes = FuroClienteContrato::with('cliente')
+            ->where('furo_id', $user->furo_id)
+            ->get();
+
+        return response()->json([
+            'status' => true,
+            'clientes' => $clientes
+        ]);
+    }
 }

@@ -171,5 +171,38 @@ class FuroController extends Controller
         
     }
 
+    public function meusFuros(Request $request)
+    {
+        $user = $request->user();
+
+        $furos = UserFuro::where('user_id', $user->id)
+                    ->with('furo:id,nome')
+                    ->get();
+
+        return response()->json([
+            'furos' => $furos,
+            'furo_actual' => $user->furo_id
+        ]);
+    }
+
+    public function mudarFuroApp(Request $request)
+    {
+        $user = $request->user();
+
+        if (!$user) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Utilizador não autenticado'
+            ], 401);
+        }
+
+        $user->furo_id = $request->furo_id;
+        $user->save();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Furo alterado com sucesso'
+        ]);
+    }
 
 }

@@ -78,6 +78,53 @@ class LeituraController extends Controller
 
     }
 
+    public function leiturasPendentesApp(Request $request)
+    {
+        $user = $request->user();
+
+        $leituras = Leitura::with([
+            'furoClienteContrato.cliente',
+            'mes',
+            'ano'
+        ])
+        ->where('furo_id', $user->furo_id)
+        ->where('mes_id', Carbon::now()->subMonth()->month)
+        ->where('estado_leitura', 0)
+        ->get();
+
+        $resultado = [];
+
+        foreach ($leituras as $leitura) {
+
+            $contrato = $leitura->furoClienteContrato;
+            $cliente = $contrato->cliente ?? null;
+
+            $resultado[] = [
+                'id' => $leitura->id,
+                'cliente_id' => $contrato->id,
+                'cliente_nome' => $cliente->nome ?? '',
+                'cliente_numero' => $contrato->contador ?? '',
+                'telefone' => $contrato->telefone_notificar ?? '',
+                'bairro' => $contrato->bairro ?? '',
+                'quarteirao' => $contrato->quarteirao ?? '',
+                'casa' => $contrato->casa ?? '',
+                'ultima_leitura' => $contrato->ultima_leitura ?? 0,
+                'divida' => $contrato->divida ?? 0,
+                'saldo' => $contrato->saldo ?? 0,
+                'consumo_minimo' => $contrato->contracto->consumo_minimo ?? 0,
+                'preco_metro_cubico' => $contrato->contracto->valor ?? 0,
+                'mes' => $leitura->mes->nome ?? '',
+                'ano' => $leitura->ano->ano ?? '',
+                'estado_leitura' => $leitura->estado_leitura,
+            ];
+        }
+
+        return response()->json([
+            'status' => true,
+            'leituras' => $resultado
+        ]);
+    }
+
     public function registarLeitura()
     {
         $userActual = Auth::user();
