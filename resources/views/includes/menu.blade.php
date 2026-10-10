@@ -42,7 +42,7 @@
                 </a>
             </li>
 
-      @role('Secretaria')
+      @role('Admin')
 
             @if(Auth::user()->empresa->subscricao==1 && Auth::user()->tipo=='Normal')
                 <li class="sidebar-list"><i class="fa fa-thumb-tack"></i>
