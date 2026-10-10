@@ -37,7 +37,7 @@ class ClienteController extends Controller
         $nacionalidades = Nacionalidade::all();
 
         // Dados
-        $clientes = FuroClienteContrato::where('empresa_id', $user->empresa_id)->where('furo_id', $user->furo_id)->get();
+        $clientes = FuroClienteContrato::all(); //where('empresa_id', $user->empresa_id)->where('furo_id', $user->furo_id)->get();
         $furos = Furo::where('empresa_id', $user->empresa_id)->get();
 
         return view('clientes.index', compact(
