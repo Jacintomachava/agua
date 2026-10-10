@@ -42,6 +42,8 @@
                 </a>
             </li>
 
+      @role('Secretaria')
+
             @if(Auth::user()->empresa->subscricao==1 && Auth::user()->tipo=='Normal')
                 <li class="sidebar-list"><i class="fa fa-thumb-tack"></i>
                     <label class="badge badge-light-primary">1</label><a class="sidebar-link sidebar-title" href="{{route('dashbord.indexHome')}}">
@@ -117,6 +119,20 @@
                 </li>
 
             @endif
+    @endrole
+
+    @role('Clientes')
+        <li class="sidebar-list"><i class="fa fa-thumb-tack"></i>
+            <label class="badge badge-light-primary">1</label><a class="sidebar-link sidebar-title" href="{{route('cliente.index')}}">
+                <span class="lan-3"><i style="font-size: 15pt; padding-right: 5pt;" class="icofont icofont-users-social"></i>Clientes</span></a>
+        </li>
+
+        <li class="sidebar-list"><i class="fa fa-thumb-tack"></i>
+            <label class="badge badge-light-primary">1</label><a class="sidebar-link sidebar-title" href="{{route('leituras.index')}}">
+                <span class="lan-3"><i style="font-size: 15pt; padding-right: 5pt;" class="icofont icofont-lamp-light"></i>Leituras</span></a>
+        </li>
+
+    @endrole
 
             @if(Auth::user()->tipo=='CoWork')
 
