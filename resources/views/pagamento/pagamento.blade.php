@@ -142,7 +142,7 @@
         distritoSelect.innerHTML = '<option value="">Carregando...</option>';
 
         if (provinciaID) {
-            fetch(`/api/bancos/carteiras/${provinciaID}`)
+            fetch(`{{ url('/api/bancos/carteiras/') }}/${provinciaID}`)
                 .then(response => response.json())
                 .then(data => {
                     distritoSelect.innerHTML = '<option value="">Selecione o Banco Carteira</option>';
