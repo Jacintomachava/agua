@@ -34,7 +34,7 @@ class LeituraController extends Controller
         $mesAnterior = Carbon::now()->subMonth()->month;
 
         // Query base
-        $leituras = Leitura::where('empresa_id', $user->empresa_id)->where('furo_id', $user->furo_id)->where('mes_id', $mesAnterior)->get();
+        $leituras = Leitura::all(); //where('empresa_id', $user->empresa_id)->where('furo_id', $user->furo_id)->where('mes_id', $mesAnterior)->get();
 
 
         return view('leitura.index', compact('leituras'));
