@@ -209,7 +209,7 @@ class LeituraController extends Controller
         $empresa = Empresa::where('id',$userActual->empresa_id)->first();
 
         // usuário é Leitura
-        $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->where('estado_leitura',1)->where('furo_id',$userActual->furo_id)->where('mes_id',$mesAtual)->get();
+        $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->where('estado_leitura',1)->where('furo_id',17)->where('mes_id',$mesAtual)->get();
 
         $pdf = \PDF::loadView('leitura.facturasTodos', [
              'leituras' => $leituras,

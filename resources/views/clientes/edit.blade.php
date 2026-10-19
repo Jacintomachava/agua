@@ -525,7 +525,7 @@ $(document).ready(function() {
                                       text: response.message,
                             });
 
-                            window.location.reload();
+                             window.location.href = "{{ url('/clientes') }}"; 
 
                             } else if(response.status == 0) {
 
