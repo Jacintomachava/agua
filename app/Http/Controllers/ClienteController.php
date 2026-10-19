@@ -267,8 +267,8 @@ class ClienteController extends Controller
         $contratos = Contrato::where('empresa_id',$userActual->empresa_id)->get();
         $formasPagamentos = FormaPagamento::all();
         $bancos = BancoCarteira::all();
-        $factura = Fatura::where('empresa_id',$userActual->empresa_id)->where('furo_id',17)->where('cliente_id',$cliente->cliente_id)->whereNull('leitura_id')->first();
-        $recibo = Recibo::where('empresa_id',$userActual->empresa_id)->where('factura_id',$factura->id)->first();
+        //$factura = Fatura::where('empresa_id',$userActual->empresa_id)->where('furo_id',17)->where('cliente_id',$cliente->cliente_id)->whereNull('leitura_id')->first();
+       // $recibo = Recibo::where('empresa_id',$userActual->empresa_id)->where('factura_id',$factura->id)->first();
 
         if (auth()->user()->hasRole('Admin')) {
             // usuário é admin
@@ -294,8 +294,8 @@ class ClienteController extends Controller
              'contratos' => $contratos,
              'formasPagamentos' => $formasPagamentos,
              'bancos' => $bancos,
-             'factura' => $factura,
-             'recibo' => $recibo,
+             //'factura' => $factura,
+             //'recibo' => $recibo,
         ]);
     }
 
@@ -622,65 +622,9 @@ class ClienteController extends Controller
 
                 if($furoClienteContrato->save()){
 
-                    $factura = Fatura::where('id',$request->input('factura'))->first();
-                    $factura->cliente_id = $furoClienteContrato->id;
-                    $factura->empresa_id = $userActual->empresa_id;
-                    $factura->numero_factura = $numeroFatura;
-                    $factura->data_emissao = $data;
-                    $factura->status = $estado;
-                    $factura->tipo_pagamento_id = 1;
-                    //$factura->contrato_id = $furoClienteContrato->id;
-                    $factura->tipo_pagamento_id = 1;
-                    $factura->valor = $valorAPagar;
-                    $factura->furo_id = 17;
-
-                    if($factura->save()){
-
-                        if($valorPago > 0){
-
-                            $pagamento = Pagamento::where('id',$request->input('pagamentoID'))->first();
-                            $pagamento->valor = $valorAPagar;
-                            $pagamento->furo_id = $request->input('furo');
-                            $pagamento->empresa_id = $userActual->empresa_id;
-                            $pagamento->factura_id = $factura->id;
-                            //$pagamento->estado = $estado;
-                            $pagamento->forma_pagamento_id = $request->input('forma_pagamento');
-                            $pagamento->tipo_pagamento_id = 1;
-                            $pagamento->descricao = $request->input('descricao');
-                            $pagamento->tipo_banco = $request->input('banco');
-
-                            if($pagamento->save()){
-
-                                $recibo = new Recibo();
-                                $recibo->cliente_id = $furoClienteContrato->id;
-                                $recibo->empresa_id = $userActual->empresa_id;
-                                $recibo->numero_factura = $numeroFatura;
-                                //$recibo->status = $estado;
-                                $recibo->tipo_pagamento_id = 1;
-                                $recibo->contrato_id = $furoClienteContrato->id;
-                                $recibo->tipo_pagamento_id = 1;
-                                $recibo->valor = $valorAPagar;
-                                $recibo->pagamento_id = $pagamento->id;
-
-                                if($recibo->save()){
-
-                                    DB::commit();
-                                    return response()->json(['status' => 1, 'message' => 'Contrato Actualizado Com Sucesso']);
-
-                                }
-
-
-                            }
-                        
-
-                        }else{
-
-                            DB::commit();
-                            return response()->json(['status' => 1, 'message' => 'Contrato Registado Com Sucesso']);
-
-                        }
-
-                    }
+                    DB::commit();
+                    
+                    return response()->json(['status' => 1, 'message' => 'Contrato Actualizado Com Sucesso']);
 
                 }
 
