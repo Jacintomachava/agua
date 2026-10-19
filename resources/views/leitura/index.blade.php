@@ -143,7 +143,7 @@
                                         </a>
                                         
                                         @if($leitura->estado_leitura==0)
-                                            <a class="btn btn-danger btn-xs activate-btn" href="{{route('localizar.casa',['contratoID'=>$leitura->furoClienteContrato->contador])}}">
+                                            <a class="btn btn-danger btn-xs activate-btn" href="{{route('localizar.casa',['contratoID'=>$leitura->furoClienteContrato->id])}}">
                                                 Localizar
                                             </a>
                                         @else
