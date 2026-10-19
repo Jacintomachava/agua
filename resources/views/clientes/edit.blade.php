@@ -494,7 +494,7 @@ $(document).ready(function() {
         submitHandler: function(form) {
             $.ajax({
                 type: "POST",
-                url: "{{route('cliente.store')}}",
+                url: "{{route('cliente.update')}}",
                 data: $(form).serialize(), // Corrigido para usar `form` em vez de `this`
 
                 beforeSend: function () {
