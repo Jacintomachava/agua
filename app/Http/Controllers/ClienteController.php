@@ -267,6 +267,7 @@ class ClienteController extends Controller
         $contratos = Contrato::where('empresa_id',$userActual->empresa_id)->get();
         $formasPagamentos = FormaPagamento::all();
         $bancos = BancoCarteira::all();
+        $factura = Fatura::where('empresa_id',$userActual->empresa_id)->where('furo_id',17)->where('cliente_id',$cliente->cliente_id)->whereNull('leitura')->first();
 
         if (auth()->user()->hasRole('Admin')) {
             // usuário é admin
@@ -292,6 +293,7 @@ class ClienteController extends Controller
              'contratos' => $contratos,
              'formasPagamentos' => $formasPagamentos,
              'bancos' => $bancos,
+             'factura' => $factura,
         ]);
     }
 
@@ -612,9 +614,9 @@ class ClienteController extends Controller
                 $furoClienteContrato->provincia_id = $request->input('provincia');
                 $furoClienteContrato->ano_inicio_id = $ano->id;
                 $furoClienteContrato->mes_inicio_id = $mes->id;
-                $furoClienteContrato->furo_id = $request->input('furo');
+                $furoClienteContrato->furo_id = 17;
                 $furoClienteContrato->empresa_id = $userActual->empresa_id;
-                $furoClienteContrato->cliente_id = $cliente->id;
+                //$furoClienteContrato->cliente_id = $cliente->id;
 
                 if($furoClienteContrato->save()){
 
@@ -625,10 +627,10 @@ class ClienteController extends Controller
                     $factura->data_emissao = $data;
                     $factura->status = $estado;
                     $factura->tipo_pagamento_id = 1;
-                    $factura->contrato_id = $furoClienteContrato->id;
+                    //$factura->contrato_id = $furoClienteContrato->id;
                     $factura->tipo_pagamento_id = 1;
                     $factura->valor = $valorAPagar;
-                    $factura->furo_id = $request->input('furo');
+                    $factura->furo_id = 17;
 
                     if($factura->save()){
 
@@ -661,7 +663,7 @@ class ClienteController extends Controller
                                 if($recibo->save()){
 
                                     DB::commit();
-                                    return response()->json(['status' => 1, 'message' => 'Contrato Registado Com Sucesso']);
+                                    return response()->json(['status' => 1, 'message' => 'Contrato Actualizado Com Sucesso']);
 
                                 }
 

@@ -118,6 +118,7 @@
                       <input class="form-control"  type="hidden" name="contrato" value="{{$cliente->codigo}}" placeholder="Nome Cliente" >
                       <input class="form-control"  type="hidden" name="clienteID" value="{{$cliente->cliente_id}}" placeholder="Nome Cliente" >
                       <input class="form-control"  type="hidden" name="codigo" value="{{$cliente->codigo}}" placeholder="Nome Cliente" >
+                      <input class="form-control"  type="hidden" name="factura" value="{{$factura->id}}" placeholder="Nome Cliente" >
 
                       <div class="col-4">
                         <label class="form-label" for="confirmpasswordwizard">Nome Cliente<span class="txt-danger">*</span></label>
