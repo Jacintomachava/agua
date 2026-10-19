@@ -129,7 +129,7 @@ class LeituraController extends Controller
     {
         $userActual = Auth::user();
 
-        $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->where('mes_id',Carbon::now()->subMonth()->month)->where('furo_id',$userActual->furo_id)->get();
+        $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->where('mes_id',Carbon::now()->subMonth()->month)->where('furo_id',17)->get();
         $empresa = Empresa::where('id',$userActual->empresa_id)->first();
         $mesLeitura = Mes::where('numero',Carbon::now()->subMonth()->month)->first(); 
 
