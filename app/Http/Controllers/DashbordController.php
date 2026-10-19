@@ -25,9 +25,9 @@ class DashbordController extends Controller
        $mesAtual = Carbon::now()->month;
        $ano = Ano::where('ano',$anoActual)->first();
        $mesActualAnterior = Mes::where('numero',$mesAtual-1)->first();
-       $saldo = SaldoSMS::where('empresa_id',$userActual->empresa_id)->where('furo_id',$userActual->furo_id)->first();
-       $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->where('estado_leitura',0)->where('furo_id',$userActual->furo_id)->where('mes_id',$mesAtual-1)->get();
-       $clientes = FuroClienteContrato::where('empresa_id',$userActual->empresa_id)->where('furo_id',$userActual->furo_id)->get();
+       $saldo = SaldoSMS::where('empresa_id',$userActual->empresa_id)->where('furo_id',17)->first();
+       $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->where('estado_leitura',0)->where('furo_id',17)->where('mes_id',$mesAtual-1)->get();
+       $clientes = FuroClienteContrato::where('empresa_id',$userActual->empresa_id)->where('furo_id',17)->get();
 
        //Grafico de Consumo por Mes
        // Buscar todos os meses
@@ -39,7 +39,7 @@ class DashbordController extends Controller
        foreach ($meses as $mes) {
             $totalConsumo = Leitura::where('ano_id', $ano->id)
                 ->where('mes_id', $mes->id)
-                ->where('furo_id',$userActual->furo_id)
+                ->where('furo_id',17)
                 ->where('empresa_id',$userActual->empresa_id)
                 ->sum('consumo');
 
@@ -54,7 +54,7 @@ class DashbordController extends Controller
         )
         ->join('banco_carteira', 'pagamentos.tipo_banco', '=', 'banco_carteira.id')
         ->where('empresa_id',$userActual->empresa_id)
-        ->where('furo_id',$userActual->furo_id)
+        ->where('furo_id',17)
         ->groupBy('banco_carteira.nome')
         ->orderBy('total', 'desc')
         ->get();
@@ -63,12 +63,12 @@ class DashbordController extends Controller
         $valores1 = $dados->pluck('total');
 
         //Leituras
-        $leiturasFeitas = Leitura::where('estado_leitura', 1)->where('empresa_id',$userActual->empresa_id)->where('furo_id',$userActual->furo_id)->count();
-        $leiturasPendentes = Leitura::where('estado_leitura', 0)->where('empresa_id',$userActual->empresa_id)->where('furo_id',$userActual->furo_id)->count();
+        $leiturasFeitas = Leitura::where('estado_leitura', 1)->where('empresa_id',$userActual->empresa_id)->where('furo_id',17)->count();
+        $leiturasPendentes = Leitura::where('estado_leitura', 0)->where('empresa_id',$userActual->empresa_id)->where('furo_id',17)->count();
 
         //Clientes Activo 
-        $clientesAtivos = FuroClienteContrato::where('ligacao_activa', 1)->where('empresa_id',$userActual->empresa_id)->where('furo_id',$userActual->furo_id)->count();
-        $clientesInativos = FuroClienteContrato::where('ligacao_activa', 0)->where('empresa_id',$userActual->empresa_id)->where('furo_id',$userActual->furo_id)->count();
+        $clientesAtivos = FuroClienteContrato::where('ligacao_activa', 1)->where('empresa_id',$userActual->empresa_id)->where('furo_id',17)->count();
+        $clientesInativos = FuroClienteContrato::where('ligacao_activa', 0)->where('empresa_id',$userActual->empresa_id)->where('furo_id',17)->count();
 
 
         return view('home',  [

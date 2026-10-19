@@ -543,8 +543,8 @@ class ClienteController extends Controller
             $mes = Mes::where('numero',$mesActual)->first();
             $year_last_two_digits = substr($anoActual, -2);
             //Factura e Recibo
-            $totalFatura = Fatura::where('empresa_id',$userActual->empresa_id)->where('furo_id',$userActual->furo_id)->get();
-            $totalRecibo = Recibo::where('empresa_id',$userActual->empresa_id)->where('furo_id',$userActual->furo_id)->get();
+            $totalFatura = Fatura::where('empresa_id',$userActual->empresa_id)->get();
+            $totalRecibo = Recibo::where('empresa_id',$userActual->empresa_id)->get();
             $totalCliente = FuroClienteContrato::where('empresa_id',$userActual->empresa_id)->get();
 
             $numeroFatura = str_pad(count($totalFatura) + 1, 7, '0', STR_PAD_LEFT).'-'.$anoActual;

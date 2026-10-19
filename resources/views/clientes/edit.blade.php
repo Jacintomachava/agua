@@ -115,6 +115,9 @@
                     
                     <form1 class="stepper-one row g-3 needs-validation custom-input" >
 
+                      <input class="form-control"  type="hidden" name="contrato" value="{{$cliente->cliente->codigo}}" placeholder="Nome Cliente" >
+                      <input class="form-control"  type="hidden" name="clienteID" value="{{$cliente->cliente->id}}" placeholder="Nome Cliente" >
+
                       <div class="col-4">
                         <label class="form-label" for="confirmpasswordwizard">Nome Cliente<span class="txt-danger">*</span></label>
                         <input class="form-control"  type="text" name="cliente" value="{{$cliente->cliente->nome}}" placeholder="Nome Cliente" >
