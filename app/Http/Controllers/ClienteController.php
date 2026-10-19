@@ -643,7 +643,7 @@ class ClienteController extends Controller
                             $pagamento->furo_id = $request->input('furo');
                             $pagamento->empresa_id = $userActual->empresa_id;
                             $pagamento->factura_id = $factura->id;
-                            $pagamento->estado = $estado;
+                            //$pagamento->estado = $estado;
                             $pagamento->forma_pagamento_id = $request->input('forma_pagamento');
                             $pagamento->tipo_pagamento_id = 1;
                             $pagamento->descricao = $request->input('descricao');
@@ -655,7 +655,7 @@ class ClienteController extends Controller
                                 $recibo->cliente_id = $furoClienteContrato->id;
                                 $recibo->empresa_id = $userActual->empresa_id;
                                 $recibo->numero_factura = $numeroFatura;
-                                $recibo->status = $estado;
+                                //$recibo->status = $estado;
                                 $recibo->tipo_pagamento_id = 1;
                                 $recibo->contrato_id = $furoClienteContrato->id;
                                 $recibo->tipo_pagamento_id = 1;
