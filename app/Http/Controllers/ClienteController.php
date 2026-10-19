@@ -267,7 +267,7 @@ class ClienteController extends Controller
         $contratos = Contrato::where('empresa_id',$userActual->empresa_id)->get();
         $formasPagamentos = FormaPagamento::all();
         $bancos = BancoCarteira::all();
-        $factura = Fatura::where('empresa_id',$userActual->empresa_id)->where('furo_id',17)->where('cliente_id',$cliente->cliente_id)->whereNull('leitura')->first();
+        $factura = Fatura::where('empresa_id',$userActual->empresa_id)->where('furo_id',17)->where('cliente_id',$cliente->cliente_id)->whereNull('leitura_id')->first();
 
         if (auth()->user()->hasRole('Admin')) {
             // usuário é admin
