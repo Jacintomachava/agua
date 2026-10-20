@@ -76,6 +76,9 @@
 <div class="container">
 
 
+@foreach($leiturasPorBairro as $bairro => $leituras)
+
+
 @foreach($leituras as $leitura)
 
     <!-- DADOS DO CLIENTE -->
@@ -174,6 +177,8 @@
     <br>
         <hr class="cut-center">
     <br>
+@endforeach
+
 @endforeach
 </div>
 

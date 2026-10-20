@@ -137,6 +137,7 @@ Route::post('/registar/ligar', [ClienteController::class, 'registarLigar'])->nam
 Route::get('/localizcao/clientes', [ClienteController::class, 'mapa'])->name('mapa.clientes');
 //PDF Clientes
 Route::get('/pdf/clientes', [ClienteController::class, 'PDFCliente'])->name('pdf.clientes');
+Route::delete('/cliente/{codigo}/apagar',[ClienteController::class, 'destroy'])->name('cliente.destroy');
 
 //Leitura
 Route::get('/leituras', [LeituraController::class, 'index'])->name('leituras.index');

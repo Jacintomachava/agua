@@ -201,24 +201,39 @@ class LeituraController extends Controller
 
     }
 
-    public function facturasTodos()
+   public function facturasTodos()
     {
         $userActual = Auth::user();
+
         $mesAtual = Carbon::now()->subMonth()->month;
 
-        $empresa = Empresa::where('id',$userActual->empresa_id)->first();
+        $empresa = Empresa::findOrFail($userActual->empresa_id);
 
-        // usuário é Leitura
-        $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->where('estado_leitura',1)->where('furo_id',17)->where('mes_id',$mesAtual)->get();
+        $leituras = Leitura::with([
+            'furoClienteContrato.cliente',
+            'furoClienteContrato.contrato',
+            'mes'
+        ])
+        ->where('empresa_id', $userActual->empresa_id)
+        ->where('estado_leitura', 1)
+        ->where('furo_id', 17)
+        ->where('mes_id', $mesAtual)
+        ->get()
+        ->sortBy(function ($leitura) {
+            return $leitura->furoClienteContrato?->bairro ?? '';
+        })
+        ->groupBy(function ($leitura) {
+            return $leitura->furoClienteContrato?->bairro ?? 'Sem Bairro';
+        });
 
         $pdf = \PDF::loadView('leitura.facturasTodos', [
-             'leituras' => $leituras,
-             'empresa' => $empresa,
+            'leiturasPorBairro' => $leituras,
+            'empresa' => $empresa,
         ])->setPaper('a4', 'Portrait');
 
-        $fikeName = 'Todas Facturas - '.$empresa->nome;
+        $fileName = 'Todas Facturas - ' . $empresa->nome;
 
-        return $pdf->stream($fikeName.'.pdf');
+        return $pdf->stream($fileName . '.pdf');
     }
 
     public function localizarCasa($contratoID)
@@ -360,7 +375,10 @@ class LeituraController extends Controller
                 $sms->furo_id = $leitura->furo_id;
                 $sms->data_envio = $data;
 
-                if($factura->save() && $sms->save()){
+                $furoClienteContrato->consumo = $consumo;
+                $furoClienteContrato->valor_consumo = $valorAPagar;
+
+                if($factura->save() && $sms->save() && $furoClienteContrato->save()){
 
                     DB::commit();
                     return response()->json(['status' => 1, 'message' => 'Leitura Feito Com Sucesso']);

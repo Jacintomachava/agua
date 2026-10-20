@@ -37,7 +37,7 @@ class ClienteController extends Controller
         $nacionalidades = Nacionalidade::all();
 
         // Dados
-        $clientes = FuroClienteContrato::all(); //where('empresa_id', $user->empresa_id)->where('furo_id', $user->furo_id)->get();
+        $clientes = FuroClienteContrato::where('empresa_id', $user->empresa_id)->where('furo_id', 17)->get();
         $furos = Furo::where('empresa_id', $user->empresa_id)->get();
 
         return view('clientes.index', compact(
@@ -63,6 +63,46 @@ class ClienteController extends Controller
              'furos' => $furos,
              'provincias' => $provincias,
         ]);
+    }
+
+    public function destroy($codigo)
+    {
+        try {
+
+            $clienteFuro = FuroClienteContrato::where('id', $codigo)->firstOrFail();
+            $codigo1 = $clienteFuro->cliente_id;
+            $cliente = Cliente::where('id', $codigo1)->firstOrFail();
+
+            Leitura::where('furo_cliente_contrato_id', $codigo)->delete();
+
+            $cliente->delete();
+            $clienteFuro->delete();
+
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Cliente apagado com sucesso!'
+            ]);
+
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Cliente não encontrado.'
+            ], 404);
+
+        } catch (\Throwable $e) {
+
+            \Log::error('Erro ao apagar cliente', [
+                'codigo' => $codigo,
+                'erro' => $e->getMessage()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Não foi possível apagar o cliente.'
+            ], 500);
+        }
     }
 
     public function show($codigo)
