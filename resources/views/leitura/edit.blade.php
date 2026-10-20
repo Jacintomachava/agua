@@ -60,12 +60,16 @@
 
                     <div class="col-4">
                       <label class="form-label" for="passwordwizard">Ultima Leitura<span class="txt-danger">*</span></label>
-                      <input class="form-control"  type="text" name="ultima_leitura" value="{{$ultimaLeitura}}" readonly style="background-color: #f5f5f5; color: #555;">
+                      <input class="form-control"  type="text" name="ultima_leitura" value="{{$ultimaLeitura}}" >
                     </div>
 
                     <div class="col-4">
-                      <label class="form-label" for="passwordwizard">Valor da Leitura<span class="txt-danger">*</span></label>
+                      <label class="form-label" for="passwordwizard">Leitura Actual<span class="txt-danger">*</span></label>
                       <input class="form-control"  type="text" name="valor_leitura"  >
+                    </div>
+
+                    <div class="col-12 mt-3">
+                        <b>Consumo: <span id="consumo">0</span> m³</b>
                     </div>
 
 
@@ -177,6 +181,43 @@ $(document).ready(function() {
             });
         }
     });
+});
+
+
+$(document).ready(function () {
+
+    function calcularConsumo() {
+
+        let ultimaLeitura = parseFloat($('#ultima_leitura').val());
+        let leituraActual = parseFloat($('#valor_leitura').val());
+
+        if (isNaN(ultimaLeitura) || isNaN(leituraActual)) {
+            $('#consumo').text('0');
+            return;
+        }
+
+        let consumo = leituraActual - ultimaLeitura;
+
+        if (consumo < 0) {
+            $('#consumo')
+                .text('Leitura actual inferior à última leitura')
+                .css('color', 'red');
+            return;
+        }
+
+        $('#consumo')
+            .text(consumo.toFixed(2))
+            .css('color', 'green');
+    }
+
+    // Calcular ao alterar qualquer uma das leituras
+    $('#ultima_leitura, #valor_leitura').on('input change', function () {
+        calcularConsumo();
+    });
+
+    // Calcular ao carregar a página
+    calcularConsumo();
+
 });
 
 </script>

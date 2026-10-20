@@ -244,6 +244,14 @@ class LeituraController extends Controller
                 ->orderByDesc('id')             //Pegar O ultimo valor
                 ->value('valor_leitura') ?? 0;  //Pagar o valor
 
+
+        if($ultimaLeitura==0){
+
+          $cliente = FuroClienteContrato::where('empresa_id',$userActual->empresa_id)->where('id',$leitura->furo_cliente_contrato_id)->first();
+
+           $ultimaLeitura = $cliente->ultima_leitura;
+        }        
+
         return view('leitura.edit',  [
              'leitura' => $leitura,
              'ultimaLeitura' => $ultimaLeitura,
@@ -276,7 +284,7 @@ class LeituraController extends Controller
 
             if($leitura->estado_leitura==0){
 
-                $credito = SaldoSMS::where('empresa_id',$userActual->empresa_id)->where('furo_id',$userActual->furo_id)->first();
+                $credito = SaldoSMS::where('empresa_id',$userActual->empresa_id)->where('furo_id',17)->first();
 
                 if($credito->saldo_sistema - $empresa->valor_por_cliente >= 0){
 
