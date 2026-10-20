@@ -60,12 +60,12 @@
 
                     <div class="col-4">
                       <label class="form-label" for="passwordwizard">Ultima Leitura<span class="txt-danger">*</span></label>
-                      <input class="form-control"  type="text" name="ultima_leitura" value="{{$ultimaLeitura}}" >
+                      <input class="form-control"  type="text" step="any" id="ultima_leitura" name="ultima_leitura" value="{{$ultimaLeitura}}" >
                     </div>
 
                     <div class="col-4">
                       <label class="form-label" for="passwordwizard">Leitura Actual<span class="txt-danger">*</span></label>
-                      <input class="form-control"  type="text" name="valor_leitura"  >
+                      <input class="form-control"  type="text" step="any" id="valor_leitura" name="valor_leitura"  >
                     </div>
 
                     <div class="col-12 mt-3">
