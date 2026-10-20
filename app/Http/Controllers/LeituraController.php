@@ -434,6 +434,12 @@ class LeituraController extends Controller
                 $ultimaLeitura = $furoClienteContrato->ultima_leitura;
                 $novaLeitura   = $item['valor'];
 
+
+                 // Ignorar leituras vazias, nulas ou iguais a zero
+                if (!isset($item['valor']) || trim((string) $item['valor']) === '' || !is_numeric($item['valor']) || (float) $item['valor'] == 0) {
+                    continue;
+                }
+
                 if ($novaLeitura < $ultimaLeitura) {
                     DB::rollBack();
                     return response()->json([
@@ -452,7 +458,7 @@ class LeituraController extends Controller
                 // VALIDAR SALDO SISTEMA
                 // =========================
                 $saldo = SaldoSMS::where('empresa_id', $userActual->empresa_id)
-                    ->where('furo_id', $userActual->furo_id)
+                    ->where('furo_id', 17)
                     ->first();
 
                 if ($saldo->saldo_sistema < $empresa->valor_por_cliente) {

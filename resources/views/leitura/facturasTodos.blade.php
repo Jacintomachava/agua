@@ -164,12 +164,12 @@
         </tr>
         <tr>
             <td colspan="7" style="text-align: center;">
-                 BIM - 53130781;  BCI NIB: 000800006340814110195;  M-pesa: 84 586 8327;  E-mola: 87 586 8324
+
             </td>
         </tr>
         <tr>
             <td colspan="7" style="text-align: center;">
-                 <b>NB: <i>Após o pagamento por meio bancário, o cliente DEVE enviar a mensagem comprovativa.</i></b>
+
             </td>
         </tr>
         
