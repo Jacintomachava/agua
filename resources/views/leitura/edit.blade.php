@@ -69,7 +69,7 @@
                     </div>
 
                     <div class="col-12 mt-3">
-                        <center><h2>Consumo: <span id="consumo">0</span> m³</h2></center>
+                        <center><h2>Total Consumo: <span id="consumo">0</span> m³</h2></center>
                     </div>
 
 
