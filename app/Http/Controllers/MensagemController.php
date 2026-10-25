@@ -29,19 +29,19 @@ class MensagemController extends Controller
     {
 
         $userActual = Auth::user();
-        $mensagens = Mensagem::where('empresa_id',$userActual->empresa_id)->where('furo_id',$userActual->furo_id)->orderBy('updated_at', 'desc')->get();
+        $mensagens = Mensagem::where('empresa_id',$userActual->empresa_id)->where('furo_id',17)->orderBy('updated_at', 'desc')->get();
         $contatos = MensagemSessao::orderBy('updated_at', 'desc')->get();
-        $pacotes = CompraCredito::where('empresa_id',$userActual->empresa_id)->where('furo_id',$userActual->furo_id)->orderBy('updated_at', 'desc')->get();
-        $saldo = SaldoSMS::where('empresa_id',$userActual->empresa_id)->where('furo_id',$userActual->furo_id)->first();
-        $creditoSMSPendente = Mensagem::where('empresa_id',$userActual->empresa_id)->where('furo_id',$userActual->furo_id)->sum('credito');
-        $mensagensPeriodicas = MensagemPeriodica::where('empresa_id',$userActual->empresa_id)->where('furo_id',$userActual->furo_id)->get();
+        $pacotes = CompraCredito::where('empresa_id',$userActual->empresa_id)->where('furo_id',17)->orderBy('updated_at', 'desc')->get();
+        $saldo = SaldoSMS::where('empresa_id',$userActual->empresa_id)->where('furo_id',17)->first();
+        $creditoSMSPendente = Mensagem::where('empresa_id',$userActual->empresa_id)->where('furo_id',17)->sum('credito');
+        $mensagensPeriodicas = MensagemPeriodica::where('empresa_id',$userActual->empresa_id)->where('furo_id',17)->get();
 
 
         // 🟢 Gráfico 1: Consumo de créditos por mês e canal (WhatsApp e SMS)
         $consumoPorCanal = DB::table('mensagem')
                     ->selectRaw("DATE_FORMAT(created_at, '%M') as mes, canal, SUM(credito) as total_credito")
                     ->where('empresa_id',$userActual->empresa_id)
-                    ->where('furo_id',$userActual->furo_id)
+                    ->where('furo_id',17)
                     ->where('tipo', 'Enviada')
                     ->groupBy('mes', 'canal')
                     ->orderBy('mes')
@@ -52,7 +52,7 @@ class MensagemController extends Controller
 
         // 🟢 Gráfico 2: Consumo de crédito e lucro por mês
         $consumoLucroPorMes = Mensagem::selectRaw("DATE_FORMAT(created_at, '%M') as mes, SUM(credito) as total_credito, SUM(credito - custo_real) as lucro")
-            ->where('empresa_id',$userActual->empresa_id)
+            ->where('empresa_id',17)
             ->where('furo_id',$userActual->furo_id)
             ->groupBy('mes')
             ->orderBy('mes')

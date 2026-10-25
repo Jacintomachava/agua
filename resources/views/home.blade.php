@@ -11,6 +11,7 @@
 <div class="row">
   
     <div class="col-xl-3 col-md-4 col-sm-6">
+      <a herf="{{route('cliente.index')}}">  
         <div class="card project-widget widget-1 title-line">
             <div class="card-header card-no-border pb-0"> 
             <div class="header-top">
@@ -42,9 +43,11 @@
             </div>
             </div>
         </div>
+      </a>  
     </div>
 
     <div class="col-xl-3 col-md-4 col-sm-6">
+      <a href="{{route('leituras.pendentes')}}">  
         <div class="card project-widget widget-1 title-line">
             <div class="card-header card-no-border pb-0"> 
             <div class="header-top">
@@ -76,6 +79,7 @@
             </div>
             </div>
         </div>
+      </a>  
     </div>
 
     <div class="col-xl-3 col-md-4 col-sm-6">

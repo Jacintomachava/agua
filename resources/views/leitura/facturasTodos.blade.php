@@ -1,30 +1,72 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt">
 <head>
     <meta charset="utf-8">
-    <title>Factura</title>
+    <title>Facturas</title>
 
     <style>
+        @page {
+            size: A4 portrait;
+            margin: 8mm 10mm;
+        }
+
         body {
             font-family: DejaVu Sans, sans-serif;
-            font-size: 12px;
+            font-size: 9px;
+            margin: 0;
+            padding: 0;
         }
 
         .container {
             width: 100%;
-            padding: 10px;
         }
 
-        .header-table, 
+        /*
+        |--------------------------------------------------------------------------
+        | CADA PÁGINA CONTÉM DUAS FACTURAS
+        |--------------------------------------------------------------------------
+        */
+
+        .pagina {
+            width: 100%;
+            page-break-after: always;
+        }
+
+        .pagina:last-child {
+            page-break-after: auto;
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | CADA FACTURA OCUPA METADE DA PÁGINA
+        |--------------------------------------------------------------------------
+        */
+
+        .factura {
+            height: 135mm;
+            width: 100%;
+            page-break-inside: avoid;
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | TABELAS
+        |--------------------------------------------------------------------------
+        */
+
+        .header-table,
         .data-table {
             width: 100%;
             border-collapse: collapse;
+            table-layout: fixed;
         }
 
-        .data-table td, 
+        .data-table td,
         .data-table th {
             border: 1px solid #000;
-            padding: 5px;
+            padding: 4px;
+            font-size: 9px;
+            vertical-align: middle;
         }
 
         .bold {
@@ -32,42 +74,72 @@
         }
 
         .title {
-            font-size: 18px;
+            font-size: 15px;
             text-align: center;
             margin-bottom: 5px;
         }
 
         .logo {
-            width: 120px;
+            width: 90px;
+            height: 65px;
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | LINHA DE CORTE
+        |--------------------------------------------------------------------------
+        */
+
+        .cut-center {
+            border: none;
+            border-top: 1px dashed #000;
+            margin: 0;
+            padding: 0;
+            height: 0;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .text-left {
+            text-align: left;
         }
 
         .note {
+            font-size: 8px;
+            line-height: 1.4;
+        }
+
+        .total {
+            font-weight: bold;
             font-size: 11px;
-            margin-top: 10px;
+        }
+        .assinatura {
+            text-align: center;
+            margin-top: 8px;
         }
 
-        .payment {
-            margin-top: 10px;
-            font-size: 12px;
+        .assinatura img {
+            width: 140px;
+            height: 65px;
         }
-    </style>
-    <style>
-    .cut-center {
-        border: none;
-        border-top: 1px dashed #000;
-        position: relative;
-        margin: 20px 0;
-    }
 
-    .cut-center:before {
-        content: "✂";
-        position: absolute;
-        top: -10px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: #fff;
-        padding: 0 5px;
-    }
+        .assinatura .linha {
+            width: 180px;
+            border-top: 1px solid #000;
+            margin: 0 auto;
+        }
+
+        .assinatura .texto {
+            font-size: 9px;
+            margin-top: 3px;
+        }
+
     </style>
 </head>
 
@@ -75,111 +147,508 @@
 
 <div class="container">
 
+    @php
 
-@foreach($leiturasPorBairro as $bairro => $leituras)
+        /*
+        |--------------------------------------------------------------------------
+        | JUNTAR TODAS AS LEITURAS NUMA ÚNICA COLECÇÃO
+        |--------------------------------------------------------------------------
+        |
+        | Mantém a ordem dos bairros e permite dividir as facturas
+        | em grupos de duas.
+        |
+        */
+
+        $todasLeituras = collect($leiturasPorBairro)
+            ->flatMap(function ($leituras) {
+                return collect($leituras);
+            })
+            ->values();
+
+        /*
+        |--------------------------------------------------------------------------
+        | DIVIDIR EM GRUPOS DE DUAS FACTURAS
+        |--------------------------------------------------------------------------
+        */
+
+        $paginas = $todasLeituras->chunk(2);
+
+    @endphp
 
 
-@foreach($leituras as $leitura)
+    @foreach($paginas as $pagina)
 
-    <!-- DADOS DO CLIENTE -->
-    <br>
-    <table class="data-table">
-        <tr>
-            <td colspan="2" style="text-align: center;">
-                 @if(Auth::user()->empresa->logotipo==null)
-                    <img src="{{public_path('images/logotipo.png')}}" width="90" height="70">
-                 @else
-                    <img src="{{public_path('/logotipo/'.Auth::user()->empresa->logotipo)}}" width="90" height="70">
-                 @endif
-            </td>
-            <td colspan="3" style="text-align: center;">
-                <div class="bold">{{ strtoupper($empresa->nome) }}</div>
-                <div>{{ $empresa->endereco }}</div>
-                <div>NUIT: {{ $empresa->nuit }}</div>
-            </td>
-            <td colspan="2" style="text-align: right;">
-                <div class="bold">FACTURA Nº: {{$leitura->numero_factura}}</div>
-                <div>Mês {{$leitura->mes->nome}}</div>
-            </td>
-        </tr>
-        <tr>
-            <td>Nome</td>
-            <th colspan="6" style="text-align: center;">{{strtoupper($leitura->furoClienteContrato->cliente->nome)}}</th>
-        </tr>
+        <div class="pagina">
 
-        <tr>
-            <td>Morada</td>
-            <td>Quarteirao</td>
-            <td>{{$leitura->furoClienteContrato->cliente->quarteirao}}</td>
-            <td>Casa</td>
-            <td>{{$leitura->furoClienteContrato->cliente->casa}}</td>
-            <td>Cliente</td>
-            <td>{{$leitura->furoClienteContrato->codigo}}</td>
-        </tr>
+            @foreach($pagina as $indice => $leitura)
 
-        <tr>
-            <td>Mes</td>
-            <td colspan="2" style="text-align: center;">{{$leitura->mes->nome}}</td>
-            <td colspan="2" style="text-align: center;">Prazo Pag.</td>
-            <td colspan="2" style="text-align: center;">{{\Carbon\Carbon::parse($leitura->prazo_pagamento)->format('d-m-Y') }}</td>
-        </tr>
+                @php
 
-        <tr>
-            <td>L. Anterior</td>
-            <td colspan="2" style="text-align: center;">{{$leitura->valor_leitura-$leitura->consumo}}m&sup3;</td>
-            <td colspan="2" style="text-align: center;">Consumo</td>
-            <td colspan="2" style="text-align: center;">{{$leitura->consumo}}m&sup3;</td>
-        </tr>
+                    /*
+                    |--------------------------------------------------------------------------
+                    | CÁLCULO DOS VALORES
+                    |--------------------------------------------------------------------------
+                    */
 
-        <tr>
-            <td>L. Actual</td>
-            <td colspan="2" style="text-align: center;">{{$leitura->valor_leitura}}m&sup3;</td>
-            <td colspan="2" style="text-align: center;">Divida</td>
-            <td colspan="2" style="text-align: center;">{{number_format($leitura->furoClienteContrato->divida,2,',','.')}}MT</td>
-        </tr>
+                    $valorAPagar = (float) ($leitura->valor_a_pagar ?? 0);
 
-        <tr>
-            <td>Valor/m&sup3;</td>
-            <td colspan="2" style="text-align: center;">{{$leitura->furoClienteContrato->contrato->valor}}MT</td>
-            <td colspan="2" style="text-align: center;">Mes Corrente</td>
-            <td colspan="2" style="text-align: center;">{{number_format($leitura->valor_a_pagar,2,',','.')}}MT</td>
-        </tr>
+                    $divida = (float) (
+                        $leitura->furoClienteContrato->divida ?? 0
+                    );
 
-        <tr>
-            <td>Data Leitura</td>
-            <td colspan="2" style="text-align: center;">{{ \Carbon\Carbon::parse($leitura->data_leitura)->format('d-m-Y') }}</td>
-            <th colspan="2" style="text-align: center;">Total a Pagar</th>
-            <th colspan="2" style="text-align: center;">{{ number_format($leitura->valor_a_pagar+ $leitura->furoClienteContrato->divida- $leitura->furoClienteContrato->saldo + ($leitura->valor_a_pagar * $leitura->multa / 100),2,',','.')}}MT</th>
-        </tr>
+                    $saldo = (float) (
+                        $leitura->furoClienteContrato->saldo ?? 0
+                    );
 
-        <tr>
-            <td colspan="7" style="text-align: justfy;">
-                Nota: O cliente é sujeito a uma MULTA de 25% após o último dia do pagamento (Artigo 2-e do contracto) e o fornecedor poderá interromper o fornecimento de água sem aviso prévio.
-            </td>
-        </tr>
-        <tr>
-            <th colspan="7" style="text-align: center;">
-                 Modalidades de pagamento:
-            </th>
-        </tr>
-        <tr>
-            <td colspan="7" style="text-align: center;">
+                    $multa = (float) ($leitura->multa ?? 0);
 
-            </td>
-        </tr>
-        <tr>
-            <td colspan="7" style="text-align: center;">
+                    // Multa calculada sobre o valor da leitura actual
+                    $valorMulta = $valorAPagar * ($multa / 100);
 
-            </td>
-        </tr>
-        
-    </table>
-    <br>
-        <hr class="cut-center">
-    <br>
-@endforeach
+                    // Total a pagar
+                    $totalPagar = max(
+                        0,
+                        $valorAPagar + $divida - $saldo + $valorMulta
+                    );
 
-@endforeach
+                @endphp
+
+
+                <div class="factura">
+
+                    <table class="data-table">
+
+                        <!-- ================================================= -->
+                        <!-- CABEÇALHO DA FACTURA -->
+                        <!-- ================================================= -->
+
+                        <tr>
+
+                            <td colspan="2" class="text-center">
+
+                                @if(Auth::user()->empresa->logotipo == null)
+
+                                    <img
+                                        src="{{ public_path('images/logotipo.png') }}"
+                                        width="90"
+                                        height="70"
+                                    >
+
+                                @else
+
+                                    <img
+                                        src="{{ public_path('/logotipo/' . Auth::user()->empresa->logotipo) }}"
+                                        width="90"
+                                        height="70"
+                                    >
+
+                                @endif
+
+                            </td>
+
+                            <td colspan="3" class="text-center">
+
+                                <div class="bold">
+                                    {{ strtoupper($empresa->nome) }}
+                                </div>
+
+                                <div>
+                                    {{ $empresa->endereco }}
+                                </div>
+
+                                <div>
+                                    NUIT: {{ $empresa->nuit }}
+                                </div>
+
+                            </td>
+
+                            <td colspan="2" class="text-right">
+
+                                <div class="bold">
+                                    FACTURA Nº:
+                                    {{ $leitura->numero_factura }}
+                                </div>
+
+                                <div>
+                                    Mês {{ $leitura->mes->nome }}
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+
+                        <!-- ================================================= -->
+                        <!-- NOME DO CLIENTE -->
+                        <!-- ================================================= -->
+
+                        <tr>
+
+                            <td>
+                                Nome
+                            </td>
+
+                            <th colspan="6" class="text-center">
+
+                                {{
+                                    strtoupper(
+                                        $leitura->furoClienteContrato->cliente->nome
+                                    )
+                                }}
+
+                            </th>
+
+                        </tr>
+
+
+                        <!-- ================================================= -->
+                        <!-- MORADA -->
+                        <!-- ================================================= -->
+
+                        <tr>
+
+                            <td>
+                                Morada
+                            </td>
+
+                            <td>
+                                Quarteirão
+                            </td>
+
+                            <td>
+                                {{ $leitura->furoClienteContrato->cliente->quarteirao }}
+                            </td>
+
+                            <td>
+                                Casa
+                            </td>
+
+                            <td>
+                                {{ $leitura->furoClienteContrato->cliente->casa }}
+                            </td>
+
+                            <td>
+                                Cliente
+                            </td>
+
+                            <td>
+                                {{ $leitura->furoClienteContrato->codigo }}
+                            </td>
+
+                        </tr>
+
+
+                        <!-- ================================================= -->
+                        <!-- MÊS E PRAZO DE PAGAMENTO -->
+                        <!-- ================================================= -->
+
+                        <tr>
+
+                            <td>
+                                Mês
+                            </td>
+
+                            <td colspan="2" class="text-center">
+
+                                {{ $leitura->mes->nome }}
+
+                            </td>
+
+                            <td colspan="2" class="text-center">
+
+                                Prazo Pag.
+
+                            </td>
+
+                            <td colspan="2" class="text-center">
+
+                                {{
+                                    \Carbon\Carbon::parse(
+                                        $leitura->prazo_pagamento
+                                    )->format('d-m-Y')
+                                }}
+
+                            </td>
+
+                        </tr>
+
+
+                        <!-- ================================================= -->
+                        <!-- LEITURA ANTERIOR E CONSUMO -->
+                        <!-- ================================================= -->
+
+                        <tr>
+
+                            <td>
+                                L. Anterior
+                            </td>
+
+                            <td colspan="2" class="text-center">
+
+                                {{
+                                    $leitura->valor_leitura - $leitura->consumo
+                                }} m&sup3;
+
+                            </td>
+
+                            <td colspan="2" class="text-center">
+
+                                Consumo
+
+                            </td>
+
+                            <td colspan="2" class="text-center">
+
+                                {{ $leitura->consumo }} m&sup3;
+
+                            </td>
+
+                        </tr>
+
+
+                        <!-- ================================================= -->
+                        <!-- LEITURA ACTUAL E DÍVIDA -->
+                        <!-- ================================================= -->
+
+                        <tr>
+
+                            <td>
+                                L. Actual
+                            </td>
+
+                            <td colspan="2" class="text-center">
+
+                                {{ $leitura->valor_leitura }} m&sup3;
+
+                            </td>
+
+                            <td colspan="2" class="text-center">
+
+                                Dívida
+
+                            </td>
+
+                            <td colspan="2" class="text-center">
+
+                                {{
+                                    number_format(
+                                        $divida,
+                                        2,
+                                        ',',
+                                        '.'
+                                    )
+                                }} MT
+
+                            </td>
+
+                        </tr>
+
+
+                        <!-- ================================================= -->
+                        <!-- VALOR POR METRO CÚBICO -->
+                        <!-- ================================================= -->
+
+                        <tr>
+
+                            <td>
+                                Valor/m&sup3;
+                            </td>
+
+                            <td colspan="2" class="text-center">
+
+                                {{
+                                    number_format(
+                                        $leitura->furoClienteContrato->contrato->valor,
+                                        2,
+                                        ',',
+                                        '.'
+                                    )
+                                }} MT
+
+                            </td>
+
+                            <td colspan="2" class="text-center">
+
+                                Mês Corrente
+
+                            </td>
+
+                            <td colspan="2" class="text-center">
+
+                                {{
+                                    number_format(
+                                        $valorAPagar,
+                                        2,
+                                        ',',
+                                        '.'
+                                    )
+                                }} MT
+
+                            </td>
+
+                        </tr>
+
+
+                        <!-- ================================================= -->
+                        <!-- SALDO / ADIANTAMENTO -->
+                        <!-- ================================================= -->
+
+                        <tr>
+
+                            <td>
+                                Saldo
+                            </td>
+
+                            <td colspan="2" class="text-center">
+
+                                {{
+                                    number_format(
+                                        $saldo,
+                                        2,
+                                        ',',
+                                        '.'
+                                    )
+                                }} MT
+
+                            </td>
+
+                            <td colspan="2" class="text-center">
+
+                                Multa ({{ number_format($multa, 0)*20 }} dias)
+
+                            </td>
+
+                            <td colspan="2" class="text-center">
+
+                                {{
+                                    number_format(
+                                        $valorMulta,
+                                        2,
+                                        ',',
+                                        '.'
+                                    )
+                                }} MT
+
+                            </td>
+
+                        </tr>
+
+
+                        <!-- ================================================= -->
+                        <!-- DATA DA LEITURA E TOTAL -->
+                        <!-- ================================================= -->
+
+                        <tr>
+
+                            <td>
+                                Data Leitura
+                            </td>
+
+                            <td colspan="2" class="text-center">
+
+                                {{
+                                    \Carbon\Carbon::parse(
+                                        $leitura->data_leitura
+                                    )->format('d-m-Y')
+                                }}
+
+                            </td>
+
+                            <th colspan="2" class="text-center">
+
+                                Total a Pagar
+
+                            </th>
+
+                            <th colspan="2" class="text-center total">
+
+                                {{
+                                    number_format(
+                                        $totalPagar,
+                                        2,
+                                        ',',
+                                        '.'
+                                    )
+                                }} MT
+
+                            </th>
+
+                        </tr>
+
+
+                        <!-- ================================================= -->
+                        <!-- NOTA -->
+                        <!-- ================================================= -->
+
+                        <tr>
+
+                            <td colspan="7" class="note">
+
+                                Nota: O cliente é sujeito a uma MULTA
+                                de 20MT por dia após o último dia do pagamento(dia 10 de cada mês)
+                                e o fornecedor poderá interromper o fornecimento de
+                                água sem aviso prévio.
+
+                            </td>
+
+                        </tr>
+
+
+                        <!-- ================================================= -->
+                        <!-- MODALIDADES DE PAGAMENTO -->
+                        <!-- ================================================= -->
+
+                        <tr>
+
+                            <th colspan="7" class="text-center">
+
+                                Modalidades de pagamento:
+
+                            </th>
+
+                        </tr>
+
+
+                        <tr>
+
+                            <td colspan="7" class="text-center">
+
+                                <!-- ASSINATURA -->
+                                <div class="assinatura">
+
+                                    <img
+                                        src="{{ public_path('logotipo/assinatura.png') }}"
+                                        alt="Assinatura"
+                                    >
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                    </table>
+
+                </div>
+
+
+                <!-- ================================================= -->
+                <!-- LINHA DE CORTE ENTRE AS DUAS FACTURAS -->
+                <!-- ================================================= -->
+
+                @if($indice == 0 && $pagina->count() == 2)
+
+                    <hr class="cut-center">
+
+                @endif
+
+
+            @endforeach
+
+        </div>
+
+    @endforeach
+
 </div>
 
 </body>
