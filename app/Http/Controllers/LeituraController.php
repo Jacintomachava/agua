@@ -23,6 +23,7 @@ use App\Services\SMSService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class LeituraController extends Controller
 {
@@ -57,7 +58,7 @@ class LeituraController extends Controller
         $userActual = Auth::user();
         $mesAtual = Carbon::now()->month;
 
-        $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->where('furo_id',$userActual->furo_id)->get();
+        $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->where('furo_id',17)->get();
 
         return view('leitura.index',  [
              'leituras' => $leituras,
@@ -70,7 +71,7 @@ class LeituraController extends Controller
         $userActual = Auth::user();
         $mesAtual = Carbon::now()->month;
 
-        $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->where('estado_leitura',0)->where('furo_id',$userActual->furo_id)->where('mes_id', Carbon::now()->subMonth()->month)->get();
+        $leituras = Leitura::where('empresa_id',$userActual->empresa_id)->where('estado_leitura',0)->where('furo_id',17)->where('mes_id', Carbon::now()->subMonth()->month)->get();
 
         return view('leitura.index',  [
              'leituras' => $leituras,
@@ -201,7 +202,7 @@ class LeituraController extends Controller
 
     }
 
-   public function facturasTodos()
+    public function facturasTodos()
     {
         $userActual = Auth::user();
 
@@ -562,6 +563,33 @@ class LeituraController extends Controller
                 'message' => $e->getMessage()
             ]);
         }
+    }
+
+    public function actualizarDividaAdiantamento(Request $request)
+    {
+        $dados = $request->validate([
+            'cliente_id' => 'required|integer',
+            'tipo' => ['required', Rule::in(['DIVIDA', 'ADIANTAMENTO'])],
+            'valor' => 'required|numeric|gt:0',
+        ]);
+
+        DB::transaction(function () use ($dados) {
+
+            $cliente = FuroClienteContrato::where('id', $dados['cliente_id'])->lockForUpdate()->firstOrFail();
+
+            if ($dados['tipo'] === 'DIVIDA') {
+                $cliente->divida = $dados['valor'];
+            } else {
+                $cliente->saldo = $dados['valor'];
+            }
+
+            $cliente->save();
+        });
+
+        return response()->json([
+            'status' => 1,
+            'message' => 'Dados actualizados com sucesso.'
+        ]);
     }
 
     public function geolocalizacaoStore(Request $request)

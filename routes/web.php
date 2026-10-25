@@ -74,6 +74,7 @@ Route::get('/leituras/fazer', [LeituraController::class, 'leituraFazer'])->name(
 Route::post('/todas/leituras', [LeituraController::class, 'updateTodos'])->name('update.todos');
 Route::get('/registar/leituras', [LeituraController::class, 'registarLeitura'])->name('registar.leitura');
 Route::get('/facturas/leitura/{id}', [LeituraController::class, 'facturaLeitura'])->name('facturas.leitura');
+Route::post('/clientes/divida-adiantamento',[LeituraController::class, 'actualizarDividaAdiantamento'])->name('clientes.divida-adiantamento');
 
 //Empresa Gravar
 Route::post('/registar/empresa', [EmpresaController::class, 'store'])->name('empresa.store');

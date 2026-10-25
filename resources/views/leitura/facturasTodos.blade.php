@@ -135,21 +135,21 @@
             <td>L. Actual</td>
             <td colspan="2" style="text-align: center;">{{$leitura->valor_leitura}}m&sup3;</td>
             <td colspan="2" style="text-align: center;">Divida</td>
-            <td colspan="2" style="text-align: center;">{{$leitura->divida_anterior}}MT</td>
+            <td colspan="2" style="text-align: center;">{{number_format($leitura->furoClienteContrato->divida,2,',','.')}}MT</td>
         </tr>
 
         <tr>
             <td>Valor/m&sup3;</td>
             <td colspan="2" style="text-align: center;">{{$leitura->furoClienteContrato->contrato->valor}}MT</td>
             <td colspan="2" style="text-align: center;">Mes Corrente</td>
-            <td colspan="2" style="text-align: center;">{{$leitura->valor_a_pagar}}MT</td>
+            <td colspan="2" style="text-align: center;">{{number_format($leitura->valor_a_pagar,2,',','.')}}MT</td>
         </tr>
 
         <tr>
             <td>Data Leitura</td>
             <td colspan="2" style="text-align: center;">{{ \Carbon\Carbon::parse($leitura->data_leitura)->format('d-m-Y') }}</td>
             <th colspan="2" style="text-align: center;">Total a Pagar</th>
-            <th colspan="2" style="text-align: center;">{{$leitura->valor_a_pagar+$leitura->divida_anterior}}MT</th>
+            <th colspan="2" style="text-align: center;">{{ number_format($leitura->valor_a_pagar+ $leitura->furoClienteContrato->divida- $leitura->furoClienteContrato->saldo + ($leitura->valor_a_pagar * $leitura->multa / 100),2,',','.')}}MT</th>
         </tr>
 
         <tr>

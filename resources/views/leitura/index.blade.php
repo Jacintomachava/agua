@@ -111,14 +111,14 @@
                                         @if($leitura->estado_leitura==0)
                                         ...
                                         @else
-                                        {{$leitura->valor_a_pagar}}
+                                        {{number_format($leitura->valor_a_pagar,2,',','.')}}
                                         @endif
                                     </td>
                                     <td>
                                         @if($leitura->estado_leitura==0)
                                         ...
                                         @else
-                                        {{$leitura->divida_anterior}}
+                                        {{number_format($leitura->furoClienteContrato->divida,2,',','.')}}
                                         @endif
                                     </td>
                                     <td>
@@ -132,7 +132,17 @@
                                         @if($leitura->estado_leitura==0)
                                             ...
                                         @else
-                                            {{$leitura->valor_a_pagar}} 
+                                           {{
+                                                number_format(
+                                                    $leitura->valor_a_pagar
+                                                    + $leitura->furoClienteContrato->divida
+                                                    - $leitura->furoClienteContrato->saldo
+                                                    + ($leitura->valor_a_pagar * $leitura->multa / 100),
+                                                    2,
+                                                    ',',
+                                                    '.'
+                                                )
+                                            }}
                                         @endif
                                     </td>
 
@@ -151,6 +161,14 @@
                                                 Fatura
                                             </a>
                                         @endif
+
+                                            <a href="javascript:void(0)"
+                                                class="btn btn-danger btn-xs btn-divida"
+                                                data-id="{{ $leitura->furoClienteContrato->id }}"
+                                                data-nome="{{ $leitura->furoClienteContrato->cliente->nome }}">
+                                                <i class="fas fa-money-bill-wave"></i>
+                                                Dívida/Adi.
+                                            </a>
                                     </td>
                                 </tr>
                             @endforeach
@@ -165,9 +183,142 @@
     </div>
 </div>
 
+
+<div class="modal fade" id="modalDivida" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Dívida / Adiantamento</h5>
+                <button type="button" class="btn-close"
+                    data-bs-dismiss="modal"></button>
+            </div>
+
+            <form id="formDivida">
+                @csrf
+
+                <div class="modal-body">
+
+                    <input type="hidden" name="cliente_id" id="cliente_id">
+
+                    <div class="mb-3">
+                        <label class="form-label">Cliente</label>
+                        <input type="text"
+                            id="cliente_nome"
+                            class="form-control"
+                            readonly  disabled>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Tipo de operação</label>
+
+                        <select name="tipo" id="tipo"
+                            class="form-select" required>
+                            <option value="DIVIDA">Dívida</option>
+                            <option value="ADIANTAMENTO">Adiantamento</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Valor (MT)</label>
+                        <input type="number"
+                            name="valor"
+                            id="valor"
+                            class="form-control"
+                            min="0.01"
+                            step="0.01"
+                            required>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+
+                    <button type="submit" class="btn btn-primary"
+                        id="btnGuardarDivida">
+                        Guardar
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
 @endsection
 
 @push('js')
 
+
+<script>
+
+$(document).on('click', '.btn-divida', function () {
+
+    let clienteId = $(this).data('id');
+    let clienteNome = $(this).data('nome');
+
+    $('#formDivida')[0].reset();
+
+    $('#cliente_id').val(clienteId);
+    $('#cliente_nome').val(clienteNome);
+
+    $('#modalDivida').modal('show');
+
+    bootstrap.Modal.getOrCreateInstance(document.getElementById('modalDivida')).show();
+
+});
+
+
+$('#formDivida').on('submit', function (e) {
+
+    e.preventDefault();
+
+    let botao = $('#btnGuardarDivida');
+
+    botao.prop('disabled', true).text('A guardar...');
+
+    $.ajax({
+        url: "{{ route('clientes.divida-adiantamento') }}",
+        type: "POST",
+        data: $(this).serialize(),
+
+        success: function (response) {
+
+            Swal.fire({
+                icon: 'success',
+                title: 'Sucesso!',
+                text: response.message,
+                timer: 2000,
+                showConfirmButton: false
+            }).then(() => {
+                location.reload();
+            });
+        },
+
+        error: function (xhr) {
+
+            let mensagem = xhr.responseJSON?.message
+                || 'Erro ao actualizar os dados.';
+
+            Swal.fire({
+                icon: 'error',
+                title: 'Erro!',
+                text: mensagem
+            });
+        },
+
+        complete: function () {
+            botao.prop('disabled', false).text('Guardar');
+        }
+    });
+});
+
+
+</script>
 
 @endpush
